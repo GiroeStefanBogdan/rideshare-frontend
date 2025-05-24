@@ -13,26 +13,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 🧾 Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: 🛠 Setup Node.js with cache
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: 📦 Install npm dependencies
         run: npm ci
 
-      - name: SvelteKit Sync
+      - name: 🔄 Sync SvelteKit types
         run: npm run prepare
 
-      - name: Type check
+      - name: ✅ TypeScript type checking
         run: npm run check
 
-      - name: Lint
+      - name: 🧹 Format & lint check
         run: npm run lint
 
-      - name: build
+      - name: 🏗 Build SvelteKit project
         run: npm run build
