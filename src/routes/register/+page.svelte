@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	let { form } = $props();
 
 	let name = $state('');
