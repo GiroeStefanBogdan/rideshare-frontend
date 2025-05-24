@@ -31,7 +31,7 @@
 			} else {
 				error = 'Something went wrong.';
 			}
-		} catch (e) {
+		} catch {
 			error = 'Could not connect to server.';
 		}
 	});
