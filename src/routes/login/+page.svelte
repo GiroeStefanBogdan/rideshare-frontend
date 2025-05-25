@@ -16,14 +16,13 @@
 			headers: {
 				'Content-Type': 'application/json',
 			},
+			credentials: 'include', // 🔐 Accepts cookie from server
 			body: JSON.stringify({
 				email,
 				password,
 			}),
 		});
 		if(res.ok){
-			const token = await res.text();
-			localStorage.setItem('token', token);
 			goto('/dashboard');
 		}else{
 			error = 'Invalid email or password';
@@ -38,6 +37,7 @@
 			headers: {
 				'Content-Type': 'application/json',
 			},
+			credentials: 'include', // 🔐 Accepts cookie from server
 		});
 		if (res.ok) {
 			const url = await res.text();
