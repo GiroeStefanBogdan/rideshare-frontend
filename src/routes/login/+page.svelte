@@ -21,32 +21,29 @@
 				password
 			})
 		});
-		if(res.ok){
+		if (res.ok) {
 			goto('/dashboard');
 		} else {
 			error = 'Invalid email or password';
 		}
 	}
 
-
 	async function handleGoogleLogin(event: Event) {
 		event.preventDefault();
 		const res = await fetch('http://localhost:8080/oauth2/authorization/google', {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json',
+				'Content-Type': 'application/json'
 			},
-			credentials: 'include', // 🔐 Accepts cookie from server
+			credentials: 'include' // 🔐 Accepts cookie from server
 		});
 		if (res.ok) {
-			const url = await res.text();
+			// const url = await res.text();
 			// TODO: Redirect to dashboard if sucessful
-			
 		} else {
 			error = 'Google login failed';
 		}
 	}
-
 </script>
 
 <div
@@ -129,15 +126,19 @@
 				<a href="#" class="text-blue-500 hover:underline">Forgot password?</a>
 			</div>
 
-			 <!-- Google Login Button -->
-      <button
-        type="button"
-        onclick={handleGoogleLogin}
-        class="mt-4 mb-4 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-100 dark:border-gray-600 dark:bg-slate-800 dark:text-white hover:dark:bg-slate-700"
-      >
-        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="h-5 w-5" />
-        Sign in with Google
-      </button>
+			<!-- Google Login Button -->
+			<button
+				type="button"
+				onclick={handleGoogleLogin}
+				class="mt-4 mb-4 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-100 dark:border-gray-600 dark:bg-slate-800 dark:text-white hover:dark:bg-slate-700"
+			>
+				<img
+					src="https://www.svgrepo.com/show/475656/google-color.svg"
+					alt="Google"
+					class="h-5 w-5"
+				/>
+				Sign in with Google
+			</button>
 
 			<!-- Submit -->
 			<button
@@ -175,4 +176,4 @@
 	.animate-fade-in {
 		animation: fade-in 0.4s ease-out both;
 	}
-	</style>
+</style>

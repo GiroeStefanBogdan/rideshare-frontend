@@ -1,7 +1,5 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
-
-let { form } = $props();
+	import { goto } from '$app/navigation';
 
 	let name = $state('');
 	let email = $state('');
@@ -11,30 +9,29 @@ let { form } = $props();
 	let showPassword = $state(false);
 	let showConfirmPassword = $state(false);
 	let error = $state('');
- 	let passwordsMatch = $derived(password === confirm);
-
+	let passwordsMatch = $derived(password === confirm);
 
 	async function handleRegister(event: Event) {
 		event.preventDefault();
 
-		if(error != null){
-		const res = await fetch('http://localhost:8080/register', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				name,
-				email,
-				password,
-			}),
-		});
+		if (error != null) {
+			const res = await fetch('http://localhost:8080/register', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					name,
+					email,
+					password
+				})
+			});
 
-if(res.ok){
-			const token = await res.text();
-			localStorage.setItem('token', token);
-			goto('/login');
-		}else{
-			error = 'Invalid email or password';
-		}
+			if (res.ok) {
+				const token = await res.text();
+				localStorage.setItem('token', token);
+				goto('/login');
+			} else {
+				error = 'Invalid email or password';
+			}
 		}
 	}
 </script>
@@ -122,10 +119,8 @@ if(res.ok){
 						class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 pr-12 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
 					/>
 					{#if !passwordsMatch}
-				<p class="mt-1 text-sm text-red-600 dark:text-red-400">
-					Passwords do not match
-				</p>
-				{/if}
+						<p class="mt-1 text-sm text-red-600 dark:text-red-400">Passwords do not match</p>
+					{/if}
 					<!-- Optional: a second toggle button -->
 					<button
 						type="button"
@@ -149,7 +144,7 @@ if(res.ok){
 
 			<button
 				type="submit"
-				  disabled={!passwordsMatch}
+				disabled={!passwordsMatch}
 				class="w-full rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 py-2 font-semibold text-white shadow-lg transition duration-200 hover:scale-[1.01] hover:from-purple-700 hover:to-indigo-700"
 			>
 				Create Account
