@@ -83,7 +83,7 @@
 					bind:value={email}
 					required
 					autocomplete="email"
-					placeholder="you@example.com"
+					placeholder="email"
 					class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 shadow-sm transition placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
 				/>
 			</div>
@@ -103,7 +103,7 @@
 						bind:value={password}
 						required
 						autocomplete="current-password"
-						placeholder="••••••••"
+						placeholder="password"
 						class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 pr-12 text-gray-800 shadow-sm transition placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
 					/>
 					<button
