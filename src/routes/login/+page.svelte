@@ -1,6 +1,5 @@
-
 <script lang="ts">
-  import { goto } from '$app/navigation';
+	import { goto } from '$app/navigation';
 
 	let email = $state('');
 	let password = $state('');
@@ -14,20 +13,20 @@
 		const res = await fetch('http://localhost:8080/login', {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json',
+				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
 				email,
-				password,
-			}),
+				password
+			})
 		});
-		if(res.ok){
+		if (res.ok) {
 			const token = await res.text();
 			localStorage.setItem('token', token);
 			goto('/dashboard');
-		}else{
+		} else {
 			error = 'Invalid email or password';
-		}	
+		}
 	}
 </script>
 
@@ -45,12 +44,12 @@
 			<p class="mt-1 text-sm text-gray-500 dark:text-gray-300">Secure and stylish ✨</p>
 		</div>
 
-		 <!-- Error -->
-    {#if error}
-      <p class="mb-5 rounded border border-red-300 bg-red-100 p-3 text-center text-sm text-red-700">
-        {error}
-      </p>
-    {/if}
+		<!-- Error -->
+		{#if error}
+			<p class="mb-5 rounded border border-red-300 bg-red-100 p-3 text-center text-sm text-red-700">
+				{error}
+			</p>
+		{/if}
 
 		<!-- Form -->
 		<form onsubmit={handleLogin}>
