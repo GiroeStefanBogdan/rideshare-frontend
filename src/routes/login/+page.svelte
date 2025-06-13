@@ -89,7 +89,7 @@
 			<div>
 				<label
 					for="password"
-					class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+					class="mt-5 mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
 				>
 					Password
 				</label>
