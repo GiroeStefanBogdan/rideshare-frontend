@@ -9,6 +9,10 @@
 
 	async function handleLogin(event: Event) {
 		event.preventDefault();
+		console.log('Sending login payload:', {
+			email: email,
+			password: password
+		});
 
 		const res = await fetch('http://localhost:8080/login', {
 			method: 'POST',
