@@ -9,23 +9,43 @@
 
 	async function handleLogin(event: Event) {
 		event.preventDefault();
+		console.log('Sending login payload:', {
+			email: email,
+			password: password
+		});
 
 		const res = await fetch('http://localhost:8080/login', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
+			credentials: 'include', // 🔐 Accepts cookie from server
 			body: JSON.stringify({
 				email,
 				password
 			})
 		});
 		if (res.ok) {
-			const token = await res.text();
-			localStorage.setItem('token', token);
 			goto('/dashboard');
 		} else {
 			error = 'Invalid email or password';
+		}
+	}
+
+	async function handleGoogleLogin(event: Event) {
+		event.preventDefault();
+		const res = await fetch('http://localhost:8080/oauth2/authorization/google', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			credentials: 'include' // 🔐 Accepts cookie from server
+		});
+		if (res.ok) {
+			// const url = await res.text();
+			// TODO: Redirect to dashboard if sucessful
+		} else {
+			error = 'Google login failed';
 		}
 	}
 </script>
@@ -64,7 +84,7 @@
 					bind:value={email}
 					required
 					autocomplete="email"
-					placeholder="you@example.com"
+					placeholder="email"
 					class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 shadow-sm transition placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
 				/>
 			</div>
@@ -73,7 +93,7 @@
 			<div>
 				<label
 					for="password"
-					class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+					class="mt-5 mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
 				>
 					Password
 				</label>
@@ -84,7 +104,7 @@
 						bind:value={password}
 						required
 						autocomplete="current-password"
-						placeholder="••••••••"
+						placeholder="password"
 						class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 pr-12 text-gray-800 shadow-sm transition placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
 					/>
 					<button
@@ -109,6 +129,20 @@
 				</label>
 				<a href="#" class="text-blue-500 hover:underline">Forgot password?</a>
 			</div>
+
+			<!-- Google Login Button -->
+			<button
+				type="button"
+				onclick={handleGoogleLogin}
+				class="mt-4 mb-4 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-100 dark:border-gray-600 dark:bg-slate-800 dark:text-white hover:dark:bg-slate-700"
+			>
+				<img
+					src="https://www.svgrepo.com/show/475656/google-color.svg"
+					alt="Google"
+					class="h-5 w-5"
+				/>
+				Sign in with Google
+			</button>
 
 			<!-- Submit -->
 			<button
