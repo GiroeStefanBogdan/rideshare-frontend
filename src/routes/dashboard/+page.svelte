@@ -1,48 +1,15 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
+	let { data } = $props();
+	let { email }: { email: string | null } = data;
 
-	let message = '';
-	let error = '';
-
-	onMount(async () => {
-		const token = localStorage.getItem('token');
-
-		if (!token) {
-			goto('/login');
-			return;
-		}
-
-		try {
-			const res = await fetch('http://localhost:8080/greeting', {
-				method: 'GET',
-				headers: {
-					Authorization: `Bearer ${token}`
-				}
-			});
-
-			if (res.ok) {
-				const data = await res.json();
-				message = data.message;
-			} else if (res.status === 401) {
-				error = 'Unauthorized. Please log in again.';
-				localStorage.removeItem('token');
-				goto('/login');
-			} else {
-				error = 'Something went wrong.';
-			}
-		} catch {
-			error = 'Could not connect to server.';
-		}
-	});
+	console.log('📥 Received email:', email);
 </script>
 
-<div class="p-10 text-center">
-	{#if message}
-		<h1 class="text-2xl font-bold text-green-600">{message}</h1>
-	{:else if error}
-		<p class="text-red-500">{error}</p>
-	{:else}
-		<p>Loading...</p>
-	{/if}
-</div>
+<h1>Dashboard</h1>
+<p>Email: {email}</p>
+
+{#if email}
+	<p style="color: green">✅ Authenticated as {email}</p>
+{:else}
+	<p style="color: red">❌ Not authenticated</p>
+{/if}

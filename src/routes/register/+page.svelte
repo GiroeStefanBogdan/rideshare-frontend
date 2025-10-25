@@ -1,13 +1,55 @@
 <script lang="ts">
-	let { form } = $props();
+	import { goto } from '$app/navigation';
 
-	let name = $state('');
-	let email = $state('');
-	let password = $state('');
-	let confirm = $state('');
-	let newsletter = $state(true);
-	let showPassword = $state(false);
-	let showConfirmPassword = $state(false);
+	let name = '';
+	let email = '';
+	let password = '';
+	let birthday = '';
+	let phoneNumber = '';
+	let gender = '';
+	let confirm = '';
+	let newsletter = true;
+	let showPassword = false;
+	let showConfirmPassword = false;
+	let error = '';
+	let fieldErrors: Record<string, string> = {};
+
+	// Derived value for password match
+	$: passwordsMatch = password === confirm;
+
+	async function handleRegister(event: Event) {
+		event.preventDefault();
+
+		// Only proceed if there is no error
+		if (!error) {
+			const res = await fetch('http://localhost:8080/register', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					name,
+					email,
+					password,
+					birthday,
+					phoneNumber,
+					gender
+				})
+			});
+
+			if (res.ok) {
+				goto('/login');
+			} else {
+				if (res.headers.get('Content-Type')?.includes('application/json')) {
+					const data = await res.json();
+
+					if (typeof data === 'object') {
+						fieldErrors = data;
+						console.log('Field errors:', fieldErrors);
+					}
+				}
+				error = 'Invalid email or password';
+			}
+		}
+	}
 </script>
 
 <div
@@ -23,13 +65,7 @@
 			<p class="mt-1 text-sm text-gray-500 dark:text-gray-300">Sign up to access the dashboard</p>
 		</div>
 
-		{#if form?.error}
-			<p class="mb-5 rounded border border-red-300 bg-red-100 p-3 text-center text-sm text-red-700">
-				{form.error}
-			</p>
-		{/if}
-
-		<form method="POST" class="space-y-5">
+		<form onsubmit={handleRegister} class="space-y-5">
 			<div>
 				<label for="name" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
 					>Full Name</label
@@ -55,6 +91,59 @@
 					autocomplete="email"
 					class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
 				/>
+
+				{#if fieldErrors.email}
+					<p class="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.email}</p>
+				{/if}
+			</div>
+
+			<div>
+				<label for="gender" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+					>Gender</label
+				>
+				<select
+					id="gender"
+					bind:value={gender}
+					required
+					class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
+				>
+					<option value="MALE">Male</option>
+					<option value="FEMALE">Female</option>
+				</select>
+			</div>
+			<div>
+				<label
+					for="birthday"
+					class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Birthday</label
+				>
+				<input
+					id="birthday"
+					type="date"
+					bind:value={birthday}
+					required
+					class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white [&::-webkit-calendar-picker-indicator]:invert"
+				/>
+				{#if fieldErrors.birthday}
+					<p class="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.birthday}</p>
+				{/if}
+			</div>
+
+			<div>
+				<label
+					for="phoneNumber"
+					class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+					>Phone Number</label
+				>
+				<input
+					id="phoneNumber"
+					type="tel"
+					bind:value={phoneNumber}
+					required
+					class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
+				/>
+				{#if fieldErrors.phoneNumber}
+					<p class="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.phoneNumber}</p>
+				{/if}
 			</div>
 
 			<div>
@@ -71,20 +160,23 @@
 						class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 pr-12 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
 					/>
 					<button
-						type="button"
+						type="submit"
 						class="absolute inset-y-0 right-3 text-sm text-blue-500 hover:underline"
 						onclick={() => (showPassword = !showPassword)}
 					>
 						{showPassword ? 'Hide' : 'Show'}
 					</button>
 				</div>
+				{#if fieldErrors.password}
+					<p class="mt-2 text-sm text-red-600 dark:text-red-400">{fieldErrors.password}</p>
+				{/if}
 			</div>
 
 			<div>
 				<label for="confirm" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
 					>Confirm Password</label
 				>
-				<div class="relative">
+				<div class="relative mb-9">
 					<input
 						id="confirm"
 						type={showConfirmPassword ? 'text' : 'password'}
@@ -92,7 +184,12 @@
 						required
 						class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 pr-12 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
 					/>
-					<!-- Optional: a second toggle button -->
+					{#if !passwordsMatch}
+						<p class="absolute top-full left-0 mt-1 text-sm text-red-600 dark:text-red-400">
+							Passwords do not match
+						</p>
+					{/if}
+					<!-- toggle button for confirm password -->
 					<button
 						type="button"
 						class="absolute inset-y-0 right-3 text-sm text-blue-500 hover:underline"
@@ -115,6 +212,7 @@
 
 			<button
 				type="submit"
+				disabled={!passwordsMatch}
 				class="w-full rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 py-2 font-semibold text-white shadow-lg transition duration-200 hover:scale-[1.01] hover:from-purple-700 hover:to-indigo-700"
 			>
 				Create Account
