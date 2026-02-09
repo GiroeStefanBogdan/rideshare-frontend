@@ -1,21 +1,20 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 
-	let name = '';
-	let email = '';
-	let password = '';
-	let birthday = '';
-	let phoneNumber = '';
-	let gender = '';
-	let confirm = '';
-	let newsletter = true;
-	let showPassword = false;
-	let showConfirmPassword = false;
-	let error = '';
-	let fieldErrors: Record<string, string> = {};
+	let name = $state('');
+	let email = $state('');
+	let password = $state('');
+	let birthday = $state('');
+	let phoneNumber = $state('');
+	let gender = $state('');
+	let confirm = $state('');
+	let newsletter = $state(true);
+	let showPassword = $state(false);
+	let showConfirmPassword = $state(false);
+	let error = $state('');
+	let fieldErrors: Record<string, string> = $state({});
 
-	// Derived value for password match
-	$: passwordsMatch = password === confirm;
+	let passwordsMatch = $derived(password === confirm);
 
 	async function handleRegister(event: Event) {
 		event.preventDefault();
@@ -160,7 +159,7 @@
 						class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 pr-12 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
 					/>
 					<button
-						type="submit"
+						type="button"
 						class="absolute inset-y-0 right-3 text-sm text-blue-500 hover:underline"
 						onclick={() => (showPassword = !showPassword)}
 					>
