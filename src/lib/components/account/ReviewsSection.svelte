@@ -26,7 +26,7 @@
 						<span class="text-xs text-slate-500">{formatDate(review.date)}</span>
 					</div>
 					<div class="mb-2 flex gap-0.5">
-						{#each { length: 5 } as _, i}
+						{#each [0, 1, 2, 3, 4] as i (i)}
 							<span class={i < review.score ? 'text-yellow-400' : 'text-slate-600'}>★</span>
 						{/each}
 					</div>
