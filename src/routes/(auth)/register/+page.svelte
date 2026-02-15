@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { authStore } from '$lib/stores/auth.svelte';
+	import type { UserResponseDto } from '$lib/types/user';
 
 	let name = $state('');
 	let email = $state('');
@@ -35,6 +37,8 @@
 			});
 
 			if (res.ok) {
+				const user: UserResponseDto = await res.json();
+				authStore.setUser(user);
 				goto('/login');
 			} else {
 				if (res.headers.get('Content-Type')?.includes('application/json')) {

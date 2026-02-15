@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { authStore } from '$lib/stores/auth.svelte';
+	import type { LoginResponse } from '$lib/types/user';
 
 	let email = $state('');
 	let password = $state('');
@@ -26,6 +28,13 @@
 			})
 		});
 		if (res.ok) {
+			const contentType = res.headers.get('Content-Type') ?? '';
+			if (contentType.includes('application/json')) {
+				const body: LoginResponse = await res.json();
+				authStore.setUser(body.user);
+			} else {
+				authStore.setEmail(email);
+			}
 			goto('/dashboard');
 		} else {
 			error = 'Invalid email or password';
