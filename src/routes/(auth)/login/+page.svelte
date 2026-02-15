@@ -136,7 +136,7 @@
 					/>
 					<span>Remember me</span>
 				</label>
-				<a href="#" class="text-blue-500 hover:underline">Forgot password?</a>
+				<a href="/login" class="text-blue-500 hover:underline">Forgot password?</a>
 			</div>
 
 			<!-- Google Login Button -->
@@ -165,7 +165,7 @@
 		<!-- Footer -->
 		<p class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
 			By logging in, you agree to our
-			<a href="#" class="underline hover:text-blue-500">terms of service</a>.
+			<a href="/login" class="underline hover:text-blue-500">terms of service</a>.
 		</p>
 
 		<p class="mt-4 text-center text-sm text-gray-600 dark:text-gray-300">

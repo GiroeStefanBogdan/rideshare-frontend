@@ -1,7 +1,9 @@
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
-import { PUBLIC_API_URL } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 import type { UserProfile } from '$lib/types/user';
+
+const PUBLIC_API_URL = env.PUBLIC_API_URL ?? 'http://localhost:8080';
 
 export const load: PageLoad = async ({ params, fetch }) => {
 	const res = await fetch(`${PUBLIC_API_URL}/users/${params.id}`, {

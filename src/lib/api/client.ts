@@ -1,5 +1,7 @@
-import { PUBLIC_API_URL } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 import { goto } from '$app/navigation';
+
+const PUBLIC_API_URL = env.PUBLIC_API_URL ?? 'http://localhost:8080';
 
 export class ApiError extends Error {
 	constructor(
