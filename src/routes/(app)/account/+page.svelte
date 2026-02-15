@@ -70,7 +70,7 @@
 
 	<!-- User not loaded warning -->
 	{#if !authStore.user}
-		<div class="rounded-xl bg-yellow-900/30 border border-yellow-600 p-4 text-sm text-yellow-300">
+		<div class="rounded-xl border border-yellow-600 bg-yellow-900/30 p-4 text-sm text-yellow-300">
 			<strong>Your profile data is not loaded.</strong> Please
 			<a href="/login" class="underline hover:text-yellow-100">log out and log in again</a>
 			to refresh your session.
@@ -84,7 +84,9 @@
 	</div>
 
 	{#if profileError}
-		<p class="rounded border border-red-500 bg-red-900/30 p-2 text-sm text-red-400">{profileError}</p>
+		<p class="rounded border border-red-500 bg-red-900/30 p-2 text-sm text-red-400">
+			{profileError}
+		</p>
 	{/if}
 
 	<div class="grid gap-6 lg:grid-cols-2">

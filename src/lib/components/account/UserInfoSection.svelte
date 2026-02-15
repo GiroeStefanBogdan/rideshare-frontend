@@ -44,7 +44,9 @@
 	<h2 class="mb-4 text-xl font-semibold text-white">Change Password</h2>
 
 	{#if isGoogle}
-		<p class="text-sm text-slate-400">Password change is not available for Google-linked accounts.</p>
+		<p class="text-sm text-slate-400">
+			Password change is not available for Google-linked accounts.
+		</p>
 	{:else}
 		<form onsubmit={handleChangePassword} class="space-y-4">
 			{#if knownEmail}
