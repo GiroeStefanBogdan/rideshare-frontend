@@ -1,246 +1,262 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-	import { authStore } from '$lib/stores/auth.svelte';
-	import type { UserResponseDto } from '$lib/types/user';
+  import { goto } from '$app/navigation';
+  import { authStore } from '$lib/stores/auth.svelte';
+  import type { UserResponseDto } from '$lib/types/user';
+  import { i18n } from '$lib/stores/i18n.svelte';
 
-	let name = $state('');
-	let email = $state('');
-	let password = $state('');
-	let birthday = $state('');
-	let phoneNumber = $state('');
-	let gender = $state('');
-	let confirm = $state('');
-	let newsletter = $state(true);
-	let showPassword = $state(false);
-	let showConfirmPassword = $state(false);
-	let error = $state('');
-	let fieldErrors: Record<string, string> = $state({});
+  let name = $state('');
+  let email = $state('');
+  let password = $state('');
+  let birthday = $state('');
+  let phoneNumber = $state('');
+  let gender = $state('');
+  let confirm = $state('');
+  let newsletter = $state(true);
+  let showPassword = $state(false);
+  let showConfirmPassword = $state(false);
+  let error = $state('');
+  let fieldErrors: Record<string, string> = $state({});
 
-	let passwordsMatch = $derived(password === confirm);
+  let passwordsMatch = $derived(password === confirm);
 
-	async function handleRegister(event: Event) {
-		event.preventDefault();
+  async function handleRegister(event: Event) {
+    event.preventDefault();
 
-		// Only proceed if there is no error
-		if (!error) {
-			const res = await fetch('http://localhost:8080/register', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					name,
-					email,
-					password,
-					birthday,
-					phoneNumber,
-					gender
-				})
-			});
+    if (!error) {
+      const res = await fetch('http://localhost:8080/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          birthday,
+          phoneNumber,
+          gender
+        })
+      });
 
-			if (res.ok) {
-				const user: UserResponseDto = await res.json();
-				authStore.setUser(user);
-				goto('/login');
-			} else {
-				if (res.headers.get('Content-Type')?.includes('application/json')) {
-					const data = await res.json();
-
-					if (typeof data === 'object') {
-						fieldErrors = data;
-						console.log('Field errors:', fieldErrors);
-					}
-				}
-				error = 'Invalid email or password';
-			}
-		}
-	}
+      if (res.ok) {
+        const user: UserResponseDto = await res.json();
+        authStore.setUser(user);
+        goto('/login');
+      } else {
+        if (res.headers.get('Content-Type')?.includes('application/json')) {
+          const data = await res.json();
+          if (typeof data === 'object') {
+            fieldErrors = data;
+          }
+        }
+        error = i18n.t('register.errorDefault');
+      }
+    }
+  }
 </script>
 
-<div
-	class="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 px-4 dark:from-slate-900 dark:to-slate-800"
->
-	<div
-		class="animate-fade-in w-full max-w-md rounded-2xl border border-white/40 bg-white/70 p-8 shadow-2xl backdrop-blur-lg sm:p-10 dark:border-white/20 dark:bg-white/10"
-	>
-		<div class="mb-8 text-center">
-			<h1 class="text-3xl font-extrabold tracking-tight text-gray-800 dark:text-white">
-				Create your account
-			</h1>
-			<p class="mt-1 text-sm text-gray-500 dark:text-gray-300">Sign up to access the dashboard</p>
-		</div>
+<div class="flex min-h-screen items-center justify-center folk-pattern-bg px-4 py-16">
+  <div class="w-full max-w-md">
+    <!-- Brand mark -->
+    <div class="mb-10 text-center">
+      <a href="/" class="font-headline text-3xl font-black tracking-tight text-primary">DrumBun</a>
+      <div class="mt-3 inline-flex items-center gap-2">
+        <div class="h-px w-8 bg-primary/30"></div>
+        <p class="font-label text-[0.6875rem] font-bold tracking-[0.3em] text-primary uppercase">{i18n.t('register.title')}</p>
+        <div class="h-px w-8 bg-primary/30"></div>
+      </div>
+      <p class="mt-2 font-body text-sm text-secondary">{i18n.t('register.subtitle')}</p>
+    </div>
 
-		<form onsubmit={handleRegister} class="space-y-5">
-			<div>
-				<label for="name" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-					>Full Name</label
-				>
-				<input
-					id="name"
-					type="text"
-					bind:value={name}
-					required
-					class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
-				/>
-			</div>
+    <!-- Card -->
+    <div class="glass-panel rounded-xl shadow-[0_40px_100px_rgba(0,32,104,0.08)] p-8 border border-outline-variant/20 ia-border-accent">
 
-			<div>
-				<label for="email" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-					>Email address</label
-				>
-				<input
-					id="email"
-					type="email"
-					bind:value={email}
-					required
-					autocomplete="email"
-					class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
-				/>
+      <!-- Error -->
+      {#if error}
+        <div class="mb-6 flex items-center gap-3 rounded-lg bg-error/5 px-4 py-3 border border-error/10">
+          <span class="material-symbols-outlined text-error">error</span>
+          <p class="text-sm font-medium text-error">{error}</p>
+        </div>
+      {/if}
 
-				{#if fieldErrors.email}
-					<p class="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.email}</p>
-				{/if}
-			</div>
+      <form onsubmit={handleRegister} class="space-y-4">
+        <!-- Full Name -->
+        <div class="flex flex-col px-4 py-3 bg-surface-container-low/50 rounded-lg transition-all focus-within:bg-white focus-within:shadow-sm">
+          <label for="name" class="font-label text-[0.6875rem] font-bold tracking-widest text-secondary/70 uppercase mb-1">
+            {i18n.t('register.fullName')}
+          </label>
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary/70">person</span>
+            <input
+              id="name"
+              type="text"
+              bind:value={name}
+              required
+              class="bg-transparent border-none p-0 w-full focus:ring-0 text-base font-bold placeholder:text-outline-variant/60 text-on-surface"
+            />
+          </div>
+        </div>
 
-			<div>
-				<label for="gender" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-					>Gender</label
-				>
-				<select
-					id="gender"
-					bind:value={gender}
-					required
-					class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
-				>
-					<option value="MALE">Male</option>
-					<option value="FEMALE">Female</option>
-				</select>
-			</div>
-			<div>
-				<label
-					for="birthday"
-					class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Birthday</label
-				>
-				<input
-					id="birthday"
-					type="date"
-					bind:value={birthday}
-					required
-					class="w-full appearance-none rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white [&::-webkit-calendar-picker-indicator]:invert"
-				/>
-				{#if fieldErrors.birthday}
-					<p class="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.birthday}</p>
-				{/if}
-			</div>
+        <!-- Email -->
+        <div class="flex flex-col px-4 py-3 bg-surface-container-low/50 rounded-lg transition-all focus-within:bg-white focus-within:shadow-sm">
+          <label for="email" class="font-label text-[0.6875rem] font-bold tracking-widest text-secondary/70 uppercase mb-1">
+            {i18n.t('register.email')}
+          </label>
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary/70">mail</span>
+            <input
+              id="email"
+              type="email"
+              bind:value={email}
+              required
+              autocomplete="email"
+              class="bg-transparent border-none p-0 w-full focus:ring-0 text-base font-bold placeholder:text-outline-variant/60 text-on-surface"
+            />
+          </div>
+          {#if fieldErrors.email}
+            <p class="mt-1 text-xs text-error">{fieldErrors.email}</p>
+          {/if}
+        </div>
 
-			<div>
-				<label
-					for="phoneNumber"
-					class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-					>Phone Number</label
-				>
-				<input
-					id="phoneNumber"
-					type="tel"
-					bind:value={phoneNumber}
-					required
-					class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
-				/>
-				{#if fieldErrors.phoneNumber}
-					<p class="mt-1 text-sm text-red-600 dark:text-red-400">{fieldErrors.phoneNumber}</p>
-				{/if}
-			</div>
+        <!-- Gender -->
+        <div class="flex flex-col px-4 py-3 bg-surface-container-low/50 rounded-lg transition-all focus-within:bg-white focus-within:shadow-sm">
+          <label for="gender" class="font-label text-[0.6875rem] font-bold tracking-widest text-secondary/70 uppercase mb-1">
+            {i18n.t('register.gender')}
+          </label>
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary/70">wc</span>
+            <select
+              id="gender"
+              bind:value={gender}
+              required
+              class="bg-transparent border-none p-0 w-full focus:ring-0 text-base font-bold text-on-surface"
+            >
+              <option value="MALE">{i18n.t('account.male')}</option>
+              <option value="FEMALE">{i18n.t('account.female')}</option>
+            </select>
+          </div>
+        </div>
 
-			<div>
-				<label
-					for="password"
-					class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label
-				>
-				<div class="relative">
-					<input
-						id="password"
-						type={showPassword ? 'text' : 'password'}
-						bind:value={password}
-						required
-						class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 pr-12 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
-					/>
-					<button
-						type="button"
-						class="absolute inset-y-0 right-3 text-sm text-blue-500 hover:underline"
-						onclick={() => (showPassword = !showPassword)}
-					>
-						{showPassword ? 'Hide' : 'Show'}
-					</button>
-				</div>
-				{#if fieldErrors.password}
-					<p class="mt-2 text-sm text-red-600 dark:text-red-400">{fieldErrors.password}</p>
-				{/if}
-			</div>
+        <!-- Birthday -->
+        <div class="flex flex-col px-4 py-3 bg-surface-container-low/50 rounded-lg transition-all focus-within:bg-white focus-within:shadow-sm">
+          <label for="birthday" class="font-label text-[0.6875rem] font-bold tracking-widest text-secondary/70 uppercase mb-1">
+            {i18n.t('register.birthday')}
+          </label>
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary/70">cake</span>
+            <input
+              id="birthday"
+              type="date"
+              bind:value={birthday}
+              required
+              class="bg-transparent border-none p-0 w-full focus:ring-0 text-base font-bold text-on-surface appearance-none"
+            />
+          </div>
+          {#if fieldErrors.birthday}
+            <p class="mt-1 text-xs text-error">{fieldErrors.birthday}</p>
+          {/if}
+        </div>
 
-			<div>
-				<label for="confirm" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
-					>Confirm Password</label
-				>
-				<div class="relative mb-9">
-					<input
-						id="confirm"
-						type={showConfirmPassword ? 'text' : 'password'}
-						bind:value={confirm}
-						required
-						class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 pr-12 text-gray-800 shadow-sm transition focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
-					/>
-					{#if !passwordsMatch}
-						<p class="absolute top-full left-0 mt-1 text-sm text-red-600 dark:text-red-400">
-							Passwords do not match
-						</p>
-					{/if}
-					<!-- toggle button for confirm password -->
-					<button
-						type="button"
-						class="absolute inset-y-0 right-3 text-sm text-blue-500 hover:underline"
-						onclick={() => (showConfirmPassword = !showConfirmPassword)}
-					>
-						{showConfirmPassword ? 'Hide' : 'Show'}
-					</button>
-				</div>
-			</div>
+        <!-- Phone -->
+        <div class="flex flex-col px-4 py-3 bg-surface-container-low/50 rounded-lg transition-all focus-within:bg-white focus-within:shadow-sm">
+          <label for="phoneNumber" class="font-label text-[0.6875rem] font-bold tracking-widest text-secondary/70 uppercase mb-1">
+            {i18n.t('register.phone')}
+          </label>
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary/70">phone</span>
+            <input
+              id="phoneNumber"
+              type="tel"
+              bind:value={phoneNumber}
+              required
+              class="bg-transparent border-none p-0 w-full focus:ring-0 text-base font-bold placeholder:text-outline-variant/60 text-on-surface"
+            />
+          </div>
+          {#if fieldErrors.phoneNumber}
+            <p class="mt-1 text-xs text-error">{fieldErrors.phoneNumber}</p>
+          {/if}
+        </div>
 
-			<div class="flex items-center text-sm">
-				<input
-					id="newsletter"
-					type="checkbox"
-					bind:checked={newsletter}
-					class="form-checkbox mr-2 border-gray-300 text-blue-600 dark:border-gray-600"
-				/>
-				<label for="newsletter">Subscribe to our newsletter</label>
-			</div>
+        <!-- Password -->
+        <div class="flex flex-col px-4 py-3 bg-surface-container-low/50 rounded-lg transition-all focus-within:bg-white focus-within:shadow-sm">
+          <label for="password" class="font-label text-[0.6875rem] font-bold tracking-widest text-secondary/70 uppercase mb-1">
+            {i18n.t('register.password')}
+          </label>
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary/70">lock</span>
+            <input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              bind:value={password}
+              required
+              class="bg-transparent border-none p-0 w-full focus:ring-0 text-base font-bold placeholder:text-outline-variant/60 text-on-surface"
+            />
+            <button
+              type="button"
+              class="font-label text-[0.6875rem] font-bold tracking-widest text-primary/70 uppercase hover:text-primary transition-colors"
+              onclick={() => (showPassword = !showPassword)}
+              aria-label={showPassword ? i18n.t('auth.hidePassword') : i18n.t('auth.showPassword')}
+            >
+              {showPassword ? i18n.t('auth.hidePassword') : i18n.t('auth.showPassword')}
+            </button>
+          </div>
+          {#if fieldErrors.password}
+            <p class="mt-1 text-xs text-error">{fieldErrors.password}</p>
+          {/if}
+        </div>
 
-			<button
-				type="submit"
-				disabled={!passwordsMatch}
-				class="w-full rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 py-2 font-semibold text-white shadow-lg transition duration-200 hover:scale-[1.01] hover:from-purple-700 hover:to-indigo-700"
-			>
-				Create Account
-			</button>
+        <!-- Confirm Password -->
+        <div class="flex flex-col px-4 py-3 bg-surface-container-low/50 rounded-lg transition-all focus-within:bg-white focus-within:shadow-sm">
+          <label for="confirm" class="font-label text-[0.6875rem] font-bold tracking-widest text-secondary/70 uppercase mb-1">
+            {i18n.t('register.confirmPassword')}
+          </label>
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary/70">lock_reset</span>
+            <input
+              id="confirm"
+              type={showConfirmPassword ? 'text' : 'password'}
+              bind:value={confirm}
+              required
+              class="bg-transparent border-none p-0 w-full focus:ring-0 text-base font-bold placeholder:text-outline-variant/60 text-on-surface"
+            />
+            <button
+              type="button"
+              class="font-label text-[0.6875rem] font-bold tracking-widest text-primary/70 uppercase hover:text-primary transition-colors"
+              onclick={() => (showConfirmPassword = !showConfirmPassword)}
+              aria-label={showConfirmPassword ? i18n.t('auth.hidePassword') : i18n.t('auth.showPassword')}
+            >
+              {showConfirmPassword ? i18n.t('auth.hidePassword') : i18n.t('auth.showPassword')}
+            </button>
+          </div>
+          {#if !passwordsMatch && confirm}
+            <p class="mt-1 text-xs text-error">{i18n.t('register.passwordsDoNotMatch')}</p>
+          {/if}
+        </div>
 
-			<p class="mt-4 text-center text-xs text-gray-500 dark:text-gray-400">
-				Already have an account?
-				<a href="/login" class="text-blue-500 underline hover:text-blue-600">Login here</a>
-			</p>
-		</form>
-	</div>
+        <!-- Newsletter -->
+        <label class="flex items-center gap-3 px-1 cursor-pointer">
+          <input
+            id="newsletter"
+            type="checkbox"
+            bind:checked={newsletter}
+            class="form-checkbox h-4 w-4 rounded border-outline-variant text-primary-container focus:ring-primary"
+          />
+          <span class="font-body text-sm text-secondary">{i18n.t('register.newsletter')}</span>
+        </label>
+
+        <!-- Submit -->
+        <button
+          type="submit"
+          disabled={!passwordsMatch}
+          class="w-full rounded-lg bg-primary-container px-8 py-4 font-headline font-bold text-lg text-white transition hover:bg-primary flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {i18n.t('register.createButton')}
+          <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        </button>
+      </form>
+
+      <p class="mt-6 text-center font-body text-sm text-secondary">
+        {i18n.t('register.alreadyHaveAccount')}
+        <a href="/login" class="font-bold text-primary-container hover:text-primary transition-colors">{i18n.t('register.loginHere')}</a>
+      </p>
+    </div>
+  </div>
 </div>
-
-<style>
-	@keyframes fade-in {
-		from {
-			opacity: 0;
-			transform: scale(0.96);
-		}
-		to {
-			opacity: 1;
-			transform: scale(1);
-		}
-	}
-	.animate-fade-in {
-		animation: fade-in 0.5s ease-out both;
-	}
-</style>
