@@ -117,21 +117,21 @@ Use SvelteKit's server hook to read and decode the JWT cookie once per request, 
 import { decodeJwt } from '$lib/utils/jwt.js'; // lightweight base64 decode, no crypto needed client-side
 
 export async function handle({ event, resolve }) {
-  const token = event.cookies.get('jwt'); // align cookie name with backend
+	const token = event.cookies.get('jwt'); // align cookie name with backend
 
-  if (token) {
-    try {
-      const payload = decodeJwt(token);
-      const isExpired = payload.exp && payload.exp * 1000 < Date.now();
-      event.locals.user = isExpired ? null : payload;
-    } catch {
-      event.locals.user = null;
-    }
-  } else {
-    event.locals.user = null;
-  }
+	if (token) {
+		try {
+			const payload = decodeJwt(token);
+			const isExpired = payload.exp && payload.exp * 1000 < Date.now();
+			event.locals.user = isExpired ? null : payload;
+		} catch {
+			event.locals.user = null;
+		}
+	} else {
+		event.locals.user = null;
+	}
 
-  return resolve(event);
+	return resolve(event);
 }
 ```
 
@@ -140,7 +140,7 @@ export async function handle({ event, resolve }) {
 ```js
 // src/routes/+layout.server.js
 export function load({ locals }) {
-  return { user: locals.user ?? null };
+	return { user: locals.user ?? null };
 }
 ```
 
@@ -155,11 +155,11 @@ On **login success**, set the cookie with secure flags:
 ```js
 // inside a +server.js or form action
 event.cookies.set('jwt', token, {
-  httpOnly: true,
-  sameSite: 'lax',
-  secure: process.env.NODE_ENV === 'production',
-  path: '/',
-  maxAge: 60 * 60 * 24 * 7, // match backend token expiry
+	httpOnly: true,
+	sameSite: 'lax',
+	secure: process.env.NODE_ENV === 'production',
+	path: '/',
+	maxAge: 60 * 60 * 24 * 7 // match backend token expiry
 });
 ```
 
@@ -183,14 +183,14 @@ Never attempt to delete or expire the cookie from the browser.
 
 ### Naming Conventions
 
-| Thing | Convention | Example |
-|---|---|---|
-| Component files | PascalCase | `RideCard.svelte` |
-| Route directories | lowercase-kebab | `rides/post/` |
-| JS/TS files | camelCase | `formatDate.js` |
-| Store variables | camelCase | `currentUser` |
-| Tailwind config keys | camelCase or kebab | `brandGreen` |
-| CSS custom properties | `--kebab-case` | `--color-brand` |
+| Thing                 | Convention         | Example           |
+| --------------------- | ------------------ | ----------------- |
+| Component files       | PascalCase         | `RideCard.svelte` |
+| Route directories     | lowercase-kebab    | `rides/post/`     |
+| JS/TS files           | camelCase          | `formatDate.js`   |
+| Store variables       | camelCase          | `currentUser`     |
+| Tailwind config keys  | camelCase or kebab | `brandGreen`      |
+| CSS custom properties | `--kebab-case`     | `--color-brand`   |
 
 ### Accessibility
 

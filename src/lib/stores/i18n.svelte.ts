@@ -13,7 +13,7 @@ function createI18nStore() {
 				localStorage.setItem('lang', lang);
 			}
 		},
- 	t(path: string): string {
+		t(path: string): string {
 			const keys = path.split('.');
 			let value: unknown = translations[currentLang] as Record<string, unknown>;
 			for (const key of keys) {
