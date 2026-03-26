@@ -59,9 +59,9 @@
 				</p>
 			</div>
 			<div class="flex flex-wrap justify-center gap-10">
-				<a class="font-body text-sm font-semibold text-secondary transition-all hover:text-primary" href="#">{i18n.t('footer.terms')}</a>
-				<a class="font-body text-sm font-semibold text-secondary transition-all hover:text-primary" href="#">{i18n.t('footer.privacy')}</a>
-				<a class="font-body text-sm font-semibold text-secondary transition-all hover:text-primary" href="#">{i18n.t('footer.contact')}</a>
+ 			<a class="font-body text-sm font-semibold text-secondary transition-all hover:text-primary" href="/terms">{i18n.t('footer.terms')}</a>
+				<a class="font-body text-sm font-semibold text-secondary transition-all hover:text-primary" href="/privacy">{i18n.t('footer.privacy')}</a>
+				<a class="font-body text-sm font-semibold text-secondary transition-all hover:text-primary" href="/contact">{i18n.t('footer.contact')}</a>
 			</div>
 			<div class="mt-10 md:mt-0 text-right">
 				<p class="font-body text-xs leading-relaxed text-secondary/50">
