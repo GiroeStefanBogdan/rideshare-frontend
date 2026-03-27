@@ -6,6 +6,7 @@
 	import ReviewsSection from '$lib/components/account/ReviewsSection.svelte';
 	import { adminDeleteUser, updateUserRole, getUsers, getUserById } from '$lib/api/users';
 	import type { UserCar, UserProfile, UserResponseDto, UserReview } from '$lib/types/user';
+	import { i18n } from '$lib/stores/i18n.svelte';
 
 	const isAdmin = $derived(authStore.isAdmin);
 
@@ -22,7 +23,7 @@
 		if (id) {
 			getUserById(id)
 				.then((p) => (profile = p))
-				.catch(() => (profileError = 'Failed to load profile.'));
+				.catch(() => (profileError = i18n.t('account.failedLoadUsers')));
 		}
 	});
 
@@ -30,7 +31,7 @@
 		if (isAdmin) {
 			getUsers()
 				.then((users: UserResponseDto[]) => (allUsers = users))
-				.catch(() => (adminError = 'Failed to load users.'));
+				.catch(() => (adminError = i18n.t('account.failedLoadUsers')));
 		}
 	});
 
@@ -45,7 +46,7 @@
 			const updated = await updateUserRole(user.id, newRole);
 			allUsers = allUsers.map((u) => (u.id === updated.id ? updated : u));
 		} catch {
-			adminError = `Failed to update role for user #${user.id}.`;
+			adminError = `${i18n.t('account.failedUpdateRole')}${user.id}.`;
 		} finally {
 			roleUpdating = null;
 		}
@@ -58,22 +59,46 @@
 			await adminDeleteUser(id);
 			allUsers = allUsers.filter((u) => u.id !== id);
 		} catch {
-			adminError = `Failed to delete user #${id}.`;
+			adminError = `${i18n.t('account.failedDeleteUser')}${id}.`;
 		} finally {
 			deleting = null;
 		}
 	}
 </script>
 
-<div class="space-y-8">
-	<h1 class="text-2xl font-bold text-white">My Account</h1>
+<!-- Page header -->
+<section class="folk-pattern-bg border-primary/5 relative overflow-hidden border-b pt-16 pb-12">
+	<div class="relative z-10 mx-auto max-w-7xl px-8">
+		<div class="mb-3 inline-flex items-center gap-2">
+			<div class="bg-primary/30 h-px w-8"></div>
+			<p class="font-label text-primary text-[0.6875rem] font-bold tracking-[0.3em] uppercase">
+				{i18n.t('account.title')}
+			</p>
+		</div>
+		<h1 class="font-headline text-primary text-4xl leading-tight font-extrabold tracking-tight">
+			{authStore.user?.name ?? i18n.t('account.title')}
+		</h1>
+	</div>
+</section>
 
+<div class="ia-divider w-full opacity-60"></div>
+
+<div class="mx-auto max-w-7xl space-y-10 px-8 py-12">
 	<!-- User not loaded warning -->
 	{#if !authStore.user}
-		<div class="rounded-xl border border-yellow-600 bg-yellow-900/30 p-4 text-sm text-yellow-300">
-			<strong>Your profile data is not loaded.</strong> Please
-			<a href="/login" class="underline hover:text-yellow-100">log out and log in again</a>
-			to refresh your session.
+		<div
+			class="bg-tertiary-fixed/30 border-tertiary-fixed flex items-center gap-3 rounded-lg border px-4 py-3"
+		>
+			<span class="material-symbols-outlined text-tertiary">warning</span>
+			<p class="font-body text-tertiary text-sm">
+				<strong>{i18n.t('account.notLoadedWarning')}</strong>
+				{i18n.t('account.refreshSession')}
+				<a
+					href="/login"
+					class="text-primary-container hover:text-primary font-bold underline transition-colors"
+					>{i18n.t('hero.loginLink')}</a
+				>
+			</p>
 		</div>
 	{/if}
 
@@ -84,9 +109,10 @@
 	</div>
 
 	{#if profileError}
-		<p class="rounded border border-red-500 bg-red-900/30 p-2 text-sm text-red-400">
-			{profileError}
-		</p>
+		<div class="bg-error/5 border-error/10 flex items-center gap-3 rounded-lg border px-4 py-3">
+			<span class="material-symbols-outlined text-error">error</span>
+			<p class="font-body text-error text-sm">{profileError}</p>
+		</div>
 	{/if}
 
 	<div class="grid gap-6 lg:grid-cols-2">
@@ -97,70 +123,99 @@
 	<!-- Admin panel -->
 	{#if isAdmin}
 		<section>
-			<h2 class="mb-4 text-xl font-semibold text-white">Admin — All Users</h2>
+			<div class="mb-6 inline-flex items-center gap-2">
+				<div class="bg-primary/30 h-px w-8"></div>
+				<p class="font-label text-primary text-[0.6875rem] font-bold tracking-[0.3em] uppercase">
+					{i18n.t('account.adminPanelTitle')}
+				</p>
+			</div>
 
 			{#if adminError}
-				<p class="mb-3 rounded border border-red-500 bg-red-900/30 p-2 text-sm text-red-400">
-					{adminError}
-				</p>
+				<div
+					class="bg-error/5 border-error/10 mb-4 flex items-center gap-3 rounded-lg border px-4 py-3"
+				>
+					<span class="material-symbols-outlined text-error">error</span>
+					<p class="font-body text-error text-sm">{adminError}</p>
+				</div>
 			{/if}
 
 			{#if allUsers.length === 0}
-				<p class="text-sm text-slate-400">No users found.</p>
+				<p class="font-body text-secondary text-sm">{i18n.t('account.noUsersFound')}</p>
 			{:else}
-				<div class="overflow-x-auto rounded-xl bg-slate-800 shadow">
+				<div
+					class="bg-surface-container-lowest border-outline-variant/15 overflow-x-auto rounded-xl border shadow-[0_8px_40px_rgba(0,32,104,0.06)]"
+				>
 					<table class="w-full text-sm">
 						<thead>
-							<tr class="border-b border-slate-700 text-left text-slate-400">
-								<th class="px-4 py-3">ID</th>
-								<th class="px-4 py-3">Name</th>
-								<th class="px-4 py-3">Email</th>
-								<th class="px-4 py-3">Role</th>
-								<th class="px-4 py-3">Actions</th>
+							<tr class="border-outline-variant/15 border-b text-left">
+								<th
+									class="font-label text-secondary/70 px-4 py-3 text-[0.6875rem] font-bold tracking-widest uppercase"
+									>ID</th
+								>
+								<th
+									class="font-label text-secondary/70 px-4 py-3 text-[0.6875rem] font-bold tracking-widest uppercase"
+									>{i18n.t('account.name')}</th
+								>
+								<th
+									class="font-label text-secondary/70 px-4 py-3 text-[0.6875rem] font-bold tracking-widest uppercase"
+									>{i18n.t('account.email')}</th
+								>
+								<th
+									class="font-label text-secondary/70 px-4 py-3 text-[0.6875rem] font-bold tracking-widest uppercase"
+									>{i18n.t('account.role')}</th
+								>
+								<th
+									class="font-label text-secondary/70 px-4 py-3 text-[0.6875rem] font-bold tracking-widest uppercase"
+									>{i18n.t('account.actions')}</th
+								>
 							</tr>
 						</thead>
 						<tbody>
 							{#each allUsers as user (user.id)}
-								<tr class="border-b border-slate-700/50 transition hover:bg-slate-700/30">
-									<td class="px-4 py-3 text-slate-400">{user.id}</td>
-									<td class="px-4 py-3 text-white">{user.name}</td>
-									<td class="px-4 py-3 text-slate-300">{user.email}</td>
+								<tr
+									class="border-outline-variant/10 hover:bg-surface-container-low border-b transition last:border-0"
+								>
+									<td class="font-body text-secondary px-4 py-3">{user.id}</td>
+									<td class="font-headline text-on-surface px-4 py-3 font-bold">{user.name}</td>
+									<td class="font-body text-secondary px-4 py-3">{user.email}</td>
 									<td class="px-4 py-3">
 										<span
 											class={[
-												'rounded-full px-2 py-0.5 text-xs font-medium',
+												'font-label rounded-full px-3 py-1 text-[0.6875rem] font-bold tracking-widest uppercase',
 												user.role === 'ROLE_ADMIN'
-													? 'bg-blue-900 text-blue-300'
-													: 'bg-slate-700 text-slate-300'
+													? 'bg-primary/10 text-primary'
+													: 'bg-surface-container text-secondary'
 											].join(' ')}
 										>
-											{user.role === 'ROLE_ADMIN' ? 'Admin' : 'User'}
+											{user.role === 'ROLE_ADMIN'
+												? i18n.t('account.admin')
+												: i18n.t('account.user')}
 										</span>
 									</td>
 									<td class="flex gap-2 px-4 py-3">
 										<a
 											href={`/users/${user.id}`}
-											class="rounded bg-slate-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-slate-500"
+											class="bg-surface-container font-headline text-on-surface hover:bg-surface-container-high rounded-lg px-3 py-1.5 text-xs font-bold transition"
 										>
-											View
+											{i18n.t('account.view')}
 										</a>
 										<button
 											onclick={() => handleRoleToggle(user)}
 											disabled={roleUpdating === user.id}
-											class="rounded bg-blue-700 px-3 py-1 text-xs font-medium text-white transition hover:bg-blue-600 disabled:opacity-50"
+											class="bg-primary/10 font-headline text-primary hover:bg-primary rounded-lg px-3 py-1.5 text-xs font-bold transition hover:text-white disabled:opacity-50"
 										>
 											{roleUpdating === user.id
 												? '…'
 												: user.role === 'ROLE_ADMIN'
-													? 'Demote'
-													: 'Promote'}
+													? i18n.t('account.demote')
+													: i18n.t('account.promote')}
 										</button>
 										<button
 											onclick={() => handleAdminDelete(user.id)}
 											disabled={deleting === user.id}
-											class="rounded bg-red-700 px-3 py-1 text-xs font-medium text-white transition hover:bg-red-600 disabled:opacity-50"
+											class="bg-error/10 font-headline text-error hover:bg-error rounded-lg px-3 py-1.5 text-xs font-bold transition hover:text-white disabled:opacity-50"
 										>
-											{deleting === user.id ? '…' : 'Delete'}
+											{deleting === user.id ? '…' : i18n.t('account.delete')}
 										</button>
 									</td>
 								</tr>

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { authStore } from '$lib/stores/auth.svelte';
+	import { i18n } from '$lib/stores/i18n.svelte';
 	import type { LoginResponse } from '$lib/types/user';
 
 	let email = $state('');
@@ -11,17 +12,12 @@
 
 	async function handleLogin(event: Event) {
 		event.preventDefault();
-		console.log('Sending login payload:', {
-			email: email,
-			password: password
-		});
-
 		const res = await fetch('http://localhost:8080/login', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			credentials: 'include', // 🔐 Accepts cookie from server
+			credentials: 'include',
 			body: JSON.stringify({
 				email,
 				password
@@ -37,7 +33,7 @@
 			}
 			goto('/dashboard');
 		} else {
-			error = 'Invalid email or password';
+			error = i18n.t('auth.invalidCredentials');
 		}
 	}
 
@@ -48,145 +44,151 @@
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			credentials: 'include' // 🔐 Accepts cookie from server
+			credentials: 'include'
 		});
-		if (res.ok) {
-			// const url = await res.text();
-			// TODO: Redirect to dashboard if sucessful
-		} else {
-			error = 'Google login failed';
+		if (!res.ok) {
+			error = i18n.t('auth.googleFailed');
 		}
 	}
 </script>
 
-<div
-	class="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 px-4 dark:from-slate-900 dark:to-slate-800"
->
-	<div
-		class="animate-fade-in w-full max-w-md rounded-2xl border border-white/40 bg-white/70 p-8 shadow-2xl backdrop-blur-lg sm:p-10 dark:border-white/20 dark:bg-white/10"
-	>
-		<!-- Header -->
-		<div class="mb-8 text-center">
-			<h1 class="text-3xl font-extrabold tracking-tight text-gray-800 dark:text-white">
-				Login to your dashboard
-			</h1>
-			<p class="mt-1 text-sm text-gray-500 dark:text-gray-300">Secure and stylish ✨</p>
+<div class="folk-pattern-bg flex min-h-screen items-center justify-center px-4 py-16">
+	<div class="w-full max-w-md">
+		<!-- Brand mark -->
+		<div class="mb-10 text-center">
+			<a href="/" class="font-headline text-primary text-3xl font-black tracking-tight">DrumBun</a>
+			<div class="mt-3 inline-flex items-center gap-2">
+				<div class="bg-primary/30 h-px w-8"></div>
+				<p class="font-label text-primary text-[0.6875rem] font-bold tracking-[0.3em] uppercase">
+					{i18n.t('auth.loginTitle')}
+				</p>
+				<div class="bg-primary/30 h-px w-8"></div>
+			</div>
 		</div>
 
-		<!-- Error -->
-		{#if error}
-			<p class="mb-5 rounded border border-red-300 bg-red-100 p-3 text-center text-sm text-red-700">
-				{error}
-			</p>
-		{/if}
-
-		<!-- Form -->
-		<form onsubmit={handleLogin}>
-			<!-- Email -->
-			<div>
-				<label for="email" class="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
-					Email address
-				</label>
-				<input
-					id="email"
-					type="email"
-					bind:value={email}
-					required
-					autocomplete="email"
-					placeholder="email"
-					class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 text-gray-800 shadow-sm transition placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
-				/>
-			</div>
-
-			<!-- Password -->
-			<div>
-				<label
-					for="password"
-					class="mt-5 mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+		<!-- Card -->
+		<div
+			class="glass-panel border-outline-variant/20 ia-border-accent rounded-xl border p-8 shadow-[0_40px_100px_rgba(0,32,104,0.08)]"
+		>
+			<!-- Error -->
+			{#if error}
+				<div
+					class="bg-error/5 border-error/10 mb-6 flex items-center gap-3 rounded-lg border px-4 py-3"
 				>
-					Password
-				</label>
-				<div class="relative">
-					<input
-						id="password"
-						type={showPassword ? 'text' : 'password'}
-						bind:value={password}
-						required
-						autocomplete="current-password"
-						placeholder="password"
-						class="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 pr-12 text-gray-800 shadow-sm transition placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-slate-800 dark:text-white"
-					/>
-					<button
-						type="button"
-						class="absolute inset-y-0 right-3 text-sm text-blue-500 hover:underline"
-						onclick={() => (showPassword = !showPassword)}
-					>
-						{showPassword ? 'Hide' : 'Show'}
-					</button>
+					<span class="material-symbols-outlined text-error">error</span>
+					<p class="text-error text-sm font-medium">{error}</p>
 				</div>
-			</div>
+			{/if}
 
-			<!-- Remember me / Forgot password -->
-			<div class="flex items-center justify-between text-sm">
-				<label class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-					<input
-						type="checkbox"
-						bind:checked={remember}
-						class="form-checkbox h-4 w-4 rounded border-gray-300 text-blue-600 dark:border-gray-600"
+			<!-- Form -->
+			<form onsubmit={handleLogin} class="space-y-5">
+				<!-- Email -->
+				<div
+					class="bg-surface-container-low/50 flex flex-col rounded-lg px-4 py-3 transition-all focus-within:bg-white focus-within:shadow-sm"
+				>
+					<label
+						for="email"
+						class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
+					>
+						{i18n.t('auth.emailLabel')}
+					</label>
+					<div class="flex items-center gap-3">
+						<span class="material-symbols-outlined text-primary/70">mail</span>
+						<input
+							id="email"
+							type="email"
+							bind:value={email}
+							required
+							autocomplete="email"
+							placeholder={i18n.t('auth.emailLabel')}
+							class="placeholder:text-outline-variant/60 text-on-surface w-full border-none bg-transparent p-0 text-base font-bold focus:ring-0"
+						/>
+					</div>
+				</div>
+
+				<!-- Password -->
+				<div
+					class="bg-surface-container-low/50 flex flex-col rounded-lg px-4 py-3 transition-all focus-within:bg-white focus-within:shadow-sm"
+				>
+					<label
+						for="password"
+						class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
+					>
+						{i18n.t('auth.passwordLabel')}
+					</label>
+					<div class="flex items-center gap-3">
+						<span class="material-symbols-outlined text-primary/70">lock</span>
+						<input
+							id="password"
+							type={showPassword ? 'text' : 'password'}
+							bind:value={password}
+							required
+							autocomplete="current-password"
+							placeholder={i18n.t('auth.passwordLabel')}
+							class="placeholder:text-outline-variant/60 text-on-surface w-full border-none bg-transparent p-0 text-base font-bold focus:ring-0"
+						/>
+						<button
+							type="button"
+							class="font-label text-primary/70 hover:text-primary text-[0.6875rem] font-bold tracking-widest uppercase transition-colors"
+							onclick={() => (showPassword = !showPassword)}
+							aria-label={showPassword ? i18n.t('auth.hidePassword') : i18n.t('auth.showPassword')}
+						>
+							{showPassword ? i18n.t('auth.hidePassword') : i18n.t('auth.showPassword')}
+						</button>
+					</div>
+				</div>
+
+				<!-- Remember me / Forgot password -->
+				<div class="flex items-center justify-between px-1 text-sm">
+					<label class="text-secondary flex cursor-pointer items-center gap-2">
+						<input
+							type="checkbox"
+							bind:checked={remember}
+							class="form-checkbox border-outline-variant text-primary-container focus:ring-primary h-4 w-4 rounded"
+						/>
+						<span class="font-body text-sm">{i18n.t('auth.rememberMe')}</span>
+					</label>
+					<a
+						href="/login"
+						class="font-body text-primary-container hover:text-primary text-sm transition-colors"
+						>{i18n.t('auth.forgotPassword')}</a
+					>
+				</div>
+
+				<!-- Google Login -->
+				<button
+					type="button"
+					onclick={handleGoogleLogin}
+					class="bg-surface-container-low font-headline text-on-surface hover:bg-surface-container flex w-full items-center justify-center gap-3 rounded-lg px-4 py-3 text-sm font-bold transition"
+				>
+					<img
+						src="https://www.svgrepo.com/show/475656/google-color.svg"
+						alt="Google"
+						class="h-5 w-5"
 					/>
-					<span>Remember me</span>
-				</label>
-				<a href="/login" class="text-blue-500 hover:underline">Forgot password?</a>
-			</div>
+					{i18n.t('auth.signInWithGoogle')}
+				</button>
 
-			<!-- Google Login Button -->
-			<button
-				type="button"
-				onclick={handleGoogleLogin}
-				class="mt-4 mb-4 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-100 dark:border-gray-600 dark:bg-slate-800 dark:text-white hover:dark:bg-slate-700"
-			>
-				<img
-					src="https://www.svgrepo.com/show/475656/google-color.svg"
-					alt="Google"
-					class="h-5 w-5"
-				/>
-				Sign in with Google
-			</button>
+				<!-- Submit -->
+				<button
+					type="submit"
+					class="bg-primary-container font-headline hover:bg-primary group flex w-full items-center justify-center gap-3 rounded-lg px-8 py-4 text-lg font-bold text-white transition"
+				>
+					{i18n.t('auth.signIn')}
+					<span class="material-symbols-outlined transition-transform group-hover:translate-x-1"
+						>arrow_forward</span
+					>
+				</button>
+			</form>
 
-			<!-- Submit -->
-			<button
-				type="submit"
-				class="w-full rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 py-2 font-semibold text-white shadow-lg transition duration-200 hover:scale-[1.01] hover:from-blue-700 hover:to-indigo-700"
-			>
-				Sign in
-			</button>
-		</form>
-
-		<!-- Footer -->
-		<p class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
-			By logging in, you agree to our
-			<a href="/login" class="underline hover:text-blue-500">terms of service</a>.
-		</p>
-
-		<p class="mt-4 text-center text-sm text-gray-600 dark:text-gray-300">
-			Don't have an account?
-			<a href="/register" class="font-medium text-blue-500 hover:underline">Sign up here</a>
-		</p>
+			<p class="font-body text-secondary mt-6 text-center text-sm">
+				{i18n.t('auth.noAccount')}
+				<a
+					href="/register"
+					class="text-primary-container hover:text-primary font-bold transition-colors"
+					>{i18n.t('auth.signUpHere')}</a
+				>
+			</p>
+		</div>
 	</div>
 </div>
-
-<style>
-	@keyframes fade-in {
-		from {
-			opacity: 0;
-			transform: scale(0.96);
-		}
-		to {
-			opacity: 1;
-			transform: scale(1);
-		}
-	}
-	.animate-fade-in {
-		animation: fade-in 0.4s ease-out both;
-	}
-</style>

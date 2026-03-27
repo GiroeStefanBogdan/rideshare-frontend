@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { authStore } from '$lib/stores/auth.svelte';
 	import { changePassword } from '$lib/api/users';
+	import { i18n } from '$lib/stores/i18n.svelte';
 
 	let newPassword = $state('');
 	let confirmPassword = $state('');
@@ -15,11 +16,11 @@
 		e.preventDefault();
 
 		if (newPassword !== confirmPassword) {
-			errorMsg = 'Passwords do not match.';
+			errorMsg = i18n.t('account.passwordMismatch');
 			return;
 		}
 		if (newPassword.length < 6) {
-			errorMsg = 'New password must be at least 6 characters.';
+			errorMsg = i18n.t('account.passwordLength');
 			return;
 		}
 
@@ -29,83 +30,112 @@
 
 		try {
 			await changePassword(knownEmail, newPassword);
-			successMsg = 'Password changed successfully.';
+			successMsg = i18n.t('account.passwordSuccess');
 			newPassword = '';
 			confirmPassword = '';
 		} catch {
-			errorMsg = 'Failed to change password. Please try again.';
+			errorMsg = i18n.t('account.passwordError');
 		} finally {
 			saving = false;
 		}
 	}
 </script>
 
-<div class="rounded-xl bg-slate-800 p-6 shadow">
-	<h2 class="mb-4 text-xl font-semibold text-white">Change Password</h2>
+<div
+	class="bg-surface-container-lowest border-outline-variant/15 rounded-xl border p-6 shadow-[0_8px_40px_rgba(0,32,104,0.06)]"
+>
+	<div class="mb-5 flex items-center gap-3">
+		<div class="bg-primary/5 flex h-10 w-10 items-center justify-center rounded-lg">
+			<span class="material-symbols-outlined text-primary-container">lock</span>
+		</div>
+		<h2 class="font-headline text-primary text-xl font-bold">{i18n.t('account.changePassword')}</h2>
+	</div>
 
 	{#if isGoogle}
-		<p class="text-sm text-slate-400">
-			Password change is not available for Google-linked accounts.
-		</p>
+		<p class="font-body text-secondary text-sm">{i18n.t('account.googleAccountWarning')}</p>
 	{:else}
 		<form onsubmit={handleChangePassword} class="space-y-4">
 			{#if knownEmail}
-				<p class="text-sm text-slate-400">
-					Changing password for <span class="font-medium text-slate-200">{knownEmail}</span>
+				<p class="font-body text-secondary text-sm">
+					{i18n.t('account.changingPasswordFor')}
+					<span class="text-on-surface font-bold">{knownEmail}</span>
 				</p>
 			{:else}
-				<p class="rounded border border-yellow-600 bg-yellow-900/20 p-2 text-sm text-yellow-400">
-					Log out and log in again to pre-fill your email.
-				</p>
+				<div
+					class="bg-tertiary-fixed/30 border-tertiary-fixed flex items-center gap-3 rounded-lg border px-4 py-3"
+				>
+					<span class="material-symbols-outlined text-tertiary">warning</span>
+					<p class="font-body text-tertiary text-sm">{i18n.t('account.prefillWarning')}</p>
+				</div>
 			{/if}
 
-			<div>
-				<label for="new-password" class="mb-1 block text-sm font-medium text-slate-300">
-					New password
+			<div
+				class="bg-surface-container-low/50 flex flex-col rounded-lg px-4 py-3 transition-all focus-within:bg-white focus-within:shadow-sm"
+			>
+				<label
+					for="new-password"
+					class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
+				>
+					{i18n.t('account.newPassword')}
 				</label>
-				<input
-					id="new-password"
-					type="password"
-					bind:value={newPassword}
-					required
-					autocomplete="new-password"
-					class="w-full rounded-lg border border-slate-600 bg-slate-700 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-					placeholder="New password"
-				/>
+				<div class="flex items-center gap-3">
+					<span class="material-symbols-outlined text-primary/70">lock_open</span>
+					<input
+						id="new-password"
+						type="password"
+						bind:value={newPassword}
+						required
+						autocomplete="new-password"
+						placeholder={i18n.t('account.newPassword')}
+						class="placeholder:text-outline-variant/60 text-on-surface w-full border-none bg-transparent p-0 text-base font-bold focus:ring-0"
+					/>
+				</div>
 			</div>
 
-			<div>
-				<label for="confirm-password" class="mb-1 block text-sm font-medium text-slate-300">
-					Confirm new password
+			<div
+				class="bg-surface-container-low/50 flex flex-col rounded-lg px-4 py-3 transition-all focus-within:bg-white focus-within:shadow-sm"
+			>
+				<label
+					for="confirm-password"
+					class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
+				>
+					{i18n.t('account.confirmNewPassword')}
 				</label>
-				<input
-					id="confirm-password"
-					type="password"
-					bind:value={confirmPassword}
-					required
-					autocomplete="new-password"
-					class="w-full rounded-lg border border-slate-600 bg-slate-700 px-4 py-2 text-white placeholder:text-slate-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-					placeholder="Confirm new password"
-				/>
+				<div class="flex items-center gap-3">
+					<span class="material-symbols-outlined text-primary/70">lock_reset</span>
+					<input
+						id="confirm-password"
+						type="password"
+						bind:value={confirmPassword}
+						required
+						autocomplete="new-password"
+						placeholder={i18n.t('account.confirmNewPassword')}
+						class="placeholder:text-outline-variant/60 text-on-surface w-full border-none bg-transparent p-0 text-base font-bold focus:ring-0"
+					/>
+				</div>
 			</div>
 
 			{#if errorMsg}
-				<p class="rounded border border-red-500 bg-red-900/30 p-2 text-sm text-red-400">
-					{errorMsg}
-				</p>
+				<div class="bg-error/5 border-error/10 flex items-center gap-3 rounded-lg border px-4 py-3">
+					<span class="material-symbols-outlined text-error text-sm">error</span>
+					<p class="font-body text-error text-sm">{errorMsg}</p>
+				</div>
 			{/if}
 			{#if successMsg}
-				<p class="rounded border border-green-500 bg-green-900/30 p-2 text-sm text-green-400">
-					{successMsg}
-				</p>
+				<div
+					class="bg-primary/5 border-primary/10 flex items-center gap-3 rounded-lg border px-4 py-3"
+				>
+					<span class="material-symbols-outlined text-primary-container text-sm">check_circle</span>
+					<p class="font-body text-primary text-sm">{successMsg}</p>
+				</div>
 			{/if}
 
 			<button
 				type="submit"
 				disabled={saving || !knownEmail}
-				class="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
+				class="bg-primary-container font-headline hover:bg-primary rounded-lg px-6 py-3 text-sm font-bold text-white transition disabled:cursor-not-allowed disabled:opacity-50"
 			>
-				{saving ? 'Saving…' : 'Update password'}
+				{saving ? i18n.t('account.updating') : i18n.t('account.updatePassword')}
 			</button>
 		</form>
 	{/if}
