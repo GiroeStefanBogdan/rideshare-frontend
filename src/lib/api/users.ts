@@ -39,7 +39,10 @@ export async function getUserCars(userId: number): Promise<UserCar[]> {
 	return request<UserCar[]>(`/users/${userId}/cars`);
 }
 
-export async function createUserCar(userId: number, car: Omit<UserCar, 'id'>): Promise<UserCar> {
+export async function createUserCar(
+	userId: number,
+	car: Omit<UserCar, 'id' | 'userId'>
+): Promise<UserCar> {
 	return request<UserCar>(`/users/${userId}/cars`, {
 		method: 'POST',
 		body: JSON.stringify(car)
@@ -49,7 +52,7 @@ export async function createUserCar(userId: number, car: Omit<UserCar, 'id'>): P
 export async function updateUserCar(
 	userId: number,
 	carId: number,
-	car: Partial<Omit<UserCar, 'id'>>
+	car: Partial<Omit<UserCar, 'id' | 'userId'>>
 ): Promise<UserCar> {
 	return request<UserCar>(`/users/${userId}/cars/${carId}`, {
 		method: 'PATCH',

@@ -73,10 +73,7 @@
 				const updated = await updateUserCar(authStore.user.id, editingCarId, carData);
 				cars = cars.map((c) => (c.id === updated.id ? updated : c));
 			} else {
-				const created = await createUserCar(
-					authStore.user.id,
-					carData as Omit<UserCar, 'id' | 'userId'>
-				);
+				const created = await createUserCar(authStore.user.id, carData);
 				cars = [...cars, created];
 			}
 			resetForm();
