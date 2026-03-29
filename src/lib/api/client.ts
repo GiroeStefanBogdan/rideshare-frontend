@@ -14,7 +14,7 @@ export class ApiError extends Error {
 }
 
 export async function request<T>(path: string, options?: RequestInit): Promise<T> {
-	const res = await fetch(`${PUBLIC_API_URL}${path}`, {
+	const res = await fetch(`${PUBLIC_API_URL}/api/v1${path}`, {
 		...options,
 		credentials: 'include',
 		headers: {
@@ -24,7 +24,9 @@ export async function request<T>(path: string, options?: RequestInit): Promise<T
 	});
 
 	if (res.status === 401) {
-		goto('/login');
+		if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+			goto('/login');
+		}
 		throw new ApiError(401, 'Unauthorized');
 	}
 

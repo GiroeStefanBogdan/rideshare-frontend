@@ -3,6 +3,7 @@
 	import { deleteMyAccount } from '$lib/api/users';
 	import { goto } from '$app/navigation';
 	import { i18n } from '$lib/stores/i18n.svelte';
+	import ConfirmationModal from '$lib/components/ui/ConfirmationModal.svelte';
 
 	let deleting = $state(false);
 	let error = $state('');
@@ -68,35 +69,23 @@
 				</div>
 			{/if}
 
-			{#if showConfirm}
-				<p class="font-body text-secondary mb-4 text-sm">{i18n.t('account.deleteConfirm')}</p>
-				<div class="flex gap-3">
-					<button
-						onclick={handleDeleteAccount}
-						disabled={deleting}
-						class="bg-error font-headline rounded-lg px-4 py-2 text-sm font-bold text-white transition hover:opacity-90 disabled:opacity-50"
-					>
-						{deleting ? i18n.t('account.deleteDeleting') : i18n.t('account.deleteYes')}
-					</button>
-					<button
-						onclick={() => (showConfirm = false)}
-						disabled={deleting}
-						class="bg-surface-container-high font-headline text-on-surface hover:bg-surface-container-highest rounded-lg px-4 py-2 text-sm font-bold transition disabled:opacity-50"
-					>
-						{i18n.t('account.cancel')}
-					</button>
-				</div>
-			{:else}
-				<button
-					onclick={() => (showConfirm = true)}
-					class="border-error/30 font-headline text-error hover:bg-error rounded-lg border px-4 py-2 text-sm font-bold transition hover:text-white"
-				>
-					{i18n.t('account.deleteAccount')}
-				</button>
-			{/if}
+			<button
+				onclick={() => (showConfirm = true)}
+				class="border-error/30 font-headline text-error hover:bg-error rounded-lg border px-4 py-2 text-sm font-bold transition hover:text-white"
+			>
+				{i18n.t('account.deleteAccount')}
+			</button>
 		</div>
 	{:else}
 		<p class="font-body text-secondary text-sm">{i18n.t('account.profileNotAvailable')}</p>
 		<p class="font-body text-secondary/60 mt-1 text-xs">{i18n.t('account.logoutBackIn')}</p>
 	{/if}
+
+	<ConfirmationModal
+		bind:show={showConfirm}
+		title={i18n.t('account.deleteAccount')}
+		message={i18n.t('account.deleteConfirm')}
+		confirmText={deleting ? i18n.t('account.deleteDeleting') : i18n.t('account.deleteYes')}
+		onConfirm={handleDeleteAccount}
+	/>
 </div>

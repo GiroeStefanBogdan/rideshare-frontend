@@ -36,18 +36,24 @@ function createAuthStore() {
 		setUser(u: UserResponseDto) {
 			user = u;
 			email = u.email;
-			sessionStorage.setItem(STORAGE_KEY, JSON.stringify(u));
-			sessionStorage.setItem(EMAIL_KEY, u.email);
+			if (typeof sessionStorage !== 'undefined') {
+				sessionStorage.setItem(STORAGE_KEY, JSON.stringify(u));
+				sessionStorage.setItem(EMAIL_KEY, u.email);
+			}
 		},
 		setEmail(e: string) {
 			email = e;
-			sessionStorage.setItem(EMAIL_KEY, e);
+			if (typeof sessionStorage !== 'undefined') {
+				sessionStorage.setItem(EMAIL_KEY, e);
+			}
 		},
 		clear() {
 			user = null;
 			email = '';
-			sessionStorage.removeItem(STORAGE_KEY);
-			sessionStorage.removeItem(EMAIL_KEY);
+			if (typeof sessionStorage !== 'undefined') {
+				sessionStorage.removeItem(STORAGE_KEY);
+				sessionStorage.removeItem(EMAIL_KEY);
+			}
 		}
 	};
 }

@@ -1,5 +1,12 @@
 export const translations = {
 	en: {
+		common: {
+			confirm: 'Confirm Action',
+			cancel: 'Cancel',
+			delete: 'Delete',
+			save: 'Save',
+			loading: 'Loading...'
+		},
 		auth: {
 			loginTitle: 'Login to your dashboard',
 			emailLabel: 'Email address',
@@ -96,6 +103,16 @@ export const translations = {
 			updatePassword: 'Update password',
 			updating: 'Saving...',
 			myCars: 'My Cars',
+			addCar: 'Add Car',
+			editCar: 'Edit Car',
+			carBrand: 'Brand',
+			carModel: 'Model',
+			carColor: 'Color',
+			carYear: 'Year',
+			carLicensePlate: 'License Plate',
+			carSeats: 'Seats',
+			saveCar: 'Save Car',
+			deleteCar: 'Delete Car',
 			noCars: 'No cars registered yet.',
 			reviews: 'Reviews',
 			noReviews: 'No reviews yet.',
@@ -138,6 +155,13 @@ export const translations = {
 		}
 	},
 	ro: {
+		common: {
+			confirm: 'Confirmă Acțiunea',
+			cancel: 'Anulează',
+			delete: 'Șterge',
+			save: 'Salvează',
+			loading: 'Se încarcă...'
+		},
 		auth: {
 			loginTitle: 'Autentifică-te în contul tău',
 			emailLabel: 'Adresă de email',
@@ -237,6 +261,16 @@ export const translations = {
 			updatePassword: 'Actualizează parola',
 			updating: 'Se salvează...',
 			myCars: 'Mașinile mele',
+			addCar: 'Adaugă mașină',
+			editCar: 'Editează mașină',
+			carBrand: 'Marcă',
+			carModel: 'Model',
+			carColor: 'Culoare',
+			carYear: 'An',
+			carLicensePlate: 'Număr de înmatriculare',
+			carSeats: 'Locuri',
+			saveCar: 'Salvează mașină',
+			deleteCar: 'Șterge mașină',
 			noCars: 'Nicio mașină înregistrată încă.',
 			reviews: 'Recenzii',
 			noReviews: 'Nicio recenzie încă.',

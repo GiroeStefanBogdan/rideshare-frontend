@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { env } from '$env/dynamic/public';
 	import { authStore } from '$lib/stores/auth.svelte';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	import type { LoginResponse } from '$lib/types/user';
+
+	const PUBLIC_API_URL = env.PUBLIC_API_URL ?? 'http://localhost:8080';
 
 	let email = $state('');
 	let password = $state('');
@@ -12,7 +15,7 @@
 
 	async function handleLogin(event: Event) {
 		event.preventDefault();
-		const res = await fetch('http://localhost:8080/login', {
+		const res = await fetch(`${PUBLIC_API_URL}/api/v1/login`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -39,7 +42,7 @@
 
 	async function handleGoogleLogin(event: Event) {
 		event.preventDefault();
-		const res = await fetch('http://localhost:8080/oauth2/authorization/google', {
+		const res = await fetch(`${PUBLIC_API_URL}/api/v1/oauth2/authorization/google`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
