@@ -4,11 +4,11 @@ on:
   # Run CI when pushing directly to main (or when a PR is merged)
   push:
     branches:
-      - main
+      - main, develop
   # Run CI on pull requests targeting main
   pull_request:
     branches:
-      - main
+      - main, develop
 
 # Cancel in-progress runs if a new commit is pushed to the same PR/branch
 concurrency:
