@@ -3,6 +3,7 @@ import { env } from '$env/dynamic/public';
 import { request } from './client';
 import { authStore } from '$lib/stores/auth.svelte';
 import { i18n } from '$lib/stores/i18n.svelte';
+import type { LoginResponse } from '$lib/types/user';
 
 export interface LoginPayload {
 	email: string;
@@ -22,7 +23,7 @@ export interface GoogleLoginPayload {
  * cookie Max-Age. The JWT itself always lives in the HTTP-only cookie —
  * we never touch browser storage.
  */
-export const login = (payload: LoginPayload) =>
+export const login: (payload: LoginPayload) => Promise<LoginResponse> = (payload: LoginPayload) =>
 	request('/auth/login', { method: 'POST', body: JSON.stringify(payload) });
 
 /** Exchange a Google ID-token for a session cookie. */
@@ -45,8 +46,8 @@ export async function handleLogin(
 	setError: (msg: string) => void
 ): Promise<void> {
 	try {
-		const user = await login(payload);
-		authStore.setUser(user);
+		const user: LoginResponse = await login(payload);
+		authStore.setUser(user.user);
 		await goto('/dashboard');
 	} catch (err: any) {
 		// 401 → bad credentials; anything else → generic server error
@@ -72,5 +73,5 @@ export function handleGoogleLogin(): void {
 export const routes = {
 	home: '/',
 	register: '/register',
-	forgotPassword: '/forgot-password',
+	forgotPassword: '/forgot-password'
 };
