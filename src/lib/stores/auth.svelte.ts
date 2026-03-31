@@ -33,7 +33,7 @@ function createAuthStore() {
 		get isAdmin() {
 			return user?.role === 'ROLE_ADMIN';
 		},
-		setUser(u: LoginResponse) {
+		setUser(u: UserResponseDto) {
 			user = u;
 			email = u.email;
 			sessionStorage.setItem(STORAGE_KEY, JSON.stringify(u));
