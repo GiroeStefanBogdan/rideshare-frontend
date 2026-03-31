@@ -1,12 +1,8 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { i18n } from '$lib/stores/i18n.svelte';
-	import { onMount } from 'svelte';
 
 	let { children } = $props();
-
-	onMount(() => {
-		i18n.init();
-	});
 </script>
 
 <div class="bg-surface text-on-surface font-body flex min-h-screen flex-col">
@@ -14,7 +10,8 @@
 	<header class="border-outline-variant/10 bg-surface/90 sticky top-0 z-50 border-b backdrop-blur">
 		<nav class="mx-auto flex w-full max-w-7xl items-center justify-between px-8 py-6">
 			<div class="flex items-center gap-4">
-				<a href="/" class="font-headline text-primary text-2xl font-black tracking-tight">DrumBun</a
+				<a href={resolve('/')} class="font-headline text-primary text-2xl font-black tracking-tight"
+					>DrumBun</a
 				>
 			</div>
 			<div class="flex items-center gap-8">
@@ -38,12 +35,12 @@
 						</button>
 					</div>
 					<a
-						href="/rides"
+						href={resolve('/rides')}
 						class="font-headline text-secondary hover:text-primary font-bold transition-colors duration-300"
 						>{i18n.t('nav.findRide')}</a
 					>
 					<a
-						href="/publish"
+						href={resolve('/publish')}
 						class="font-headline text-secondary hover:text-primary font-bold transition-colors duration-300"
 						>{i18n.t('nav.offerRide')}</a
 					>
@@ -51,7 +48,11 @@
 				<div
 					class="text-secondary hover:text-primary flex cursor-pointer items-center gap-2 transition-colors duration-300"
 				>
-					<a href="/account" class="flex items-center" aria-label={i18n.t('nav.account')}>
+					<a
+						href={resolve('/account')}
+						class="flex items-center"
+						aria-label={i18n.t('nav.account')}
+					>
 						<span class="material-symbols-outlined text-2xl">account_circle</span>
 					</a>
 				</div>
@@ -78,15 +79,15 @@
 			<div class="flex flex-wrap justify-center gap-10">
 				<a
 					class="font-body text-secondary hover:text-primary text-sm font-semibold transition-all"
-					href="/terms">{i18n.t('footer.terms')}</a
+					href={resolve('/terms')}>{i18n.t('footer.terms')}</a
 				>
 				<a
 					class="font-body text-secondary hover:text-primary text-sm font-semibold transition-all"
-					href="/privacy">{i18n.t('footer.privacy')}</a
+					href={resolve('/privacy')}>{i18n.t('footer.privacy')}</a
 				>
 				<a
 					class="font-body text-secondary hover:text-primary text-sm font-semibold transition-all"
-					href="/contact">{i18n.t('footer.contact')}</a
+					href={resolve('/contact')}>{i18n.t('footer.contact')}</a
 				>
 			</div>
 			<div class="mt-10 text-right md:mt-0">

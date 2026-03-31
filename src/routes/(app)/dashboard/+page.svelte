@@ -37,24 +37,6 @@
 						<p class="font-headline text-primary font-bold">{email}</p>
 					</div>
 				</div>
-			{:else}
-				<div
-					class="bg-error/5 border-error/10 mt-8 inline-flex items-center gap-3 rounded-lg border px-4 py-2"
-				>
-					<span class="material-symbols-outlined text-error">error</span>
-					<div>
-						<p class="text-error/70 text-[0.6875rem] font-bold tracking-widest uppercase">
-							{i18n.t('hero.notAuthenticated')}
-						</p>
-						<p class="font-body text-secondary text-sm">
-							{i18n.t('hero.pleaseLogin')}
-							<a href="/login" class="text-primary font-bold underline"
-								>{i18n.t('hero.loginLink')}</a
-							>
-							{i18n.t('hero.accessDashboard')}
-						</p>
-					</div>
-				</div>
 			{/if}
 		</div>
 

@@ -4,12 +4,14 @@ import { env } from '$env/dynamic/public';
 
 const PUBLIC_API_URL = env.PUBLIC_API_URL ?? 'http://localhost:8080';
 
-export const load: LayoutLoad = async ({ fetch }) => {
-	const res = await fetch(`${PUBLIC_API_URL}/dashboard`, {
-		credentials: 'include'
-	});
+export const load: LayoutLoad = async ({ fetch, url }) => {
+	if (url.pathname !== '/dashboard') {
+		const res = await fetch(`${PUBLIC_API_URL}/dashboard`, {
+			credentials: 'include'
+		});
 
-	if (res.status === 401) {
-		throw redirect(303, '/login');
+		if (res.status === 401) {
+			throw redirect(303, '/login');
+		}
 	}
 };

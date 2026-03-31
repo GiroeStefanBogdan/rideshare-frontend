@@ -3,6 +3,7 @@
 	import { authStore } from '$lib/stores/auth.svelte';
 	import type { UserResponseDto } from '$lib/types/user';
 	import { i18n } from '$lib/stores/i18n.svelte';
+	import { resolve } from '$app/paths';
 
 	let name = $state('');
 	let email = $state('');
@@ -39,7 +40,7 @@
 			if (res.ok) {
 				const user: UserResponseDto = await res.json();
 				authStore.setUser(user);
-				goto('/login');
+				await goto(resolve('/login'));
 			} else {
 				if (res.headers.get('Content-Type')?.includes('application/json')) {
 					const data = await res.json();
@@ -57,7 +58,9 @@
 	<div class="w-full max-w-md">
 		<!-- Brand mark -->
 		<div class="mb-10 text-center">
-			<a href="/" class="font-headline text-primary text-3xl font-black tracking-tight">DrumBun</a>
+			<a href={resolve('/')} class="font-headline text-primary text-3xl font-black tracking-tight"
+				>DrumBun</a
+			>
 			<div class="mt-3 inline-flex items-center gap-2">
 				<div class="bg-primary/30 h-px w-8"></div>
 				<p class="font-label text-primary text-[0.6875rem] font-bold tracking-[0.3em] uppercase">
@@ -300,7 +303,7 @@
 			<p class="font-body text-secondary mt-6 text-center text-sm">
 				{i18n.t('register.alreadyHaveAccount')}
 				<a
-					href="/login"
+					href={resolve('/login')}
 					class="text-primary-container hover:text-primary font-bold transition-colors"
 					>{i18n.t('register.loginHere')}</a
 				>
