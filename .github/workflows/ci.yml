@@ -1,12 +1,19 @@
 name: CI
 
 on:
+  # Run CI when pushing directly to main (or when a PR is merged)
   push:
     branches:
-      - '**'
+      - main
+  # Run CI on pull requests targeting main
   pull_request:
     branches:
-      - '**'
+      - main
+
+# Cancel in-progress runs if a new commit is pushed to the same PR/branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:

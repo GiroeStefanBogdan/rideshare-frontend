@@ -1,5 +1,6 @@
 import { env } from '$env/dynamic/public';
 import { goto } from '$app/navigation';
+import { resolve } from '$app/paths';
 
 const PUBLIC_API_URL = env.PUBLIC_API_URL ?? 'http://localhost:8080';
 
@@ -24,7 +25,7 @@ export async function request<T>(path: string, options?: RequestInit): Promise<T
 	});
 
 	if (res.status === 401) {
-		goto('/login');
+		goto(resolve('/login'));
 		throw new ApiError(401, 'Unauthorized');
 	}
 

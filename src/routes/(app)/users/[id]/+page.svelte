@@ -3,6 +3,7 @@
 	import CarsSection from '$lib/components/account/CarsSection.svelte';
 	import ReviewsSection from '$lib/components/account/ReviewsSection.svelte';
 	import { i18n } from '$lib/stores/i18n.svelte';
+	import { resolve } from '$app/paths';
 
 	let { data }: { data: PageData } = $props();
 
@@ -16,7 +17,7 @@
 <section class="folk-pattern-bg border-primary/5 relative overflow-hidden border-b pt-16 pb-12">
 	<div class="relative z-10 mx-auto max-w-7xl px-8">
 		<a
-			href="/account"
+			href={resolve('/account')}
 			class="font-label text-primary/60 hover:text-primary mb-6 inline-flex items-center gap-2 text-[0.6875rem] font-bold tracking-widest uppercase transition-colors"
 		>
 			<span class="material-symbols-outlined text-sm">arrow_back</span>

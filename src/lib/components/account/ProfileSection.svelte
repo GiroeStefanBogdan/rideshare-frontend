@@ -3,6 +3,7 @@
 	import { deleteMyAccount } from '$lib/api/users';
 	import { goto } from '$app/navigation';
 	import { i18n } from '$lib/stores/i18n.svelte';
+	import { resolve } from '$app/paths';
 
 	let deleting = $state(false);
 	let error = $state('');
@@ -23,7 +24,7 @@
 		try {
 			await deleteMyAccount(user.id);
 			authStore.clear();
-			goto('/login');
+			await goto(resolve('/login'));
 		} catch {
 			error = i18n.t('account.errorDelete');
 			deleting = false;

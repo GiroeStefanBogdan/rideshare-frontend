@@ -1,4 +1,5 @@
 import { goto } from '$app/navigation';
+import { resolve } from '$app/paths';
 import { env } from '$env/dynamic/public';
 import { request } from './client';
 import { authStore } from '$lib/stores/auth.svelte';
@@ -47,10 +48,11 @@ export async function handleLogin(
 	try {
 		const user: LoginResponse = await login(payload);
 		authStore.setUser(user.user);
-		await goto('/dashboard');
-	} catch (err: any) {
-		// 401 → bad credentials; anything else → generic server error
-		setError(err.status === 401 ? i18n.t('auth.invalidCredentials') : i18n.t('auth.loginError'));
+		await goto(resolve('/dashboard'));
+	} catch (err) {
+		// 401 → bad credentials; anything else → generic server
+		const error = err as { status?: number };
+		setError(error.status === 401 ? i18n.t('auth.invalidCredentials') : i18n.t('auth.loginError'));
 	}
 }
 
@@ -63,10 +65,3 @@ export function handleGoogleLogin(): void {
 	const base = env.PUBLIC_API_URL ?? 'http://localhost:8080';
 	window.location.href = `${base}/oauth2/authorization/google`;
 }
-
-/** Internal hrefs as plain strings. */
-export const routes = {
-	home: '/',
-	register: '/register',
-	forgotPassword: '/forgot-password'
-};

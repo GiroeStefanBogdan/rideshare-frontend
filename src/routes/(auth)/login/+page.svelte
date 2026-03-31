@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { i18n } from '$lib/stores/i18n.svelte';
-	import { handleLogin, handleGoogleLogin, routes } from '$lib/api/auth';
+	import { handleLogin, handleGoogleLogin } from '$lib/api/auth';
+	import { resolve } from '$app/paths';
 
 	let email = $state('');
 	let password = $state('');
@@ -19,7 +20,7 @@
 	<div class="w-full max-w-md">
 		<!-- Brand mark -->
 		<div class="mb-10 text-center">
-			<a href={routes.home} class="font-headline text-primary text-3xl font-black tracking-tight"
+			<a href={resolve('/')} class="font-headline text-primary text-3xl font-black tracking-tight"
 				>DrumBun</a
 			>
 			<div class="mt-3 inline-flex items-center gap-2">
@@ -114,7 +115,7 @@
 						<span class="font-body text-sm">{i18n.t('auth.rememberMe')}</span>
 					</label>
 					<a
-						href={routes.forgotPassword}
+						href={resolve('/forgot-password')}
 						class="font-body text-primary-container hover:text-primary text-sm transition-colors"
 					>
 						{i18n.t('auth.forgotPassword')}
@@ -150,7 +151,7 @@
 			<p class="font-body text-secondary mt-6 text-center text-sm">
 				{i18n.t('auth.noAccount')}
 				<a
-					href={routes.register}
+					href={resolve('/register')}
 					class="text-primary-container hover:text-primary font-bold transition-colors"
 				>
 					{i18n.t('auth.signUpHere')}
