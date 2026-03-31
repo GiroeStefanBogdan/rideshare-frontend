@@ -1,0 +1,76 @@
+import { goto } from '$app/navigation';
+import { env } from '$env/dynamic/public';
+import { request } from './client';
+import { authStore } from '$lib/stores/auth.svelte';
+import { i18n } from '$lib/stores/i18n.svelte';
+
+export interface LoginPayload {
+	email: string;
+	password: string;
+	rememberMe: boolean;
+}
+
+export interface GoogleLoginPayload {
+	idToken: string;
+}
+
+// --- Raw API calls ---
+
+/**
+ * Email/password login.
+ * `rememberMe` is forwarded to the backend so it can set an appropriate
+ * cookie Max-Age. The JWT itself always lives in the HTTP-only cookie —
+ * we never touch browser storage.
+ */
+export const login = (payload: LoginPayload) =>
+	request('/auth/login', { method: 'POST', body: JSON.stringify(payload) });
+
+/** Exchange a Google ID-token for a session cookie. */
+export const googleLogin = (payload: GoogleLoginPayload) =>
+	request('/auth/google', { method: 'POST', body: JSON.stringify(payload) });
+
+/** Clear the JWT cookie server-side. */
+export const logout = () =>
+	request('/auth/logout', { method: 'POST' });
+
+// --- Page handler functions ---
+
+/**
+ * Handles email/password form submission.
+ * On success, stores the user and navigates to the dashboard.
+ * Returns an error string on failure, or null on success.
+ */
+export async function handleLogin(
+	payload: LoginPayload,
+	setError: (msg: string) => void
+): Promise<void> {
+	try {
+		const user = await login(payload);
+		authStore.setUser(user);
+		await goto('/dashboard');
+	} catch (err: any) {
+		// 401 → bad credentials; anything else → generic server error
+		setError(
+			err.status === 401
+				? i18n.t('auth.invalidCredentials')
+				: i18n.t('auth.loginError')
+		);
+	}
+}
+
+/**
+ * Redirects the browser to Spring Boot's Google OAuth2 authorization endpoint.
+ * This is a full-page redirect — not a fetch — so Spring Boot can drive the
+ * OIDC flow and set the HTTP-only cookie on the callback.
+ */
+export function handleGoogleLogin(): void {
+	const base = env.PUBLIC_API_URL ?? 'http://localhost:8080';
+	window.location.href = `${base}/oauth2/authorization/google`;
+}
+
+/** Internal hrefs as plain strings. */
+export const routes = {
+	home: '/',
+	register: '/register',
+	forgotPassword: '/forgot-password',
+};
