@@ -31,8 +31,7 @@ export const googleLogin = (payload: GoogleLoginPayload) =>
 	request('/auth/google', { method: 'POST', body: JSON.stringify(payload) });
 
 /** Clear the JWT cookie server-side. */
-export const logout = () =>
-	request('/auth/logout', { method: 'POST' });
+export const logout = () => request('/auth/logout', { method: 'POST' });
 
 // --- Page handler functions ---
 
@@ -51,11 +50,7 @@ export async function handleLogin(
 		await goto('/dashboard');
 	} catch (err: any) {
 		// 401 → bad credentials; anything else → generic server error
-		setError(
-			err.status === 401
-				? i18n.t('auth.invalidCredentials')
-				: i18n.t('auth.loginError')
-		);
+		setError(err.status === 401 ? i18n.t('auth.invalidCredentials') : i18n.t('auth.loginError'));
 	}
 }
 

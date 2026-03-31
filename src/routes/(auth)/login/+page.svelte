@@ -19,7 +19,9 @@
 	<div class="w-full max-w-md">
 		<!-- Brand mark -->
 		<div class="mb-10 text-center">
-			<a href={routes.home} class="font-headline text-primary text-3xl font-black tracking-tight">DrumBun</a>
+			<a href={routes.home} class="font-headline text-primary text-3xl font-black tracking-tight"
+				>DrumBun</a
+			>
 			<div class="mt-3 inline-flex items-center gap-2">
 				<div class="bg-primary/30 h-px w-8"></div>
 				<p class="font-label text-primary text-[0.6875rem] font-bold tracking-[0.3em] uppercase">
@@ -140,8 +142,8 @@
 				>
 					{i18n.t('auth.signIn')}
 					<span class="material-symbols-outlined transition-transform group-hover:translate-x-1">
-            arrow_forward
-          </span>
+						arrow_forward
+					</span>
 				</button>
 			</form>
 

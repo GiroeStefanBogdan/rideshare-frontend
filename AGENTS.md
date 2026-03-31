@@ -141,24 +141,24 @@ project-root/
 
 ```svelte
 <script>
-  // 1. imports
-  // 2. props  ($props() or export let)
-  // 3. state  ($state / $derived / stores)
-  // 4. effects / lifecycle ($effect / onMount)
-  // 5. event handlers and local functions
+	// 1. imports
+	// 2. props  ($props() or export let)
+	// 3. state  ($state / $derived / stores)
+	// 4. effects / lifecycle ($effect / onMount)
+	// 5. event handlers and local functions
 </script>
 
 <!-- markup -->
 
 <style>
-  /* only when Tailwind alone cannot express the style */
+	/* only when Tailwind alone cannot express the style */
 </style>
 ```
 
 ### Svelte 5 runes (preferred)
 
 | Use this                  | Not this                 |
-|---------------------------|--------------------------|
+| ------------------------- | ------------------------ |
 | `let { prop } = $props()` | `export let prop`        |
 | `let x = $state(0)`       | `let x = 0`              |
 | `let y = $derived(x * 2)` | `$: y = x * 2`           |
@@ -169,7 +169,7 @@ Fall back to Svelte 4 syntax only if the installed Svelte version is below 5.
 ### Naming conventions
 
 | Artifact           | Convention      | Example                |
-|--------------------|-----------------|------------------------|
+| ------------------ | --------------- | ---------------------- |
 | Component files    | PascalCase      | `RideCard.svelte`      |
 | Route directories  | lowercase-kebab | `rides/post/`          |
 | JS utility files   | camelCase       | `formatDate.js`        |
@@ -201,11 +201,11 @@ const BASE = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080';
 async function request(path, options = {}) {
 	const res = await fetch(`${BASE}${path}`, {
 		...options,
-		credentials: 'include',            // sends the HTTP-only JWT cookie automatically
+		credentials: 'include', // sends the HTTP-only JWT cookie automatically
 		headers: {
 			'Content-Type': 'application/json',
-			...options.headers,
-		},
+			...options.headers
+		}
 	});
 
 	if (!res.ok) {
@@ -231,7 +231,7 @@ These are the only endpoints that exist. Do not invent paths or methods.
 #### Auth — `/auth`
 
 | Action       | Method | Path           | Request body          | Response                         | Cookie       |
-|--------------|--------|----------------|-----------------------|----------------------------------|--------------|
+| ------------ | ------ | -------------- | --------------------- | -------------------------------- | ------------ |
 | Email login  | POST   | `/auth/login`  | `{ email, password }` | `{ id, name, email, avatarUrl }` | Sets `jwt`   |
 | Google login | POST   | `/auth/google` | `{ idToken }`         | `{ id, name, email, avatarUrl }` | Sets `jwt`   |
 | Logout       | POST   | `/auth/logout` | —                     | 204                              | Clears `jwt` |
@@ -239,7 +239,7 @@ These are the only endpoints that exist. Do not invent paths or methods.
 #### Rides — `/rides`
 
 | Action         | Method | Path         | Request body | Response |
-|----------------|--------|--------------|--------------|----------|
+| -------------- | ------ | ------------ | ------------ | -------- |
 | List all rides | GET    | `/rides`     | —            | `Ride[]` |
 | Get one ride   | GET    | `/rides/:id` | —            | `Ride`   |
 | Post a ride    | POST   | `/rides`     | `RideInput`  | `Ride`   |
@@ -304,7 +304,7 @@ These are the only endpoints that exist. Do not invent paths or methods.
 #### Reviews — `/rides/:id/reviews`
 
 | Action                | Method | Path                 | Request body  | Response   |
-|-----------------------|--------|----------------------|---------------|------------|
+| --------------------- | ------ | -------------------- | ------------- | ---------- |
 | List reviews for ride | GET    | `/rides/:id/reviews` | —             | `Review[]` |
 | Post a review         | POST   | `/rides/:id/reviews` | `ReviewInput` | `Review`   |
 
@@ -346,7 +346,7 @@ These are the only endpoints that exist. Do not invent paths or methods.
 #### Users — `/users`
 
 | Action             | Method | Path         | Request body | Response |
-|--------------------|--------|--------------|--------------|----------|
+| ------------------ | ------ | ------------ | ------------ | -------- |
 | Get any profile    | GET    | `/users/:id` | —            | `User`   |
 | Update own profile | PUT    | `/users/me`  | `UserInput`  | `User`   |
 
@@ -386,7 +386,7 @@ These are the only endpoints that exist. Do not invent paths or methods.
 ### HTTP status codes — how to handle them
 
 | Status | Meaning         | Frontend action                                              |
-|--------|-----------------|--------------------------------------------------------------|
+| ------ | --------------- | ------------------------------------------------------------ |
 | 200    | OK              | Use response body                                            |
 | 201    | Created         | Use response body                                            |
 | 204    | No content      | Return `null`, no body parsing                               |
@@ -404,30 +404,30 @@ Every component that calls an API function must handle loading and error state e
 
 ```svelte
 <script>
-  import { getRides } from '$lib/api/rides.js';
-  import { goto } from '$app/navigation';
+	import { getRides } from '$lib/api/rides.js';
+	import { goto } from '$app/navigation';
 
-  let rides   = $state([]);
-  let loading = $state(true);
-  let error   = $state(null);
+	let rides = $state([]);
+	let loading = $state(true);
+	let error = $state(null);
 
-  $effect(() => {
-    getRides()
-      .then(data  => (rides = data))
-      .catch(err  => {
-        if (err.status === 401) goto('/login');
-        else error = err.message;
-      })
-      .finally(() => (loading = false));
-  });
+	$effect(() => {
+		getRides()
+			.then((data) => (rides = data))
+			.catch((err) => {
+				if (err.status === 401) goto('/login');
+				else error = err.message;
+			})
+			.finally(() => (loading = false));
+	});
 </script>
 
 {#if loading}
-  <p>Loading…</p>
+	<p>Loading…</p>
 {:else if error}
-  <p class="text-red-600">{error}</p>
+	<p class="text-red-600">{error}</p>
 {:else}
-  <!-- render rides -->
+	<!-- render rides -->
 {/if}
 ```
 
@@ -460,7 +460,7 @@ Browser                    SvelteKit server              Spring Boot
 ### Key files and their single responsibility
 
 | File                                 | Responsibility                                                              |
-|--------------------------------------|-----------------------------------------------------------------------------|
+| ------------------------------------ | --------------------------------------------------------------------------- |
 | `hooks.server.js`                    | Reads cookie, decodes JWT, sets `event.locals.user` — runs on every request |
 | `+layout.server.js`                  | Passes `locals.user` to the client as page load data                        |
 | `+layout.svelte`                     | Writes `data.user` into the `currentUser` store                             |
@@ -494,7 +494,7 @@ import { redirect } from '@sveltejs/kit';
 
 export function load({ locals }) {
 	if (!locals.user) throw redirect(302, '/login');
-	return {};    // add data fetching here as needed
+	return {}; // add data fetching here as needed
 }
 ```
 
@@ -527,11 +527,11 @@ Generate `src/lib/components/<Name>.svelte` following this shape:
 
 ```svelte
 <script>
-  let { prop1, prop2 = 'default' } = $props();
+	let { prop1, prop2 = 'default' } = $props();
 </script>
 
 <div class="...tailwind classes...">
-  <!-- markup -->
+	<!-- markup -->
 </div>
 ```
 
