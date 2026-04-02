@@ -17,7 +17,6 @@ export interface UserInfo {
 
 export interface UserCar {
 	id: number;
-	userId: number;
 	brand: string;
 	model: string;
 	color: string;

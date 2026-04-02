@@ -7,8 +7,7 @@
 	import {
 		adminDeleteUser,
 		updateUserRole,
-		getUsers,
-		getUserById,
+ 	getUsers,
 		getUserCars
 	} from '$lib/api/users';
 	import type { UserCar, UserProfile, UserResponseDto, UserReview } from '$lib/types/user';
@@ -25,22 +24,20 @@
 	let adminError = $state('');
 
 	$effect(() => {
-		const id = authStore.user?.id;
-		if (id) {
-			getUserById(id)
-				.then((p) => {
-					profile = p;
-					if (p.cars && p.cars.length > 0) {
-						cars = [...p.cars];
-					} else {
-						getUserCars(id).then((userCars) => {
-							cars = userCars;
-						});
-					}
+		if (authStore.user) {
+			getUserCars()
+				.then((userCars) => {
+					cars = userCars;
 				})
 				.catch(() => {
 					profileError = i18n.t('account.failedLoadUsers');
 				});
+		}
+	});
+
+	$effect(() => {
+		if (authStore.user) {
+			profile = authStore.user as UserProfile;
 		}
 	});
 

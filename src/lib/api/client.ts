@@ -14,11 +14,12 @@ export class ApiError extends Error {
 }
 
 export async function request<T>(path: string, options?: RequestInit): Promise<T> {
-	const res = await fetch(`${PUBLIC_API_URL}/api/v1${path}`, {
+	const res = await fetch(`${PUBLIC_API_URL}${path}`, {
 		...options,
 		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/json',
+			'X-API-Version': '1',
 			...options?.headers
 		}
 	});

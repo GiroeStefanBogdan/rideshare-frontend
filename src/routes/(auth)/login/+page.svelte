@@ -15,10 +15,11 @@
 
 	async function handleLogin(event: Event) {
 		event.preventDefault();
-		const res = await fetch(`${PUBLIC_API_URL}/api/v1/login`, {
+		const res = await fetch(`${PUBLIC_API_URL}/login`, {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'X-API-Version': '1'
 			},
 			credentials: 'include',
 			body: JSON.stringify({
@@ -42,10 +43,11 @@
 
 	async function handleGoogleLogin(event: Event) {
 		event.preventDefault();
-		const res = await fetch(`${PUBLIC_API_URL}/api/v1/oauth2/authorization/google`, {
+		const res = await fetch(`${PUBLIC_API_URL}/oauth2/authorization/google`, {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				'X-API-Version': '1'
 			},
 			credentials: 'include'
 		});

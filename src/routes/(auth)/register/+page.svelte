@@ -26,9 +26,12 @@
 		event.preventDefault();
 
 		if (!error) {
-			const res = await fetch(`${PUBLIC_API_URL}/api/v1/register`, {
+			const res = await fetch(`${PUBLIC_API_URL}/register`, {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'X-API-Version': '1'
+				},
 				body: JSON.stringify({
 					name,
 					email,

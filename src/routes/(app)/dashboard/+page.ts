@@ -6,8 +6,11 @@ import { env } from '$env/dynamic/public';
 const PUBLIC_API_URL = env.PUBLIC_API_URL ?? 'http://localhost:8080';
 
 export const load: PageLoad = async ({ fetch }) => {
-	const res = await fetch(`${PUBLIC_API_URL}/api/v1/dashboard`, {
-		credentials: 'include'
+	const res = await fetch(`${PUBLIC_API_URL}/dashboard`, {
+		credentials: 'include',
+		headers: {
+			'X-API-Version': '1'
+		}
 	});
 
 	if (res.status === 401) {

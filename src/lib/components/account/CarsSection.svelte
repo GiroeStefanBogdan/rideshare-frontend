@@ -70,10 +70,10 @@
 
 		try {
 			if (editingCarId) {
-				const updated = await updateUserCar(authStore.user.id, editingCarId, carData);
+				const updated = await updateUserCar(editingCarId, carData);
 				cars = cars.map((c) => (c.id === updated.id ? updated : c));
 			} else {
-				const created = await createUserCar(authStore.user.id, carData);
+				const created = await createUserCar(carData);
 				cars = [...cars, created];
 			}
 			resetForm();
@@ -90,10 +90,10 @@
 	}
 
 	async function handleDelete() {
-		if (!authStore.user?.id || carIdToDelete === null) return;
+		if (carIdToDelete === null) return;
 
 		try {
-			await deleteUserCar(authStore.user.id, carIdToDelete);
+			await deleteUserCar(carIdToDelete);
 			cars = cars.filter((c) => c.id !== carIdToDelete);
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to delete car';

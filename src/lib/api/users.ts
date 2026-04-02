@@ -35,31 +35,28 @@ export async function getMe(): Promise<UserProfile> {
 	return request<UserProfile>('/users/me');
 }
 
-export async function getUserCars(userId: number): Promise<UserCar[]> {
-	return request<UserCar[]>(`/users/${userId}/cars`);
+export async function getUserCars(): Promise<UserCar[]> {
+	return request<UserCar[]>('/users/me/cars');
 }
 
 export async function createUserCar(
-	userId: number,
-	car: Omit<UserCar, 'id' | 'userId'>
-): Promise<UserCar> {
-	return request<UserCar>(`/users/${userId}/cars`, {
+	car: Omit<UserCar, 'id'>): Promise<UserCar> {
+	return request<UserCar>('/users/me/cars', {
 		method: 'POST',
 		body: JSON.stringify(car)
 	});
 }
 
 export async function updateUserCar(
-	userId: number,
 	carId: number,
-	car: Partial<Omit<UserCar, 'id' | 'userId'>>
+	car: Partial<Omit<UserCar, 'id'>>
 ): Promise<UserCar> {
-	return request<UserCar>(`/users/${userId}/cars/${carId}`, {
+	return request<UserCar>(`/users/me/cars/${carId}`, {
 		method: 'PATCH',
 		body: JSON.stringify(car)
 	});
 }
 
-export async function deleteUserCar(userId: number, carId: number): Promise<void> {
-	return request<void>(`/users/${userId}/cars/${carId}`, { method: 'DELETE' });
+export async function deleteUserCar(carId: number): Promise<void> {
+	return request<void>(`/users/me/cars/${carId}`, { method: 'DELETE' });
 }
