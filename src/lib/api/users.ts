@@ -39,8 +39,7 @@ export async function getUserCars(): Promise<UserCar[]> {
 	return request<UserCar[]>('/users/me/cars');
 }
 
-export async function createUserCar(
-	car: Omit<UserCar, 'id'>): Promise<UserCar> {
+export async function createUserCar(car: Omit<UserCar, 'id'>): Promise<UserCar> {
 	return request<UserCar>('/users/me/cars', {
 		method: 'POST',
 		body: JSON.stringify(car)

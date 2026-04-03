@@ -4,12 +4,7 @@
 	import UserInfoSection from '$lib/components/account/UserInfoSection.svelte';
 	import CarsSection from '$lib/components/account/CarsSection.svelte';
 	import ReviewsSection from '$lib/components/account/ReviewsSection.svelte';
-	import {
-		adminDeleteUser,
-		updateUserRole,
- 	getUsers,
-		getUserCars
-	} from '$lib/api/users';
+	import { adminDeleteUser, updateUserRole, getUsers, getUserCars } from '$lib/api/users';
 	import type { UserCar, UserProfile, UserResponseDto, UserReview } from '$lib/types/user';
 	import { i18n } from '$lib/stores/i18n.svelte';
 
