@@ -1,11 +1,16 @@
 // +page.ts
 import type { PageLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
+import { env } from '$env/dynamic/public';
+
+const PUBLIC_API_URL = env.PUBLIC_API_URL ?? 'http://localhost:8080';
 
 export const load: PageLoad = async ({ fetch }) => {
-	console.log('Fetching dashboard data...');
-	const res = await fetch('http://localhost:8080/dashboard', {
-		credentials: 'include' // 🔐 This tells the browser to send cookies
+	const res = await fetch(`${PUBLIC_API_URL}/dashboard`, {
+		credentials: 'include',
+		headers: {
+			'X-API-Version': '1'
+		}
 	});
 
 	if (res.status === 401) {

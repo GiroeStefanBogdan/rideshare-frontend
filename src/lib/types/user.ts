@@ -20,6 +20,9 @@ export interface UserCar {
 	brand: string;
 	model: string;
 	color: string;
+	year: number;
+	licensePlate: string;
+	numberOfSeats: number;
 }
 
 export interface UserReview {

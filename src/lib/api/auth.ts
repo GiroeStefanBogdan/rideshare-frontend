@@ -25,11 +25,17 @@ export interface GoogleLoginPayload {
  * we never touch browser storage.
  */
 export const login: (payload: LoginPayload) => Promise<LoginResponse> = (payload: LoginPayload) =>
-	request('/auth/login', { method: 'POST', body: JSON.stringify(payload) });
+	request('/login', {
+		method: 'POST',
+		body: JSON.stringify(payload)
+	});
 
 /** Exchange a Google ID-token for a session cookie. */
 export const googleLogin = (payload: GoogleLoginPayload) =>
-	request('/auth/google', { method: 'POST', body: JSON.stringify(payload) });
+	request('/auth/google', {
+		method: 'POST',
+		body: JSON.stringify(payload)
+	});
 
 /** Clear the JWT cookie server-side. */
 export const logout = () => request('/auth/logout', { method: 'POST' });
@@ -52,7 +58,11 @@ export async function handleLogin(
 	} catch (err) {
 		// 401 → bad credentials; anything else → generic server
 		const error = err as { status?: number };
-		setError(error.status === 401 ? i18n.t('auth.invalidCredentials') : i18n.t('auth.loginError'));
+		setError(
+			error.status === 401 || error.status == 403
+				? i18n.t('auth.invalidCredentials')
+				: i18n.t('auth.loginError')
+		);
 	}
 }
 

@@ -20,12 +20,15 @@ export async function request<T>(path: string, options?: RequestInit): Promise<T
 		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/json',
+			'X-API-Version': '1',
 			...options?.headers
 		}
 	});
 
 	if (res.status === 401) {
-		goto(resolve('/login'));
+		if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
+			goto(resolve('/login'));
+		}
 		throw new ApiError(401, 'Unauthorized');
 	}
 

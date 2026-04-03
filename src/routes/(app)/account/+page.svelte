@@ -4,7 +4,7 @@
 	import UserInfoSection from '$lib/components/account/UserInfoSection.svelte';
 	import CarsSection from '$lib/components/account/CarsSection.svelte';
 	import ReviewsSection from '$lib/components/account/ReviewsSection.svelte';
-	import { adminDeleteUser, updateUserRole, getUsers, getUserById } from '$lib/api/users';
+	import { adminDeleteUser, updateUserRole, getUsers, getUserCars } from '$lib/api/users';
 	import type { UserCar, UserProfile, UserResponseDto, UserReview } from '$lib/types/user';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	import { resolve } from '$app/paths';
@@ -20,11 +20,20 @@
 	let adminError = $state('');
 
 	$effect(() => {
-		const id = authStore.user?.id;
-		if (id) {
-			getUserById(id)
-				.then((p) => (profile = p))
-				.catch(() => (profileError = i18n.t('account.failedLoadUsers')));
+		if (authStore.user) {
+			getUserCars()
+				.then((userCars) => {
+					cars = userCars;
+				})
+				.catch(() => {
+					profileError = i18n.t('account.failedLoadUsers');
+				});
+		}
+	});
+
+	$effect(() => {
+		if (authStore.user) {
+			profile = authStore.user as UserProfile;
 		}
 	});
 
@@ -36,8 +45,9 @@
 		}
 	});
 
-	const cars = $derived<UserCar[]>(profile?.cars ?? []);
 	const reviews = $derived<UserReview[]>(profile?.reviews ?? []);
+
+	let cars = $state<UserCar[]>([]);
 
 	async function handleRoleToggle(user: UserResponseDto) {
 		roleUpdating = user.id;
@@ -117,7 +127,7 @@
 	{/if}
 
 	<div class="grid gap-6 lg:grid-cols-2">
-		<CarsSection {cars} />
+		<CarsSection bind:cars />
 		<ReviewsSection {reviews} />
 	</div>
 

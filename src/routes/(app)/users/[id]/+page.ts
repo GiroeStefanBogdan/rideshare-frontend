@@ -7,7 +7,10 @@ const PUBLIC_API_URL = env.PUBLIC_API_URL ?? 'http://localhost:8080';
 
 export const load: PageLoad = async ({ params, fetch }) => {
 	const res = await fetch(`${PUBLIC_API_URL}/users/${params.id}`, {
-		credentials: 'include'
+		credentials: 'include',
+		headers: {
+			'X-API-Version': '1'
+		}
 	});
 
 	if (res.status === 404) {

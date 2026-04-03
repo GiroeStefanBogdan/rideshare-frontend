@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { env } from '$env/dynamic/public';
 	import { authStore } from '$lib/stores/auth.svelte';
 	import type { UserResponseDto } from '$lib/types/user';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	import { resolve } from '$app/paths';
+
+	const PUBLIC_API_URL = env.PUBLIC_API_URL ?? 'http://localhost:8080';
 
 	let name = $state('');
 	let email = $state('');
@@ -24,9 +27,12 @@
 		event.preventDefault();
 
 		if (!error) {
-			const res = await fetch('http://localhost:8080/register', {
+			const res = await fetch(`${PUBLIC_API_URL}/register`, {
 				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'X-API-Version': '1'
+				},
 				body: JSON.stringify({
 					name,
 					email,
