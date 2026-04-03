@@ -34,11 +34,6 @@ export const login: (payload: LoginPayload) => Promise<LoginResponse> = (payload
 export const googleLogin = (payload: GoogleLoginPayload) =>
 	request('/auth/google', {
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'X-API-Version': '1'
-		},
-		credentials: 'include',
 		body: JSON.stringify(payload)
 	});
 
