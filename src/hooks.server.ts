@@ -11,7 +11,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			const res = await fetch(`${PUBLIC_API_URL}/users/me`, {
 				headers: {
 					Cookie: cookie,
-					'Content-Type': 'application/json',
+					'Content-Type': 'application/json'
 				}
 			});
 
