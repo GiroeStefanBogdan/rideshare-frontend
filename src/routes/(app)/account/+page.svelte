@@ -7,6 +7,7 @@
 	import { adminDeleteUser, updateUserRole, getUsers, getUserCars } from '$lib/api/users';
 	import type { UserCar, UserProfile, UserResponseDto, UserReview } from '$lib/types/user';
 	import { i18n } from '$lib/stores/i18n.svelte';
+	import { resolve } from '$app/paths';
 
 	const isAdmin = $derived(authStore.isAdmin);
 
@@ -104,7 +105,7 @@
 				<strong>{i18n.t('account.notLoadedWarning')}</strong>
 				{i18n.t('account.refreshSession')}
 				<a
-					href="/login"
+					href={resolve('/login')}
 					class="text-primary-container hover:text-primary font-bold underline transition-colors"
 					>{i18n.t('hero.loginLink')}</a
 				>
@@ -204,7 +205,7 @@
 									</td>
 									<td class="flex gap-2 px-4 py-3">
 										<a
-											href={`/users/${user.id}`}
+											href={resolve(`/users/${user.id}`)}
 											class="bg-surface-container font-headline text-on-surface hover:bg-surface-container-high rounded-lg px-3 py-1.5 text-xs font-bold transition"
 										>
 											{i18n.t('account.view')}
