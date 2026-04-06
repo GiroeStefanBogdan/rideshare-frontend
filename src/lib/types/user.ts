@@ -3,7 +3,7 @@ export interface UserResponseDto {
 	name: string;
 	email: string;
 	birthday: string; // ISO date string
-	gender: 0 | 1;
+	gender: 'MALE' | 'FEMALE';
 	phoneNumber: string;
 	role: 'ROLE_USER' | 'ROLE_ADMIN';
 	provider: 'LOCAL' | 'GOOGLE';
@@ -51,4 +51,12 @@ export interface ChangePasswordRequest {
 export interface LoginResponse {
 	token: string;
 	user: UserResponseDto;
+}
+
+export interface UpdateUserRequest {
+	name?: string;
+	email?: string;
+	phoneNumber?: string;
+	birthday?: string;
+	gender?: 'MALE' | 'FEMALE';
 }

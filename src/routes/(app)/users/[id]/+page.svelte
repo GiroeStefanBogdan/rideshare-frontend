@@ -9,7 +9,7 @@
 
 	const profile = $derived(data.profile);
 	const genderLabel = $derived(
-		profile.gender === 0 ? i18n.t('account.male') : i18n.t('account.female')
+		profile.gender === 'MALE' ? i18n.t('account.male') : i18n.t('account.female')
 	);
 </script>
 

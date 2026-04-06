@@ -1,5 +1,11 @@
 import { request } from './client';
-import type { ChangePasswordRequest, UserCar, UserProfile, UserResponseDto } from '$lib/types/user';
+import type {
+	ChangePasswordRequest,
+	UpdateUserRequest,
+	UserCar,
+	UserProfile,
+	UserResponseDto
+} from '$lib/types/user';
 
 export async function getUsers(): Promise<UserResponseDto[]> {
 	return request<UserResponseDto[]>('/users');
@@ -53,6 +59,15 @@ export async function updateUserCar(
 	return request<UserCar>(`/users/me/cars/${carId}`, {
 		method: 'PATCH',
 		body: JSON.stringify(car)
+	});
+}
+
+export async function updateUserProfile(
+	updateUserRequest: UpdateUserRequest
+): Promise<UserResponseDto> {
+	return request<UserResponseDto>('/users/me', {
+		method: 'PATCH',
+		body: JSON.stringify(updateUserRequest)
 	});
 }
 

@@ -151,7 +151,17 @@ export const translations = {
 			smokingAllowed: 'Smoking allowed',
 			petFriendly: 'Pet friendly',
 			yes: 'Yes',
-			no: 'No'
+			no: 'No',
+			editProfile: 'Edit Profile',
+			name: 'Name',
+			email: 'Email',
+			phoneNumber: 'Phone Number',
+			birthday: 'Birthday',
+			gender: 'Gender',
+			save: 'Save',
+			male: 'Male',
+			female: 'Female',
+			errorUpdate: 'Failed to update profile. Please try again.'
 		}
 	},
 	ro: {
@@ -309,7 +319,17 @@ export const translations = {
 			smokingAllowed: 'Fumatul permis',
 			petFriendly: 'Acceptă animale',
 			yes: 'Da',
-			no: 'Nu'
+			no: 'Nu',
+			editProfile: 'Editează profil',
+			name: 'Nume',
+			email: 'Email',
+			phoneNumber: 'Număr de telefon',
+			birthday: 'Data nașterii',
+			gender: 'Gen',
+			save: 'Salvează',
+			male: 'Masculin',
+			female: 'Feminin',
+			errorUpdate: 'Eroare la actualizarea profilului. Te rugăm să încerci din nou.'
 		}
 	}
 };
