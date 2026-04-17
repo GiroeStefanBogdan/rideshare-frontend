@@ -143,7 +143,7 @@ export const translations = {
 			alreadyHaveAccount: 'Already have an account?',
 			loginHere: 'Login here',
 			passwordsDoNotMatch: 'Passwords do not match',
-			errorDefault: 'Invalid email or password'
+			errorDefault: 'Registration failed. Please check all fields and try again.'
 		},
 		userProfile: {
 			back: 'Back',
@@ -311,7 +311,7 @@ export const translations = {
 			alreadyHaveAccount: 'Ai deja un cont?',
 			loginHere: 'Autentifică-te aici',
 			passwordsDoNotMatch: 'Parolele nu se potrivesc',
-			errorDefault: 'Email sau parolă invalidă'
+			errorDefault: 'Înregistrarea a eșuat. Verificați toate câmpurile și încercați din nou.'
 		},
 		userProfile: {
 			back: 'Înapoi',

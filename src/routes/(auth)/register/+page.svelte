@@ -206,6 +206,7 @@
 							type="tel"
 							bind:value={phoneNumber}
 							required
+							placeholder="07XX XXX XXX"
 							class="placeholder:text-outline-variant/60 text-on-surface w-full border-none bg-transparent p-0 text-base font-bold focus:ring-0"
 						/>
 					</div>

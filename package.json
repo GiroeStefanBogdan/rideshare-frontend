@@ -35,5 +35,8 @@
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.57.2",
 		"vite": "^6.4.1"
+	},
+	"dependencies": {
+		"@stomp/stompjs": "^7.3.0"
 	}
 }
