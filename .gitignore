@@ -31,4 +31,3 @@ vite.config.ts.timestamp-*
 .junie/
 .kilo/
 .vscode/
-package-lock.json
