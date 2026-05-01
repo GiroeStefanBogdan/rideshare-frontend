@@ -27,3 +27,8 @@ vite.config.ts.timestamp-*
 
 # JetBrains IDE
 .idea/
+
+.junie/
+.kilo/
+.vscode/
+package-lock.json
