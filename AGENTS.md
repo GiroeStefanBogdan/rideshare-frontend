@@ -79,21 +79,25 @@ project-root/
 ├── src/
 │   ├── lib/
 │   │   ├── api/
+│   │   │   ├── auth.ts        # Auth API endpoints
 │   │   │   ├── client.ts      # Base fetch wrapper — credentials:include, error shaping
 │   │   │   └── users.ts       # getUser, updateMe
 │   │   ├── components/
-│   │   │   └── account/       # Account-related components (PascalCase)
-│   │   │       ├── CarsSection.svelte
-│   │   │       ├── ProfileSection.svelte
-│   │   │       ├── ReviewsSection.svelte
-│   │   │       └── UserInfoSection.svelte
+│   │   │   ├── account/       # Account-related components (PascalCase)
+│   │   │   │   ├── CarsSection.svelte
+│   │   │   │   ├── ProfileSection.svelte
+│   │   │   │   ├── ReviewsSection.svelte
+│   │   │   │   └── UserInfoSection.svelte
+│   │   │   └── ui/            # UI components
+│   │   │       └── ConfirmationModal.svelte
 │   │   ├── i18n/
 │   │   │   └── translations.ts
 │   │   ├── stores/
 │   │   │   ├── auth.svelte.ts # Authentication store
 │   │   │   └── i18n.svelte.ts # Internationalization store
-│   │   └── types/
-│   │       └── user.ts        # User type definitions
+│   │   ├── types/
+│   │   │   └── user.ts        # User type definitions
+│   │   └── index.ts
 │   ├── routes/
 │   │   ├── +layout.svelte         # Root layout
 │   │   ├── +page.svelte           # Home / landing
@@ -102,25 +106,42 @@ project-root/
 │   │   │   ├── +layout.svelte     # App layout with nav
 │   │   │   ├── +layout.ts         # App layout load with auth check
 │   │   │   ├── account/
+│   │   │   │   ├── +page.server.ts # Auth guard for account
 │   │   │   │   ├── +page.svelte   # User account page
-│   │   │   │   ├── +page.ts       # Account page load
-│   │   │   │   └── +page.ts # Auth guard for account
+│   │   │   │   └── +page.ts       # Account page load
+│   │   │   ├── contact/
+│   │   │   │   ├── +page.svelte   # Contact page
+│   │   │   │   └── +page.ts       # Contact page load
 │   │   │   ├── dashboard/
 │   │   │   │   ├── +page.svelte   # Dashboard page
 │   │   │   │   └── +page.ts       # Dashboard page load
+│   │   │   ├── privacy/
+│   │   │   │   ├── +page.svelte   # Privacy policy page
+│   │   │   │   └── +page.ts       # Privacy policy load
+│   │   │   ├── publish/
+│   │   │   │   ├── +page.svelte   # Publish ride page
+│   │   │   │   └── +page.ts       # Publish ride load
+│   │   │   ├── rides/
+│   │   │   │   ├── +page.svelte   # Rides listing page
+│   │   │   │   └── +page.ts       # Rides listing load
+│   │   │   ├── terms/
+│   │   │   │   ├── +page.svelte   # Terms of service page
+│   │   │   │   └── +page.ts       # Terms of service load
 │   │   │   └── users/
 │   │   │       └── [id]/
 │   │   │           ├── +page.svelte # User profile page
 │   │   │           └── +page.ts     # User profile load
 │   │   └── (auth)/                 # Authentication routes group
 │   │       ├── +layout.svelte     # Auth layout
+│   │       ├── forgot-password/
+│   │       │   └── +page.svelte   # Forgot password page
 │   │       ├── login/
 │   │       │   └── +page.svelte   # Login page
 │   │       └── register/
 │   │           └── +page.svelte   # Register page
+│   ├── app.css                    # @tailwind directives
 │   ├── app.d.ts                   # App type definitions
-│   ├── app.html
-│   └── app.css                    # @tailwind directives
+│   └── app.html
 ├── static/
 │   └── favicon.png
 ├── .env                           # PUBLIC_API_URL=http://localhost:8080
@@ -245,62 +266,6 @@ These are the only endpoints that exist. Do not invent paths or methods.
 | Post a ride    | POST   | `/rides`     | `RideInput`  | `Ride`   |
 | Delete a ride  | DELETE | `/rides/:id` | —            | 204      |
 
-**`Ride` shape:**
-
-```js
-{
-	id: string,
-		driverId
-:
-	string,
-		driverName
-:
-	string,
-		origin
-:
-	string,
-		destination
-:
-	string,
-		departureTime
-:
-	string,   // ISO 8601
-		seatsAvailable
-:
-	number,
-		pricePerSeat
-:
-	number,    // in cents
-		notes
-:
-	string | null,
-		createdAt
-:
-	string        // ISO 8601
-}
-```
-
-**`RideInput` shape (POST body):**
-
-```js
-{
-	origin: string,
-		destination
-:
-	string,
-		departureTime
-:
-	string,   // ISO 8601
-		seatsAvailable
-:
-	number,
-		pricePerSeat
-:
-	number,    // in cents
-		notes ? : string
-}
-```
-
 #### Reviews — `/rides/:id/reviews`
 
 | Action                | Method | Path                 | Request body  | Response   |
@@ -308,80 +273,12 @@ These are the only endpoints that exist. Do not invent paths or methods.
 | List reviews for ride | GET    | `/rides/:id/reviews` | —             | `Review[]` |
 | Post a review         | POST   | `/rides/:id/reviews` | `ReviewInput` | `Review`   |
 
-**`Review` shape:**
-
-```js
-{
-	id: string,
-		rideId
-:
-	string,
-		authorId
-:
-	string,
-		authorName
-:
-	string,
-		rating
-:
-	number,          // 1–5
-		comment
-:
-	string | null,
-		createdAt
-:
-	string        // ISO 8601
-}
-```
-
-**`ReviewInput` shape:**
-
-```js
-{
-	rating: number,          // 1–5, required
-		comment ? : string
-}
-```
-
 #### Users — `/users`
 
 | Action             | Method | Path         | Request body | Response |
 | ------------------ | ------ | ------------ | ------------ | -------- |
 | Get any profile    | GET    | `/users/:id` | —            | `User`   |
 | Update own profile | PUT    | `/users/me`  | `UserInput`  | `User`   |
-
-**`User` shape:**
-
-```js
-{
-	id: string,
-		name
-:
-	string,
-		email
-:
-	string,
-		avatarUrl
-:
-	string | null,
-		bio
-:
-	string | null,
-		createdAt
-:
-	string        // ISO 8601
-}
-```
-
-**`UserInput` shape:**
-
-```js
-{
-	name ? : string,
-		bio ? : string,
-		avatarUrl ? : string
-}
-```
 
 ### HTTP status codes — how to handle them
 
@@ -496,27 +393,6 @@ export function load({ locals }) {
 	if (!locals.user) throw redirect(302, '/login');
 	return {}; // add data fetching here as needed
 }
-```
-
-### Adding a new API resource
-
-Generate `src/lib/api/<resource>.js` following this exact shape:
-
-```js
-import { get, post, put, del } from './client.js';
-
-export const get
-<
-Resource > s = () => get('/<resources>');
-export const get
-<
-Resource > = (id) => get(`/<resources>/${id}`);
-export const post
-<
-Resource > = (body) => post('/<resources>', body);
-export const delete
-<Resource>= (id) => del(`/
-	<resources>/${id}`);
 ```
 
 Only export the functions that correspond to endpoints that actually exist in the contract above.

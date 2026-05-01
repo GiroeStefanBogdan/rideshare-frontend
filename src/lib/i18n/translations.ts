@@ -43,9 +43,11 @@ export const translations = {
 			fromPlaceholder: 'Departure city',
 			to: 'Arriving in...',
 			toPlaceholder: 'Your destination',
-			date: 'Date and Time',
+			date: 'Date',
 			datePlaceholder: 'When are you starting?',
-			button: 'Search Rides'
+			button: 'Search Rides',
+			noResults: 'No results found',
+			searching: 'Searching...'
 		},
 		values: {
 			communityTitle: 'United Community',
@@ -57,6 +59,36 @@ export const translations = {
 			natureTitle: 'Nature Friendly',
 			natureDesc:
 				'Fewer cars on the road means cleaner air. DrumBun is our way of reducing our collective carbon footprint.'
+		},
+		filters: {
+			title: 'Filters',
+			price: 'Max Price',
+			distanceStart: 'Max distance to pickup (km)',
+			distanceEnd: 'Max distance from drop-off (km)',
+			time: 'Departure Time',
+			timeAny: 'Any time',
+			timeBefore8: 'Before 08:00',
+			time8to12: '08:00 - 12:00',
+			time12to18: '12:00 - 18:00',
+			timeAfter18: 'After 18:00',
+			smokingAllowed: 'Smoking allowed',
+			petFriendly: 'Pet friendly',
+			apply: 'Refresh Results',
+			outdated: 'Filters changed. Refresh to see new results.',
+			seats: 'Seats'
+		},
+		results: {
+			title: 'Rides found',
+			ridesCount: 'rides',
+			loadingTitle: 'Finding rides',
+			loadingDescription: 'Checking the latest options for your route.',
+			loadError: 'Could not load rides. Please try again.',
+			noSearch: 'Choose a route from the dashboard to search rides.',
+			noRides: 'No rides found for this route.',
+			perSeat: '/ seat',
+			distanceStart: 'to pickup',
+			distanceEnd: 'to destination',
+			destination: 'Destination'
 		},
 		footer: {
 			tagline:
@@ -208,9 +240,11 @@ export const translations = {
 			fromPlaceholder: 'Orașul de plecare',
 			to: 'Ajungem în...',
 			toPlaceholder: 'Destinația ta',
-			date: 'Data și Ora',
+			date: 'Data',
 			datePlaceholder: 'Când pornești?',
-			button: 'Caută Curse'
+			button: 'Caută Curse',
+			noResults: 'Niciun rezultat găsit',
+			searching: 'Se caută...'
 		},
 		values: {
 			communityTitle: 'Comunitate Unită',
@@ -222,6 +256,36 @@ export const translations = {
 			natureTitle: 'Prietenos cu Natura',
 			natureDesc:
 				'Mai puține mașini pe drum înseamnă un aer mai curat. DrumBun este modul nostru de a reduce amprenta de carbon colectiv.'
+		},
+		filters: {
+			title: 'Filtre',
+			price: 'Preț maxim',
+			distanceStart: 'Distanță max. până la preluare (km)',
+			distanceEnd: 'Distanță max. de la destinație (km)',
+			time: 'Ora plecării',
+			timeAny: 'Toate',
+			timeBefore8: 'Înainte de 08:00',
+			time8to12: '08:00 - 12:00',
+			time12to18: '12:00 - 18:00',
+			timeAfter18: 'După 18:00',
+			smokingAllowed: 'Fumatul permis',
+			petFriendly: 'Acceptă animale',
+			apply: 'Reîmprospătează Rezultatele',
+			outdated: 'Filtrele au fost modificate. Reîmprospătează pentru rezultate noi.',
+			seats: 'Locuri'
+		},
+		results: {
+			title: 'Curse găsite',
+			ridesCount: 'curse',
+			loadingTitle: 'Căutăm curse',
+			loadingDescription: 'Verificăm cele mai noi opțiuni pentru ruta ta.',
+			loadError: 'Nu s-au putut încărca cursele. Te rugăm să încerci din nou.',
+			noSearch: 'Alege o rută din dashboard pentru a căuta curse.',
+			noRides: 'Nicio cursă găsită pentru această rută.',
+			perSeat: '/ loc',
+			distanceStart: 'până la preluare',
+			distanceEnd: 'până la destinație',
+			destination: 'Destinație'
 		},
 		footer: {
 			tagline:
