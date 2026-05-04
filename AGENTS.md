@@ -93,6 +93,65 @@ These rules override everything else. Violating any of them is always wrong, reg
 
 ---
 
+## UI & Design Tokens
+
+DrumBun uses a **Modern Folk Minimalist** visual language. The tokens below are defined in `tailwind.config.js` as named colors — always use the token names, never raw hex values.
+
+### Colors
+
+| Token        | Hex       | Usage                                                 |
+| ------------ | --------- | ----------------------------------------------------- |
+| `voronet`    | `#003399` | Primary CTAs, active states, links, prominent accents |
+| `charcoal`   | `#333333` | All body text and secondary UI elements               |
+| `soft-white` | `#F8F9FA` | Page backgrounds                                      |
+| `heritage`   | `#F3F4F5` | Card backgrounds, dividers, decorative motifs         |
+
+```svelte
+<!-- correct — use token names -->
+<button class="bg-voronet hover:bg-voronet/90 text-white">Căută Curse</button>
+<p class="text-charcoal">...</p>
+
+<!-- wrong — never hardcode hex values -->
+<button class="bg-[#003399]">...</button>
+```
+
+### Typography
+
+Map every text element to one of these classes — do not invent your own scale:
+
+| Role                                 | Tailwind classes                                  |
+| ------------------------------------ | ------------------------------------------------- |
+| H1 — hero headlines                  | `text-4xl font-bold tracking-tight`               |
+| H2 — section headers                 | `text-2xl font-semibold`                          |
+| H3 — card headers                    | `text-xl font-semibold`                           |
+| Body                                 | `text-base font-normal leading-relaxed`           |
+| Accent labels (e.g. "PLECĂM DIN...") | `text-xs font-semibold uppercase tracking-widest` |
+
+### Spacing, Radius & Shadow
+
+- **Buttons and cards:** `rounded-lg` (8px) — do not use `rounded-full` or `rounded-none`
+- **Floating cards** (e.g. search module): `shadow-md bg-white`
+- **Section padding:** `py-16 px-4` at page level, `p-6` inside cards
+
+### Motion
+
+- **Element entrance:** `transition-all duration-200 ease-in-out` with a slight vertical shift (`translate-y-1` → default)
+- **Hover on interactive cards:** `hover:scale-[1.02] hover:shadow-lg transition-transform duration-150`
+- **Hover on buttons:** `hover:opacity-90 transition-opacity duration-150`
+- Keep motion subtle — this is a community tool, not a marketing site
+
+### Folk Motifs — Intentional Design Decisions
+
+> These are deliberate decorative choices. Do not remove or replace them with generic dividers or backgrounds.
+
+- **Hero backgrounds:** A low-opacity geometric SVG pattern (rhombuses, X-shapes) at `opacity-5` to `opacity-10` — never higher
+- **Module borders:** A 1px geometric border using `border border-heritage` on Search Cards and Ride Cards
+- **Section dividers:** Use the `<FolkDivider />` component, not `<hr>` or a plain border
+
+For the full brand rationale, component-level design spec, and motif usage guidelines, see [`docs/DESIGN.md`](docs/DESIGN.md).
+
+---
+
 ## Adding a New Reusable Component
 
 Generate `src/lib/components/<Domain>/<Name>.svelte` following this shape:
