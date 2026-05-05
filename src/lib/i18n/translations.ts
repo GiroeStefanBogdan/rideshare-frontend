@@ -98,7 +98,9 @@ export const translations = {
 			reservedTitle: 'Ride Reserved',
 			reservedMessage: 'Your booking has been confirmed.',
 			notEnoughSeats: 'Only {seats} seats left',
-			departed: 'Departed'
+			departed: 'Departed',
+			passengers: '{count} passengers',
+			filters: 'Filters'
 		},
 		footer: {
 			tagline:
@@ -305,7 +307,9 @@ export const translations = {
 			reservedTitle: 'Cursă Rezervată',
 			reservedMessage: 'Rezervarea ta a fost confirmată.',
 			notEnoughSeats: 'Doar {seats} locuri disponibile',
-			departed: 'Plecată'
+			departed: 'Plecată',
+			passengers: '{count} pasageri',
+			filters: 'Filtre'
 		},
 		footer: {
 			tagline:

@@ -8,7 +8,7 @@
 	}: {
 		data: {
 			rideId: number;
-			bookingId: number | null;
+			bookingId: string | null;
 		};
 	} = $props();
 </script>
