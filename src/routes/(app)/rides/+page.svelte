@@ -425,79 +425,6 @@
 		</aside>
 
 		<div class="relative w-full md:w-3/4">
-			<div class="border-primary/5 mb-6 rounded-xl border bg-white p-2 shadow-sm md:p-4">
-				<div class="flex flex-col gap-2 md:flex-row">
-					<LocationAutocomplete
-						id="rides-search-from"
-						label={i18n.t('search.from')}
-						placeholder={i18n.t('search.fromPlaceholder')}
-						icon="location_on"
-						bind:value={searchFrom}
-					/>
-					<LocationAutocomplete
-						id="rides-search-to"
-						label={i18n.t('search.to')}
-						placeholder={i18n.t('search.toPlaceholder')}
-						icon="near_me"
-						bind:value={searchTo}
-					/>
-				</div>
-				<div class="flex flex-col gap-2 md:flex-row">
-					<div
-						class="bg-surface-container-low/50 relative flex flex-1 flex-col rounded-lg px-6 py-4 transition-all focus-within:bg-white hover:bg-white"
-					>
-						<label
-							class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
-							>{i18n.t('search.date')}</label
-						>
-						<div class="flex items-center gap-3">
-							<span class="material-symbols-outlined text-primary/70" data-icon="calendar_today"
-								>calendar_today</span
-							>
-							<span class="text-primary text-lg font-bold">{getDisplayDate(searchDate)}</span>
-							<input
-								class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-								type="date"
-								bind:value={searchDate}
-								onclick={showDatePicker}
-							/>
-						</div>
-					</div>
-					<div
-						class="bg-surface-container-low/50 flex w-full flex-col rounded-lg px-4 py-4 transition-all focus-within:bg-white md:w-32"
-					>
-						<label
-							for="rides-search-seats"
-							class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
-							>{i18n.t('filters.seats')}</label
-						>
-						<div class="flex items-center gap-2">
-							<span class="material-symbols-outlined text-primary/70" data-icon="person"
-								>person</span
-							>
-							<input
-								id="rides-search-seats"
-								class="placeholder:text-outline-variant/60 w-full border-none bg-transparent p-0 text-lg font-bold focus:ring-0"
-								type="number"
-								min="1"
-								max="4"
-								bind:value={searchSeats}
-							/>
-						</div>
-					</div>
-					<button
-						onclick={handleRidesSearch}
-						disabled={!searchFrom || !searchTo || !searchDate || loading}
-						class="bg-primary hover:bg-primary-container font-headline flex w-full items-center justify-center gap-3 rounded-lg px-10 py-6 text-lg font-bold text-white transition-all disabled:opacity-50 md:w-auto"
-					>
-						{i18n.t('search.button')}
-						<span class="material-symbols-outlined transition-transform" data-icon="arrow_forward"
-							>arrow_forward</span
-						>
-					</button>
-				</div>
-			</div>
-
 			<div class="mb-6 flex items-center justify-between">
 				<h1 class="font-headline text-primary text-3xl font-extrabold">
 					{i18n.t('results.title')}
@@ -537,209 +464,208 @@
 						</div>
 					</div>
 				</div>
-
-				<Modal bind:show={showSearchModal}>
-					<div class="space-y-5">
-						<div class="flex items-center justify-between">
-							<h3 class="font-headline text-primary text-lg font-bold">{i18n.t('search.title')}</h3>
-							<button
-								type="button"
-								onclick={() => (showSearchModal = false)}
-								class="text-secondary/60 hover:text-secondary rounded-lg p-1 transition-colors"
-								aria-label={i18n.t('common.cancel')}
-							>
-								<span class="material-symbols-outlined text-xl" data-icon="close">close</span>
-							</button>
-						</div>
-						<LocationAutocomplete
-							id="modal-from"
-							label={i18n.t('search.from')}
-							placeholder={i18n.t('search.fromPlaceholder')}
-							icon="location_on"
-							bind:value={searchFrom}
-						/>
-						<LocationAutocomplete
-							id="modal-to"
-							label={i18n.t('search.to')}
-							placeholder={i18n.t('search.toPlaceholder')}
-							icon="near_me"
-							bind:value={searchTo}
-						/>
-						<div
-							class="bg-surface-container-low/50 relative flex flex-1 flex-col rounded-lg px-6 py-4 transition-all focus-within:bg-white hover:bg-white"
-						>
-							<label
-								class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
-								>{i18n.t('search.date')}</label
-							>
-							<div class="flex items-center gap-3">
-								<span class="material-symbols-outlined text-primary/70" data-icon="calendar_today"
-									>calendar_today</span
-								>
-								<span class="text-primary text-lg font-bold">{getDisplayDate(searchDate)}</span>
-								<input
-									class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-									type="date"
-									bind:value={searchDate}
-									onclick={showDatePicker}
-								/>
-							</div>
-						</div>
-						<div
-							class="bg-surface-container-low/50 flex w-full flex-col rounded-lg px-4 py-4 transition-all focus-within:bg-white"
-						>
-							<label
-								for="modal-seats"
-								class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
-								>{i18n.t('filters.seats')}</label
-							>
-							<div class="flex items-center gap-2">
-								<span class="material-symbols-outlined text-primary/70" data-icon="person"
-									>person</span
-								>
-								<input
-									id="modal-seats"
-									class="placeholder:text-outline-variant/60 w-full border-none bg-transparent p-0 text-lg font-bold focus:ring-0"
-									type="number"
-									min="1"
-									max="4"
-									bind:value={searchSeats}
-								/>
-							</div>
-						</div>
-						<button
-							onclick={handleMobileSearch}
-							disabled={!searchFrom || !searchTo || !searchDate || loading}
-							class="bg-primary hover:bg-primary-container font-headline flex w-full items-center justify-center gap-3 rounded-lg px-10 py-4 text-lg font-bold text-white transition-all disabled:opacity-50"
-						>
-							{i18n.t('search.button')}
-							<span class="material-symbols-outlined transition-transform" data-icon="arrow_forward"
-								>arrow_forward</span
-							>
-						</button>
-					</div>
-				</Modal>
-
-				<Modal bind:show={showFilterModal}>
-					<div class="space-y-5">
-						<div class="flex items-center justify-between">
-							<h3 class="font-headline text-primary text-lg font-bold">
-								{i18n.t('rides.filters')}
-							</h3>
-							<button
-								type="button"
-								onclick={() => (showFilterModal = false)}
-								class="text-secondary/60 hover:text-secondary rounded-lg p-1 transition-colors"
-								aria-label={i18n.t('common.cancel')}
-							>
-								<span class="material-symbols-outlined text-xl" data-icon="close">close</span>
-							</button>
-						</div>
-						<div class="space-y-2">
-							<label
-								for="modal-filter-distance"
-								class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
-								>{i18n.t('filters.distanceStart')}</label
-							>
-							<div class="flex items-center gap-2">
-								<input
-									id="modal-filter-distance"
-									type="number"
-									min="0"
-									bind:value={maxDistanceStart}
-									placeholder="10"
-									class="border-outline-variant/30 text-primary w-full rounded-lg border bg-white px-3 py-2 focus:ring-0"
-								/>
-								<span class="text-secondary/70 text-sm">km</span>
-							</div>
-						</div>
-						<div class="space-y-2">
-							<label
-								class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
-								>{i18n.t('filters.time')}</label
-							>
-							<div class="flex flex-col gap-2">
-								<label class="flex cursor-pointer items-center gap-3">
-									<input
-										type="radio"
-										name="modal-timeWindow"
-										checked={timeWindow === null}
-										onchange={() => (timeWindow = null)}
-										class="text-primary focus:ring-primary"
-									/>
-									<span class="text-secondary text-sm">{i18n.t('filters.timeAny')}</span>
-								</label>
-								<label class="flex cursor-pointer items-center gap-3">
-									<input
-										type="radio"
-										name="modal-timeWindow"
-										checked={timeWindow === 'BEFORE_8'}
-										onchange={() => (timeWindow = 'BEFORE_8')}
-										class="text-primary focus:ring-primary"
-									/>
-									<span class="text-secondary text-sm">{i18n.t('filters.timeBefore8')}</span>
-								</label>
-								<label class="flex cursor-pointer items-center gap-3">
-									<input
-										type="radio"
-										name="modal-timeWindow"
-										checked={timeWindow === '8_12'}
-										onchange={() => (timeWindow = '8_12')}
-										class="text-primary focus:ring-primary"
-									/>
-									<span class="text-secondary text-sm">{i18n.t('filters.time8to12')}</span>
-								</label>
-								<label class="flex cursor-pointer items-center gap-3">
-									<input
-										type="radio"
-										name="modal-timeWindow"
-										checked={timeWindow === '12_18'}
-										onchange={() => (timeWindow = '12_18')}
-										class="text-primary focus:ring-primary"
-									/>
-									<span class="text-secondary text-sm">{i18n.t('filters.time12to18')}</span>
-								</label>
-								<label class="flex cursor-pointer items-center gap-3">
-									<input
-										type="radio"
-										name="modal-timeWindow"
-										checked={timeWindow === 'AFTER_18'}
-										onchange={() => (timeWindow = 'AFTER_18')}
-										class="text-primary focus:ring-primary"
-									/>
-									<span class="text-secondary text-sm">{i18n.t('filters.timeAfter18')}</span>
-								</label>
-							</div>
-						</div>
-						<div class="space-y-4 pt-2">
-							<label class="flex cursor-pointer items-center justify-between">
-								<span class="text-secondary text-sm">{i18n.t('filters.smokingAllowed')}</span>
-								<input
-									type="checkbox"
-									bind:checked={smokingAllowed}
-									class="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300"
-								/>
-							</label>
-							<label class="flex cursor-pointer items-center justify-between">
-								<span class="text-secondary text-sm">{i18n.t('filters.petFriendly')}</span>
-								<input
-									type="checkbox"
-									bind:checked={petFriendly}
-									class="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300"
-								/>
-							</label>
-						</div>
-						<button
-							onclick={handleMobileFilters}
-							disabled={loading}
-							class="bg-primary hover:bg-primary-container font-headline flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 font-bold text-white transition-all disabled:cursor-not-allowed disabled:opacity-45"
-						>
-							<span class="material-symbols-outlined text-lg" data-icon="refresh">refresh</span>
-							{i18n.t('filters.apply')}
-						</button>
-					</div>
-				</Modal>
 			{/if}
+
+			<Modal bind:show={showSearchModal}>
+				<div class="space-y-5">
+					<div class="flex items-center justify-between">
+						<h3 class="font-headline text-primary text-lg font-bold">{i18n.t('search.title')}</h3>
+						<button
+							type="button"
+							onclick={() => (showSearchModal = false)}
+							class="text-secondary/60 hover:text-secondary rounded-lg p-1 transition-colors"
+							aria-label={i18n.t('common.cancel')}
+						>
+							<span class="material-symbols-outlined text-xl" data-icon="close">close</span>
+						</button>
+					</div>
+					<LocationAutocomplete
+						id="modal-from"
+						label={i18n.t('search.from')}
+						placeholder={i18n.t('search.fromPlaceholder')}
+						icon="location_on"
+						bind:value={searchFrom}
+					/>
+					<LocationAutocomplete
+						id="modal-to"
+						label={i18n.t('search.to')}
+						placeholder={i18n.t('search.toPlaceholder')}
+						icon="near_me"
+						bind:value={searchTo}
+					/>
+					<div
+						class="bg-surface-container-low/50 relative flex flex-1 flex-col rounded-lg px-6 py-4 transition-all focus-within:bg-white hover:bg-white"
+					>
+						<label
+							class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
+							>{i18n.t('search.date')}</label
+						>
+						<div class="flex items-center gap-3">
+							<span class="material-symbols-outlined text-primary/70" data-icon="calendar_today"
+								>calendar_today</span
+							>
+							<span class="text-primary text-lg font-bold">{getDisplayDate(searchDate)}</span>
+							<input
+								class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+								type="date"
+								bind:value={searchDate}
+								onclick={showDatePicker}
+							/>
+						</div>
+					</div>
+					<div
+						class="bg-surface-container-low/50 flex w-full flex-col rounded-lg px-4 py-4 transition-all focus-within:bg-white"
+					>
+						<label
+							for="modal-seats"
+							class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
+							>{i18n.t('filters.seats')}</label
+						>
+						<div class="flex items-center gap-2">
+							<span class="material-symbols-outlined text-primary/70" data-icon="person"
+								>person</span
+							>
+							<input
+								id="modal-seats"
+								class="placeholder:text-outline-variant/60 w-full border-none bg-transparent p-0 text-lg font-bold focus:ring-0"
+								type="number"
+								min="1"
+								max="4"
+								bind:value={searchSeats}
+							/>
+						</div>
+					</div>
+					<button
+						onclick={handleMobileSearch}
+						disabled={!searchFrom || !searchTo || !searchDate || loading}
+						class="bg-primary hover:bg-primary-container font-headline flex w-full items-center justify-center gap-3 rounded-lg px-10 py-4 text-lg font-bold text-white transition-all disabled:opacity-50"
+					>
+						{i18n.t('search.button')}
+						<span class="material-symbols-outlined transition-transform" data-icon="arrow_forward"
+							>arrow_forward</span
+						>
+					</button>
+				</div>
+			</Modal>
+
+			<Modal bind:show={showFilterModal}>
+				<div class="space-y-5">
+					<div class="flex items-center justify-between">
+						<h3 class="font-headline text-primary text-lg font-bold">
+							{i18n.t('rides.filters')}
+						</h3>
+						<button
+							type="button"
+							onclick={() => (showFilterModal = false)}
+							class="text-secondary/60 hover:text-secondary rounded-lg p-1 transition-colors"
+							aria-label={i18n.t('common.cancel')}
+						>
+							<span class="material-symbols-outlined text-xl" data-icon="close">close</span>
+						</button>
+					</div>
+					<div class="space-y-2">
+						<label
+							for="modal-filter-distance"
+							class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
+							>{i18n.t('filters.distanceStart')}</label
+						>
+						<div class="flex items-center gap-2">
+							<input
+								id="modal-filter-distance"
+								type="number"
+								min="0"
+								bind:value={maxDistanceStart}
+								placeholder="10"
+								class="border-outline-variant/30 text-primary w-full rounded-lg border bg-white px-3 py-2 focus:ring-0"
+							/>
+							<span class="text-secondary/70 text-sm">km</span>
+						</div>
+					</div>
+					<div class="space-y-2">
+						<label class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
+							>{i18n.t('filters.time')}</label
+						>
+						<div class="flex flex-col gap-2">
+							<label class="flex cursor-pointer items-center gap-3">
+								<input
+									type="radio"
+									name="modal-timeWindow"
+									checked={timeWindow === null}
+									onchange={() => (timeWindow = null)}
+									class="text-primary focus:ring-primary"
+								/>
+								<span class="text-secondary text-sm">{i18n.t('filters.timeAny')}</span>
+							</label>
+							<label class="flex cursor-pointer items-center gap-3">
+								<input
+									type="radio"
+									name="modal-timeWindow"
+									checked={timeWindow === 'BEFORE_8'}
+									onchange={() => (timeWindow = 'BEFORE_8')}
+									class="text-primary focus:ring-primary"
+								/>
+								<span class="text-secondary text-sm">{i18n.t('filters.timeBefore8')}</span>
+							</label>
+							<label class="flex cursor-pointer items-center gap-3">
+								<input
+									type="radio"
+									name="modal-timeWindow"
+									checked={timeWindow === '8_12'}
+									onchange={() => (timeWindow = '8_12')}
+									class="text-primary focus:ring-primary"
+								/>
+								<span class="text-secondary text-sm">{i18n.t('filters.time8to12')}</span>
+							</label>
+							<label class="flex cursor-pointer items-center gap-3">
+								<input
+									type="radio"
+									name="modal-timeWindow"
+									checked={timeWindow === '12_18'}
+									onchange={() => (timeWindow = '12_18')}
+									class="text-primary focus:ring-primary"
+								/>
+								<span class="text-secondary text-sm">{i18n.t('filters.time12to18')}</span>
+							</label>
+							<label class="flex cursor-pointer items-center gap-3">
+								<input
+									type="radio"
+									name="modal-timeWindow"
+									checked={timeWindow === 'AFTER_18'}
+									onchange={() => (timeWindow = 'AFTER_18')}
+									class="text-primary focus:ring-primary"
+								/>
+								<span class="text-secondary text-sm">{i18n.t('filters.timeAfter18')}</span>
+							</label>
+						</div>
+					</div>
+					<div class="space-y-4 pt-2">
+						<label class="flex cursor-pointer items-center justify-between">
+							<span class="text-secondary text-sm">{i18n.t('filters.smokingAllowed')}</span>
+							<input
+								type="checkbox"
+								bind:checked={smokingAllowed}
+								class="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300"
+							/>
+						</label>
+						<label class="flex cursor-pointer items-center justify-between">
+							<span class="text-secondary text-sm">{i18n.t('filters.petFriendly')}</span>
+							<input
+								type="checkbox"
+								bind:checked={petFriendly}
+								class="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300"
+							/>
+						</label>
+					</div>
+					<button
+						onclick={handleMobileFilters}
+						disabled={loading}
+						class="bg-primary hover:bg-primary-container font-headline flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 font-bold text-white transition-all disabled:cursor-not-allowed disabled:opacity-45"
+					>
+						<span class="material-symbols-outlined text-lg" data-icon="refresh">refresh</span>
+						{i18n.t('filters.apply')}
+					</button>
+				</div>
+			</Modal>
 
 			{#if error}
 				<div
