@@ -78,13 +78,13 @@ The JWT is issued by Spring Boot and stored in an **HTTP-only cookie**. Login an
 
 ### Responsibility map
 
-| File | Responsibility |
-|---|---|
-| `hooks.server.ts` | Reads cookie, decodes JWT, sets `event.locals.user` — runs on every request |
-| `+layout.server.ts` | Passes `locals.user` to the client as page load data |
-| `+layout.svelte` | Writes `data.user` into the `auth.svelte.ts` store |
-| `src/lib/stores/auth.svelte.ts` | Holds decoded user payload or `null` — never fetches or reads cookies |
-| `+page.server.ts` (protected routes) | Checks `locals.user`, redirects to `/login` if null |
+| File                                 | Responsibility                                                              |
+| ------------------------------------ | --------------------------------------------------------------------------- |
+| `hooks.server.ts`                    | Reads cookie, decodes JWT, sets `event.locals.user` — runs on every request |
+| `+layout.server.ts`                  | Passes `locals.user` to the client as page load data                        |
+| `+layout.svelte`                     | Writes `data.user` into the `auth.svelte.ts` store                          |
+| `src/lib/stores/auth.svelte.ts`      | Holds decoded user payload or `null` — never fetches or reads cookies       |
+| `+page.server.ts` (protected routes) | Checks `locals.user`, redirects to `/login` if null                         |
 
 ### Form action pattern
 
@@ -97,16 +97,16 @@ import { fail, redirect } from '@sveltejs/kit';
 import { post } from '$lib/api/client';
 
 export const actions = {
-  default: async ({ request }) => {
-    const data = await request.formData();
-    try {
-      await post('/rides', payload);
-    } catch (err) {
-      if (err.status === 400) return fail(400, { errors: err.body.errors });
-      return fail(500, { message: 'Server error' });
-    }
-    throw redirect(303, '/dashboard');
-  }
+	default: async ({ request }) => {
+		const data = await request.formData();
+		try {
+			await post('/rides', payload);
+		} catch (err) {
+			if (err.status === 400) return fail(400, { errors: err.body.errors });
+			return fail(500, { message: 'Server error' });
+		}
+		throw redirect(303, '/dashboard');
+	}
 };
 ```
 
@@ -114,8 +114,8 @@ export const actions = {
 
 ```svelte
 <form method="POST" use:enhance>
-  <!-- form fields -->
-  <button type="submit">Submit</button>
+	<!-- form fields -->
+	<button type="submit">Submit</button>
 </form>
 ```
 

@@ -25,6 +25,16 @@ export interface RideSearchResult {
 	distanceToEndKm: number;
 }
 
+export interface ReserveRideRequest {
+	fromStopId: number;
+	toStopId: number;
+	seats: number;
+}
+
+export interface ReserveRideResponse {
+	id: number; // bookingId
+}
+
 export interface RideSearchParams {
 	fromId: number;
 	fromType: 'ADMIN_UNIT' | 'STREET';

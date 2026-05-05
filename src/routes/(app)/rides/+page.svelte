@@ -1,9 +1,13 @@
 <script lang="ts">
 	import { fade, fly } from 'svelte/transition';
-	import { searchRides } from '$lib/api/rides.js';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { searchRides, reserveRide } from '$lib/api/rides.js';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	import { rideSearch } from '$lib/stores/rideSearch.svelte';
 	import type { RideSearchParams, RideSearchResult } from '$lib/types/ride.js';
+	import type { LocationResult } from '$lib/types/location.js';
+	import LocationAutocomplete from '$lib/components/ui/LocationAutocomplete.svelte';
 
 	let {
 		data
@@ -27,6 +31,45 @@
 	let loading = $state(!!initialParams && results.length === 0);
 	let error = $state<string | null>(null);
 	let lastSearchKey = $state('');
+
+	let searchFrom = $state<LocationResult | null>(rideSearch.fromLocation ?? null);
+	let searchTo = $state<LocationResult | null>(rideSearch.toLocation ?? null);
+	let searchDate = $state(rideSearch.params?.date ?? new Date().toISOString().split('T')[0]);
+	let searchSeats = $state(rideSearch.params?.seats ?? 1);
+
+	function getDisplayDate(isoStr: string) {
+		if (!isoStr) return '';
+		const d = new Date(isoStr);
+		return d.toLocaleDateString(i18n.lang === 'ro' ? 'ro-RO' : 'en-US', {
+			weekday: 'short',
+			day: 'numeric',
+			month: 'short'
+		});
+	}
+
+	function showDatePicker(event: MouseEvent) {
+		const input = event.currentTarget as HTMLInputElement;
+		input.showPicker?.();
+	}
+
+	function handleRidesSearch() {
+		if (!searchFrom || !searchTo || !searchDate || loading) return;
+
+		const params: RideSearchParams = {
+			fromId: searchFrom.id,
+			fromType: searchFrom.type,
+			toId: searchTo.id,
+			toType: searchTo.type,
+			date: searchDate,
+			seats: searchSeats,
+			maxDistanceStart: maxDistanceStart && maxDistanceStart > 0 ? maxDistanceStart : undefined,
+			timeWindow: timeWindow || undefined,
+			smokingAllowed: smokingAllowed || undefined,
+			petFriendly: petFriendly || undefined
+		};
+
+		rideSearch.setParams(params, { fromLocation: searchFrom, toLocation: searchTo });
+	}
 
 	let filtersChanged = $derived(
 		!!searchParams &&
@@ -94,6 +137,28 @@
 
 	function formatDistance(value: number) {
 		return value.toFixed(1);
+	}
+
+	let cardStates = $state<Record<number, { reserving: boolean; error: string | null }>>({});
+
+	async function handleReserve(ride: RideSearchResult) {
+		cardStates[ride.rideId] = { reserving: true, error: null };
+
+		try {
+			const requestedSeats = rideSearch.params?.seats ?? 1;
+			const response = await reserveRide(ride.rideId, {
+				fromStopId: ride.startStop.id,
+				toStopId: ride.endStop.id,
+				seats: requestedSeats
+			});
+			await goto(resolve(`/rides/${ride.rideId}?bookingId=${response.id}`));
+		} catch (err) {
+			const current = cardStates[ride.rideId];
+			if (current) {
+				current.reserving = false;
+				current.error = err instanceof Error ? err.message : i18n.t('rides.reserveError');
+			}
+		}
 	}
 </script>
 
@@ -216,6 +281,79 @@
 		</aside>
 
 		<div class="relative w-full md:w-3/4">
+			<div class="border-primary/5 mb-6 rounded-xl border bg-white p-2 shadow-sm md:p-4">
+				<div class="flex flex-col gap-2 md:flex-row">
+					<LocationAutocomplete
+						id="rides-search-from"
+						label={i18n.t('search.from')}
+						placeholder={i18n.t('search.fromPlaceholder')}
+						icon="location_on"
+						bind:value={searchFrom}
+					/>
+					<LocationAutocomplete
+						id="rides-search-to"
+						label={i18n.t('search.to')}
+						placeholder={i18n.t('search.toPlaceholder')}
+						icon="near_me"
+						bind:value={searchTo}
+					/>
+				</div>
+				<div class="flex flex-col gap-2 md:flex-row">
+					<div
+						class="bg-surface-container-low/50 relative flex flex-1 flex-col rounded-lg px-6 py-4 transition-all focus-within:bg-white hover:bg-white"
+					>
+						<label
+							class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
+							>{i18n.t('search.date')}</label
+						>
+						<div class="flex items-center gap-3">
+							<span class="material-symbols-outlined text-primary/70" data-icon="calendar_today"
+								>calendar_today</span
+							>
+							<span class="text-primary text-lg font-bold">{getDisplayDate(searchDate)}</span>
+							<input
+								class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+								type="date"
+								bind:value={searchDate}
+								onclick={showDatePicker}
+							/>
+						</div>
+					</div>
+					<div
+						class="bg-surface-container-low/50 flex w-full flex-col rounded-lg px-4 py-4 transition-all focus-within:bg-white md:w-32"
+					>
+						<label
+							for="rides-search-seats"
+							class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
+							>{i18n.t('filters.seats')}</label
+						>
+						<div class="flex items-center gap-2">
+							<span class="material-symbols-outlined text-primary/70" data-icon="person"
+								>person</span
+							>
+							<input
+								id="rides-search-seats"
+								class="placeholder:text-outline-variant/60 w-full border-none bg-transparent p-0 text-lg font-bold focus:ring-0"
+								type="number"
+								min="1"
+								max="4"
+								bind:value={searchSeats}
+							/>
+						</div>
+					</div>
+					<button
+						onclick={handleRidesSearch}
+						disabled={!searchFrom || !searchTo || !searchDate || loading}
+						class="bg-primary hover:bg-primary-container font-headline flex w-full items-center justify-center gap-3 rounded-lg px-10 py-6 text-lg font-bold text-white transition-all disabled:opacity-50 md:w-auto"
+					>
+						{i18n.t('search.button')}
+						<span class="material-symbols-outlined transition-transform" data-icon="arrow_forward"
+							>arrow_forward</span
+						>
+					</button>
+				</div>
+			</div>
+
 			<div class="mb-6 flex items-center justify-between">
 				<h1 class="font-headline text-primary text-3xl font-extrabold">
 					{i18n.t('results.title')}
@@ -286,10 +424,19 @@
 					</div>
 				{:else}
 					{#each results as ride (ride.rideId)}
+						{@const isDeparted = new Date(ride.startStop.departsAt) < new Date()}
 						<article
-							class="glass-panel border-outline-variant/20 hover:ia-border-accent rounded-xl border p-6 shadow-sm transition-all hover:shadow-md"
+							class="glass-panel border-outline-variant/20 hover:ia-border-accent relative rounded-xl border p-6 shadow-sm transition-all hover:shadow-md"
+							class:opacity-50={isDeparted}
 							in:fly={{ y: 10, duration: 180 }}
 						>
+							{#if isDeparted}
+								<span
+									class="absolute top-3 right-3 rounded bg-gray-400 px-2 py-0.5 text-xs font-bold text-white"
+								>
+									{i18n.t('rides.departed')}
+								</span>
+							{/if}
 							<div class="flex items-start justify-between gap-4 md:items-center">
 								<div class="flex items-center gap-4">
 									<div
@@ -332,6 +479,41 @@
 									>
 										{i18n.t('results.perSeat')}
 									</p>
+									{#if !isDeparted}
+										{#if cardStates[ride.rideId]?.reserving}
+											<button
+												disabled
+												class="bg-primary/60 mt-2 inline-flex items-center gap-2 rounded-lg px-4 py-1.5 text-sm font-bold text-white"
+											>
+												<span class="material-symbols-outlined animate-spin text-sm"
+													>progress_activity</span
+												>
+												{i18n.t('rides.reserveLoading')}
+											</button>
+										{:else if (rideSearch.params?.seats ?? 1) > ride.seatsAvailable}
+											<button
+												disabled
+												class="mt-2 cursor-not-allowed rounded-lg bg-gray-200 px-4 py-1.5 text-sm font-semibold text-gray-400"
+												title={i18n
+													.t('rides.notEnoughSeats')
+													.replace('{seats}', String(ride.seatsAvailable))}
+											>
+												{i18n
+													.t('rides.notEnoughSeats')
+													.replace('{seats}', String(ride.seatsAvailable))}
+											</button>
+										{:else}
+											<button
+												onclick={() => handleReserve(ride)}
+												class="bg-primary hover:bg-primary-container mt-2 inline-flex items-center gap-2 rounded-lg px-4 py-1.5 text-sm font-bold text-white transition-opacity hover:opacity-90"
+											>
+												{i18n.t('rides.reserve')}
+											</button>
+										{/if}
+										{#if cardStates[ride.rideId]?.error}
+											<p class="mt-1 text-xs text-red-600">{cardStates[ride.rideId].error}</p>
+										{/if}
+									{/if}
 								</div>
 							</div>
 

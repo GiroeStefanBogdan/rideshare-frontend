@@ -9,10 +9,10 @@
 	let { data } = $props();
 	let { email }: { email: string | null } = data;
 
-	let fromLocation = $state<LocationResult | null>(null);
-	let toLocation = $state<LocationResult | null>(null);
-	let searchDate = $state(new Date().toISOString().split('T')[0]);
-	let searchSeats = $state(1);
+	let fromLocation = $state<LocationResult | null>(rideSearch.fromLocation ?? null);
+	let toLocation = $state<LocationResult | null>(rideSearch.toLocation ?? null);
+	let searchDate = $state(rideSearch.params?.date ?? new Date().toISOString().split('T')[0]);
+	let searchSeats = $state(rideSearch.params?.seats ?? 1);
 	let searching = $state(false);
 
 	function getDisplayDate(isoStr: string) {
@@ -43,7 +43,7 @@
 				date: searchDate,
 				seats: searchSeats
 			},
-			{ clearResults: true }
+			{ clearResults: true, fromLocation, toLocation }
 		);
 
 		try {
