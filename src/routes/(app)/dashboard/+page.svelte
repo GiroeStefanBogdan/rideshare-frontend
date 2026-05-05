@@ -7,7 +7,7 @@
 	import { resolve } from '$app/paths';
 
 	let { data } = $props();
-	let { email }: { email: string | null } = data;
+	let email = $derived(data.email);
 
 	let fromLocation = $state<LocationResult | null>(rideSearch.fromLocation ?? null);
 	let toLocation = $state<LocationResult | null>(rideSearch.toLocation ?? null);
@@ -120,6 +120,7 @@
 					class="bg-surface-container-low/50 relative flex flex-1 flex-col rounded-lg px-6 py-4 transition-all focus-within:bg-white hover:bg-white"
 				>
 					<label
+						for="search-date"
 						class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
 						>{i18n.t('search.date')}</label
 					>
@@ -129,6 +130,7 @@
 						>
 						<span class="text-primary text-lg font-bold">{getDisplayDate(searchDate)}</span>
 						<input
+							id="search-date"
 							class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
 							type="date"
 							bind:value={searchDate}

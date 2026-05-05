@@ -41,8 +41,11 @@ jobs:
       - name: ✅ TypeScript type checking
         run: npm run check
 
-      - name: 🧹 Format & lint check
-        run: npm run lint
+      - name: 🎨 Prettier check
+        run: npx prettier --check .
+
+      - name: 🔍 ESLint check
+        run: npx eslint .
 
       - name: 🏗 Build SvelteKit project
         run: npm run build

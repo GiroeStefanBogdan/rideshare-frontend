@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { fade, fly } from 'svelte/transition';
+	import { untrack } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { searchRides, reserveRide } from '$lib/api/rides.js';
@@ -19,17 +20,17 @@
 		};
 	} = $props();
 
-	const initialParams = rideSearch.params ?? data.searchParams;
+	const initialParams = untrack(() => rideSearch.params ?? data.searchParams);
 
 	let results = $state<RideSearchResult[]>(
-		rideSearch.results.length ? rideSearch.results : data.results
+		untrack(() => (rideSearch.results.length ? rideSearch.results : data.results))
 	);
 	let searchParams = $state<RideSearchParams | null>(initialParams);
 	let maxDistanceStart = $state<number | undefined>(initialParams?.maxDistanceStart);
 	let timeWindow = $state<RideSearchParams['timeWindow']>(initialParams?.timeWindow || null);
 	let smokingAllowed = $state<boolean>(!!initialParams?.smokingAllowed);
 	let petFriendly = $state<boolean>(!!initialParams?.petFriendly);
-	let loading = $state(!!initialParams && results.length === 0);
+	let loading = $state(untrack(() => !!initialParams && results.length === 0));
 	let error = $state<string | null>(null);
 	let lastSearchKey = $state('');
 
@@ -335,9 +336,9 @@
 						</div>
 					</div>
 
-					<div class="space-y-2">
-						<label class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
-							>{i18n.t('filters.time')}</label
+					<fieldset class="space-y-2">
+						<legend class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
+							>{i18n.t('filters.time')}</legend
 						>
 						<div class="flex flex-col gap-2">
 							<label class="flex cursor-pointer items-center gap-3">
@@ -391,7 +392,7 @@
 								<span class="text-secondary text-sm">{i18n.t('filters.timeAfter18')}</span>
 							</label>
 						</div>
-					</div>
+					</fieldset>
 
 					<div class="space-y-4 pt-2">
 						<label class="flex cursor-pointer items-center justify-between">
@@ -497,6 +498,7 @@
 						class="bg-surface-container-low/50 relative flex flex-1 flex-col rounded-lg px-6 py-4 transition-all focus-within:bg-white hover:bg-white"
 					>
 						<label
+							for="modal-date"
 							class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
 							>{i18n.t('search.date')}</label
 						>
@@ -506,6 +508,7 @@
 							>
 							<span class="text-primary text-lg font-bold">{getDisplayDate(searchDate)}</span>
 							<input
+								id="modal-date"
 								class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
 								type="date"
 								bind:value={searchDate}
@@ -581,9 +584,9 @@
 							<span class="text-secondary/70 text-sm">km</span>
 						</div>
 					</div>
-					<div class="space-y-2">
-						<label class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
-							>{i18n.t('filters.time')}</label
+					<fieldset class="space-y-2">
+						<legend class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
+							>{i18n.t('filters.time')}</legend
 						>
 						<div class="flex flex-col gap-2">
 							<label class="flex cursor-pointer items-center gap-3">
@@ -637,7 +640,7 @@
 								<span class="text-secondary text-sm">{i18n.t('filters.timeAfter18')}</span>
 							</label>
 						</div>
-					</div>
+					</fieldset>
 					<div class="space-y-4 pt-2">
 						<label class="flex cursor-pointer items-center justify-between">
 							<span class="text-secondary text-sm">{i18n.t('filters.smokingAllowed')}</span>
