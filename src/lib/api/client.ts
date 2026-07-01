@@ -16,7 +16,11 @@ export class ApiError extends Error {
 	}
 }
 
-async function send(path: string, options?: RequestInit, fetcher: typeof fetch = fetch): Promise<Response> {
+async function send(
+	path: string,
+	options?: RequestInit,
+	fetcher: typeof fetch = fetch
+): Promise<Response> {
 	const base = fetcher === fetch ? API_BASE : SVELTEKIT_FETCH_API_BASE;
 
 	const res = await fetcher(`${base}${path}`, {
