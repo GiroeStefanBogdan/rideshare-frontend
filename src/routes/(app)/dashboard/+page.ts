@@ -1,26 +1,18 @@
 // +page.ts
 import type { PageLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
-import { env } from '$env/dynamic/public';
-
-const PUBLIC_API_URL = env.PUBLIC_API_URL ?? 'http://localhost:8080';
+import { ApiError } from '$lib/api/client';
+import { getDashboardEmail } from '$lib/api/dashboard';
 
 export const load: PageLoad = async ({ fetch }) => {
-	const res = await fetch(`${PUBLIC_API_URL}/dashboard`, {
-		credentials: 'include',
-		headers: {
-			'X-API-Version': '1'
-		}
-	});
-
-	if (res.status === 401) {
-		throw redirect(302, '/login');
-	}
-
 	try {
-		const email = await res.text();
+		const email = await getDashboardEmail(fetch);
 		return { email };
-	} catch {
+	} catch (err) {
+		if (err instanceof ApiError && err.status === 401) {
+			throw redirect(302, '/login');
+		}
+
 		return { email: null };
 	}
 };

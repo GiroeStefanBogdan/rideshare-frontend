@@ -1,12 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { env } from '$env/dynamic/public';
+	import { ApiError, request } from '$lib/api/client';
 	import { authStore } from '$lib/stores/auth.svelte';
 	import type { UserResponseDto } from '$lib/types/user';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	import { resolve } from '$app/paths';
-
-	const PUBLIC_API_URL = env.PUBLIC_API_URL ?? 'http://localhost:8080';
 
 	let name = $state('');
 	let email = $state('');
@@ -27,33 +25,33 @@
 		event.preventDefault();
 
 		if (!error) {
-			const res = await fetch(`${PUBLIC_API_URL}/register`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-API-Version': '1'
-				},
-				body: JSON.stringify({
-					name,
-					email,
-					password,
-					birthday,
-					phoneNumber,
-					gender
-				})
-			});
+			try {
+				const user = await request<UserResponseDto>('/register', {
+					method: 'POST',
+					body: JSON.stringify({
+						name,
+						email,
+						password,
+						birthday,
+						phoneNumber,
+						gender
+					})
+				});
 
-			if (res.ok) {
-				const user: UserResponseDto = await res.json();
 				authStore.setUser(user);
 				await goto(resolve('/login'));
-			} else {
-				if (res.headers.get('Content-Type')?.includes('application/json')) {
-					const data = await res.json();
-					if (typeof data === 'object') {
-						fieldErrors = data;
+			} catch (err) {
+				if (err instanceof ApiError) {
+					try {
+						const data = JSON.parse(err.message);
+						if (typeof data === 'object' && data !== null) {
+							fieldErrors = data;
+						}
+					} catch {
+						// The backend can return plain text for non-validation errors.
 					}
 				}
+
 				error = i18n.t('register.errorDefault');
 			}
 		}

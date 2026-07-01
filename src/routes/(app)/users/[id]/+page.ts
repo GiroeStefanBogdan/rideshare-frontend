@@ -1,26 +1,22 @@
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
-import { env } from '$env/dynamic/public';
+import { ApiError } from '$lib/api/client';
+import { loadUserById } from '$lib/api/users';
 import type { UserProfile } from '$lib/types/user';
 
-const PUBLIC_API_URL = env.PUBLIC_API_URL ?? 'http://localhost:8080';
-
 export const load: PageLoad = async ({ params, fetch }) => {
-	const res = await fetch(`${PUBLIC_API_URL}/users/${params.id}`, {
-		credentials: 'include',
-		headers: {
-			'X-API-Version': '1'
+	try {
+		const profile: UserProfile = await loadUserById(params.id, fetch);
+		return { profile };
+	} catch (err) {
+		if (err instanceof ApiError && err.status === 404) {
+			throw error(404, 'User not found');
 		}
-	});
 
-	if (res.status === 404) {
-		throw error(404, 'User not found');
+		if (err instanceof ApiError) {
+			throw error(err.status, 'Failed to load profile');
+		}
+
+		throw error(500, 'Failed to load profile');
 	}
-
-	if (!res.ok) {
-		throw error(res.status, 'Failed to load profile');
-	}
-
-	const profile: UserProfile = await res.json();
-	return { profile };
 };
