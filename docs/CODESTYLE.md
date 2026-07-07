@@ -6,17 +6,17 @@ Always follow this order inside every `.svelte` file:
 
 ```svelte
 <script lang="ts">
-  // 1. imports
-  // 2. props  (let { prop } = $props())
-  // 3. state  ($state / $derived / stores)
-  // 4. effects / lifecycle ($effect)
-  // 5. event handlers and local functions
+	// 1. imports
+	// 2. props  (let { prop } = $props())
+	// 3. state  ($state / $derived / stores)
+	// 4. effects / lifecycle ($effect)
+	// 5. event handlers and local functions
 </script>
 
 <!-- markup -->
 
 <style>
-  /* only when Tailwind alone cannot express the style */
+	/* only when Tailwind alone cannot express the style */
 </style>
 ```
 
@@ -26,14 +26,14 @@ Always follow this order inside every `.svelte` file:
 
 Svelte 4 patterns are not permitted. Use the Svelte 5 equivalent for everything.
 
-| Use this | Not this |
-|---|---|
-| `let { prop } = $props()` | `export let prop` |
-| `let x = $state(0)` | `let x = 0` (for reactive state) |
-| `let y = $derived(x * 2)` | `$: y = x * 2` |
-| `$effect(() => { ... })` | `onMount(() => { ... })` |
-| `let { onAction } = $props()` (callback prop) | `createEventDispatcher` |
-| `{#snippet mySnippet()}` and `{@render ...}` | `<slot>` and `<slot name="...">` |
+| Use this                                      | Not this                         |
+| --------------------------------------------- | -------------------------------- |
+| `let { prop } = $props()`                     | `export let prop`                |
+| `let x = $state(0)`                           | `let x = 0` (for reactive state) |
+| `let y = $derived(x * 2)`                     | `$: y = x * 2`                   |
+| `$effect(() => { ... })`                      | `onMount(() => { ... })`         |
+| `let { onAction } = $props()` (callback prop) | `createEventDispatcher`          |
+| `{#snippet mySnippet()}` and `{@render ...}`  | `<slot>` and `<slot name="...">` |
 
 ### Props typing
 
@@ -52,8 +52,8 @@ let { prop1 } = $props<{ prop1: string }>();
 Only reach for `$state` when the variable needs to trigger UI updates. Plain `const`/`let` is fine for non-reactive values:
 
 ```ts
-let count = $state(0);          // reactive — drives UI
-const label = 'Submit';         // non-reactive — plain const is correct
+let count = $state(0); // reactive — drives UI
+const label = 'Submit'; // non-reactive — plain const is correct
 ```
 
 ### `$effect` — comment non-obvious triggers
@@ -63,7 +63,7 @@ A comment above a `$effect` is appropriate when the reason it runs is not immedi
 ```ts
 // Re-validate form when the user's email changes server-side
 $effect(() => {
-  validateEmail(user.email);
+	validateEmail(user.email);
 });
 ```
 
@@ -71,14 +71,14 @@ $effect(() => {
 
 ## Naming Conventions
 
-| Artifact | Convention | Example |
-|---|---|---|
-| Component files | PascalCase | `RideCard.svelte` |
-| Route directories | lowercase-kebab | `rides/post/` |
-| TS utility files | camelCase | `formatDate.ts` |
-| Exported functions | camelCase | `getRides`, `postRide` |
-| Store variables | camelCase | `currentUser` |
-| Domain sub-folders | lowercase | `components/account/` |
+| Artifact           | Convention      | Example                |
+| ------------------ | --------------- | ---------------------- |
+| Component files    | PascalCase      | `RideCard.svelte`      |
+| Route directories  | lowercase-kebab | `rides/post/`          |
+| TS utility files   | camelCase       | `formatDate.ts`        |
+| Exported functions | camelCase       | `getRides`, `postRide` |
+| Store variables    | camelCase       | `currentUser`          |
+| Domain sub-folders | lowercase       | `components/account/`  |
 
 ---
 

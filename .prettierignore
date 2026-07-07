@@ -1,3 +1,43 @@
+# Build outputs
+build/
+dist/
+.output/
+.svelte-kit/
+.vercel/
+.netlify/
+.wrangler/
+
+# Dependencies
+node_modules/
+
+# Documentation
+docs/
+
+# Coverage
+coverage/
+
+# IDE / editor
+.idea/
+.vscode/
+.junie/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env*
+
+# Logs
+*.log
+
+# Vite
+*.timestamp-*
+
+# Kilo / agent metadata
+.kilo/
+.kilocode/
+
 # Package Managers
 package-lock.json
 pnpm-lock.yaml

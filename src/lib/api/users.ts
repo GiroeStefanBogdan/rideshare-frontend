@@ -15,6 +15,10 @@ export async function getUserById(id: number): Promise<UserProfile> {
 	return request<UserProfile>(`/users/${id}`);
 }
 
+export async function loadUserById(id: string, fetcher: typeof fetch): Promise<UserProfile> {
+	return request<UserProfile>(`/users/${id}`, undefined, fetcher);
+}
+
 export async function changePassword(email: string, newPassword: string): Promise<void> {
 	return request<void>('/users/me/password', {
 		method: 'PATCH',

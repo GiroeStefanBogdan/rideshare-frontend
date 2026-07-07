@@ -90,6 +90,18 @@ export const translations = {
 			distanceEnd: 'to destination',
 			destination: 'Destination'
 		},
+		rides: {
+			reserve: 'Reserve',
+			reserveLoading: 'Reserving...',
+			reserveSuccess: 'Reserved! Booking #',
+			reserveError: 'Could not reserve. Please try again.',
+			reservedTitle: 'Ride Reserved',
+			reservedMessage: 'Your booking has been confirmed.',
+			notEnoughSeats: 'Only {seats} seats left',
+			departed: 'Departed',
+			passengers: '{count} passengers',
+			filters: 'Filters'
+		},
 		footer: {
 			tagline:
 				'Community Transport Service. We travel together, preserve tradition, grow together.',
@@ -286,6 +298,18 @@ export const translations = {
 			distanceStart: 'până la preluare',
 			distanceEnd: 'până la destinație',
 			destination: 'Destinație'
+		},
+		rides: {
+			reserve: 'Rezervă',
+			reserveLoading: 'Se rezervă...',
+			reserveSuccess: 'Rezervat! Rezervarea #',
+			reserveError: 'Rezervarea nu a reușit. Încearcă din nou.',
+			reservedTitle: 'Cursă Rezervată',
+			reservedMessage: 'Rezervarea ta a fost confirmată.',
+			notEnoughSeats: 'Doar {seats} locuri disponibile',
+			departed: 'Plecată',
+			passengers: '{count} pasageri',
+			filters: 'Filtre'
 		},
 		footer: {
 			tagline:

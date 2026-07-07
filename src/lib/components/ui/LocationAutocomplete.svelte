@@ -7,13 +7,13 @@
 		id,
 		placeholder,
 		icon,
-		label,
+		label = '',
 		value = $bindable(null)
 	}: {
 		id: string;
 		placeholder: string;
 		icon: string;
-		label: string;
+		label?: string;
 		value?: LocationResult | null;
 	} = $props();
 
@@ -82,11 +82,13 @@
 		? 'bg-surface-container-low/50'
 		: 'bg-white'}"
 >
-	<label
-		for={id}
-		class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
-		>{label}</label
-	>
+	{#if label}
+		<label
+			for={id}
+			class="font-label text-secondary/70 mb-1 text-[0.6875rem] font-bold tracking-widest uppercase"
+			>{label}</label
+		>
+	{/if}
 	<div class="flex items-center gap-3">
 		<span class="material-symbols-outlined text-primary/70" data-icon={icon}>{icon}</span>
 		<input

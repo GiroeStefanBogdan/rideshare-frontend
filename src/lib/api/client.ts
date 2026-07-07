@@ -3,6 +3,8 @@ import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 
 const PUBLIC_API_URL = env.PUBLIC_API_URL ?? 'http://localhost:8080';
+const API_BASE = typeof window === 'undefined' ? PUBLIC_API_URL : '/api';
+const SVELTEKIT_FETCH_API_BASE = '/api';
 
 export class ApiError extends Error {
 	constructor(
@@ -14,8 +16,14 @@ export class ApiError extends Error {
 	}
 }
 
-export async function request<T>(path: string, options?: RequestInit): Promise<T> {
-	const res = await fetch(`${PUBLIC_API_URL}${path}`, {
+async function send(
+	path: string,
+	options?: RequestInit,
+	fetcher: typeof fetch = fetch
+): Promise<Response> {
+	const base = fetcher === fetch ? API_BASE : SVELTEKIT_FETCH_API_BASE;
+
+	const res = await fetcher(`${base}${path}`, {
 		...options,
 		credentials: 'include',
 		headers: {
@@ -32,14 +40,37 @@ export async function request<T>(path: string, options?: RequestInit): Promise<T
 		throw new ApiError(401, 'Unauthorized');
 	}
 
-	if (res.status === 204) {
-		return undefined as T;
-	}
-
 	if (!res.ok) {
 		const message = await res.text().catch(() => `HTTP ${res.status}`);
 		throw new ApiError(res.status, message);
 	}
 
+	return res;
+}
+
+export async function request<T>(
+	path: string,
+	options?: RequestInit,
+	fetcher?: typeof fetch
+): Promise<T> {
+	const res = await send(path, options, fetcher);
+
+	if (res.status === 204) {
+		return undefined as T;
+	}
+
 	return res.json() as Promise<T>;
+}
+
+export async function requestText(
+	path: string,
+	options?: RequestInit,
+	fetcher?: typeof fetch
+): Promise<string> {
+	const res = await send(path, options, fetcher);
+	if (res.status === 204) {
+		return '';
+	}
+
+	return res.text();
 }
