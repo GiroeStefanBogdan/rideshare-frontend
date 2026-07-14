@@ -226,6 +226,7 @@ export const translations = {
 			errorMinStops: 'Please choose a departure and a destination.',
 			errorSeats: 'Seats must be between 1 and 9.',
 			errorPrice: 'Price per seat must be greater than 0.',
+			errorStopPrice: 'Each stop price must be greater than 0.',
 			errorPastDate: 'Departure must be in the future.',
 			errorGeneric: 'Could not publish the ride. Please try again.'
 		}
@@ -461,6 +462,7 @@ export const translations = {
 			errorMinStops: 'Te rugăm să alegi o plecare și o destinație.',
 			errorSeats: 'Numărul de locuri trebuie să fie între 1 și 9.',
 			errorPrice: 'Prețul per loc trebuie să fie mai mare decât 0.',
+			errorStopPrice: 'Prețul fiecărei opriri trebuie să fie mai mare decât 0.',
 			errorPastDate: 'Data plecării trebuie să fie în viitor.',
 			errorGeneric: 'Cursa nu a putut fi publicată. Te rugăm să încerci din nou.'
 		}

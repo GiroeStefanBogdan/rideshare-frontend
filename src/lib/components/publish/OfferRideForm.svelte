@@ -14,12 +14,13 @@
 	interface StopEntry {
 		key: number;
 		location: LocationResult | null;
+		price: number | null;
 	}
 
 	let stopKeyCounter = 0;
 	function createStop(): StopEntry {
 		stopKeyCounter += 1;
-		return { key: stopKeyCounter, location: null };
+		return { key: stopKeyCounter, location: null, price: null };
 	}
 
 	let stops = $state<StopEntry[]>([createStop(), createStop()]);
@@ -31,11 +32,17 @@
 
 	let hasAllStops = $derived(stops.every((stop) => stop.location !== null));
 
-	function priceForStop(index: number): number {
-		if (!pricePerSeat) return 0;
-		if (index === 0) return 0;
-		if (index === stops.length - 1) return pricePerSeat;
-		return Math.round((pricePerSeat * index) / (stops.length - 1));
+	// Intermediate stop prices are entered manually by the driver instead of being
+	// interpolated from pricePerSeat, since a fair split across stops isn't linear in practice.
+	// The origin and destination prices stay in sync with the fixed 0 / pricePerSeat values.
+	$effect(() => {
+		if (stops.length === 0) return;
+		stops[0].price = 0;
+		stops[stops.length - 1].price = pricePerSeat;
+	});
+
+	function priceForStop(index: number): number | null {
+		return stops[index].price;
 	}
 
 	function addStop() {
@@ -85,11 +92,17 @@
 				error = i18n.t('publish.errorMinStops');
 				return;
 			}
+			const stopPrice = priceForStop(i);
+			const isIntermediate = i > 0 && i < stops.length - 1;
+			if (isIntermediate && (stopPrice === null || !Number.isInteger(stopPrice) || stopPrice <= 0)) {
+				error = i18n.t('publish.errorStopPrice');
+				return;
+			}
 			rideStops.push({
 				id: location.id,
 				type: location.type,
 				stopOrder: i + 1,
-				price: priceForStop(i)
+				price: stopPrice ?? 0
 			});
 		}
 
@@ -146,7 +159,8 @@
 						: `${i18n.t('publish.stop')} ${i}`}
 				placeholder={i18n.t('publish.stopPlaceholder')}
 				icon={i === 0 ? 'location_on' : i === stops.length - 1 ? 'near_me' : 'place'}
-				price={priceForStop(i)}
+				priceEditable={i > 0 && i < stops.length - 1}
+				bind:price={stop.price}
 				removable={i > 0 && i < stops.length - 1}
 				onRemove={() => removeStop(stop.key)}
 				bind:value={stop.location}

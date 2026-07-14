@@ -8,19 +8,21 @@
 		label,
 		placeholder,
 		icon,
-		price,
+		priceEditable = false,
 		removable = false,
 		onRemove,
-		value = $bindable(null)
+		value = $bindable(null),
+		price = $bindable(null)
 	}: {
 		id: string;
 		label: string;
 		placeholder: string;
 		icon: string;
-		price: number;
+		priceEditable?: boolean;
 		removable?: boolean;
 		onRemove?: () => void;
 		value?: LocationResult | null;
+		price?: number | null;
 	} = $props();
 </script>
 
@@ -32,7 +34,19 @@
 		<span class="font-label text-secondary/70 text-[0.625rem] font-bold tracking-widest uppercase"
 			>RON</span
 		>
-		<span class="text-primary text-lg font-bold">{price}</span>
+		{#if priceEditable}
+			<input
+				id="{id}-price"
+				type="number"
+				min="1"
+				max="32767"
+				step="1"
+				bind:value={price}
+				class="text-primary w-16 border-none bg-transparent p-0 text-center text-lg font-bold focus:ring-0"
+			/>
+		{:else}
+			<span class="text-primary text-lg font-bold">{price}</span>
+		{/if}
 	</div>
 	{#if removable}
 		<button
