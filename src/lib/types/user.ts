@@ -43,6 +43,18 @@ export interface UserProfile extends UserResponseDto {
 	reviews?: UserReview[];
 }
 
+export interface UserPublicProfile {
+	id: number;
+	name: string;
+	birthday: string;
+	gender: 'MALE' | 'FEMALE';
+	bio?: string;
+	canSmoke?: boolean;
+	petFriendly?: boolean;
+	cars?: UserCar[];
+	reviews?: UserReview[];
+}
+
 export interface ChangePasswordRequest {
 	email: string;
 	password: string;

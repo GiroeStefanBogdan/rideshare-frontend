@@ -2,12 +2,14 @@
 	import type { BookedRide } from '$lib/types/ride';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	let { ride }: { ride: BookedRide } = $props();
-	const formatTime = (value: string): string =>
-		new Intl.DateTimeFormat(i18n.lang === 'ro' ? 'ro-RO' : 'en-GB', {
-			dateStyle: 'medium',
-			timeStyle: 'short',
-			hour12: false
-		}).format(new Date(value));
+	const formatTime = (value: string | null): string =>
+		value
+			? new Intl.DateTimeFormat(i18n.lang === 'ro' ? 'ro-RO' : 'en-GB', {
+					dateStyle: 'medium',
+					timeStyle: 'short',
+					hour12: false
+				}).format(new Date(value))
+			: i18n.t('common.notAvailable');
 </script>
 
 <article class="border-outline-variant/20 bg-surface rounded-2xl border p-5 shadow-sm">

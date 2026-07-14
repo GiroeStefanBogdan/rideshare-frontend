@@ -5,7 +5,13 @@
 	import { createUserCar, deleteUserCar, updateUserCar } from '$lib/api/users';
 	import ConfirmationModal from '$lib/components/ui/ConfirmationModal.svelte';
 
-	let { cars = $bindable() }: { cars: UserCar[] } = $props();
+	let {
+		cars = $bindable(),
+		editable = true
+	}: {
+		cars: UserCar[];
+		editable?: boolean;
+	} = $props();
 
 	let isEditing = $state(false);
 	let editingCarId = $state<number | null>(null);
@@ -53,7 +59,7 @@
 	async function handleSave() {
 		if (!authStore.user?.id) return;
 		if (!brand || !model || !color || !year || !licensePlate || !numberOfSeats) {
-			error = 'All fields are required';
+			error = i18n.t('account.allFieldsRequired');
 			return;
 		}
 		isSaving = true;
@@ -114,7 +120,7 @@
 			<h2 class="font-headline text-primary text-xl font-bold">{i18n.t('account.myCars')}</h2>
 		</div>
 
-		{#if !isEditing}
+		{#if editable && !isEditing}
 			<button
 				onclick={startAdd}
 				class="bg-primary hover:bg-primary/90 flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-bold text-white transition-all active:scale-95"
@@ -256,20 +262,24 @@
 					</div>
 
 					<div class="flex gap-1">
-						<button
-							onclick={() => startEdit(car)}
-							class="hover:bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-lg transition-all"
-							title={i18n.t('account.editCar')}
-						>
-							<span class="material-symbols-outlined text-lg">edit</span>
-						</button>
-						<button
-							onclick={() => confirmDelete(car.id)}
-							class="hover:bg-error/10 text-error flex h-8 w-8 items-center justify-center rounded-lg transition-all"
-							title={i18n.t('account.deleteCar')}
-						>
-							<span class="material-symbols-outlined text-lg">delete</span>
-						</button>
+						{#if editable}
+							<button
+								onclick={() => startEdit(car)}
+								class="hover:bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-lg transition-all"
+								title={i18n.t('account.editCar')}
+								aria-label={i18n.t('account.editCar')}
+							>
+								<span class="material-symbols-outlined text-lg">edit</span>
+							</button>
+							<button
+								onclick={() => confirmDelete(car.id)}
+								class="hover:bg-error/10 text-error flex h-8 w-8 items-center justify-center rounded-lg transition-all"
+								title={i18n.t('account.deleteCar')}
+								aria-label={i18n.t('account.deleteCar')}
+							>
+								<span class="material-symbols-outlined text-lg">delete</span>
+							</button>
+						{/if}
 					</div>
 				</li>
 			{/each}

@@ -11,7 +11,8 @@ export interface RideDriver {
 export interface RideStopBasic {
 	id: number;
 	locationName: string;
-	departsAt: string; // ISO 8601
+	municipalityName: string;
+	departsAt: string | null; // ISO 8601
 }
 
 export interface RideStopDetails extends RideStopBasic {
@@ -38,6 +39,13 @@ export interface HostedRide {
 	rideStops: RideStopDetails[];
 }
 
+export interface RideDetails {
+	rideId: number;
+	driver: RideDriver;
+	seatsTotal: number;
+	rideStops: RideStopDetails[];
+}
+
 export interface MyRidesResponse {
 	upcomingBookings: BookedRide[];
 	pastBookings: BookedRide[];
@@ -60,10 +68,6 @@ export interface ReserveRideRequest {
 	fromStopId: number;
 	toStopId: number;
 	seats: number;
-}
-
-export interface ReserveRideResponse {
-	id: number; // bookingId
 }
 
 export interface RideSearchParams {
