@@ -94,7 +94,10 @@
 			}
 			const stopPrice = priceForStop(i);
 			const isIntermediate = i > 0 && i < stops.length - 1;
-			if (isIntermediate && (stopPrice === null || !Number.isInteger(stopPrice) || stopPrice <= 0)) {
+			if (
+				isIntermediate &&
+				(stopPrice === null || !Number.isInteger(stopPrice) || stopPrice <= 0)
+			) {
 				error = i18n.t('publish.errorStopPrice');
 				return;
 			}
