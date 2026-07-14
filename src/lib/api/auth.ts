@@ -1,4 +1,6 @@
 import { goto } from '$app/navigation';
+import { resolve } from '$app/paths';
+import type { Pathname } from '$app/types';
 import { env } from '$env/dynamic/public';
 import { request } from './client';
 import { authStore } from '$lib/stores/auth.svelte';
@@ -58,7 +60,7 @@ export async function handleLogin(
 			requestedRedirect && requestedRedirect.startsWith('/') && !requestedRedirect.startsWith('//')
 				? requestedRedirect
 				: '/dashboard';
-		await goto(redirectTo);
+		await goto(resolve(redirectTo as Pathname));
 	} catch (err) {
 		// 401 → bad credentials; anything else → generic server
 		const error = err as { status?: number };
