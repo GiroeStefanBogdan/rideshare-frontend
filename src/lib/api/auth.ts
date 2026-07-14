@@ -1,5 +1,6 @@
 import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
+import type { Pathname } from '$app/types';
 import { env } from '$env/dynamic/public';
 import { request } from './client';
 import { authStore } from '$lib/stores/auth.svelte';
@@ -54,12 +55,17 @@ export async function handleLogin(
 	try {
 		const user: LoginResponse = await login(payload);
 		authStore.setUser(user.user);
-		await goto(resolve('/dashboard'));
+		const requestedRedirect = new URLSearchParams(window.location.search).get('redirect');
+		const redirectTo =
+			requestedRedirect && requestedRedirect.startsWith('/') && !requestedRedirect.startsWith('//')
+				? requestedRedirect
+				: '/dashboard';
+		await goto(resolve(redirectTo as Pathname));
 	} catch (err) {
 		// 401 → bad credentials; anything else → generic server
 		const error = err as { status?: number };
 		setError(
-			error.status === 401 || error.status == 403
+			error.status === 401 || error.status === 403
 				? i18n.t('auth.invalidCredentials')
 				: i18n.t('auth.loginError')
 		);

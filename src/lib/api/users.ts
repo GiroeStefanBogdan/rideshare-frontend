@@ -4,6 +4,7 @@ import type {
 	UpdateUserRequest,
 	UserCar,
 	UserProfile,
+	UserPublicProfile,
 	UserResponseDto
 } from '$lib/types/user';
 
@@ -11,12 +12,12 @@ export async function getUsers(): Promise<UserResponseDto[]> {
 	return request<UserResponseDto[]>('/users');
 }
 
-export async function getUserById(id: number): Promise<UserProfile> {
-	return request<UserProfile>(`/users/${id}`);
+export async function getUserById(id: number): Promise<UserPublicProfile> {
+	return request<UserPublicProfile>(`/users/${id}`);
 }
 
-export async function loadUserById(id: string, fetcher: typeof fetch): Promise<UserProfile> {
-	return request<UserProfile>(`/users/${id}`, undefined, fetcher);
+export async function loadUserById(id: string, fetcher: typeof fetch): Promise<UserPublicProfile> {
+	return request<UserPublicProfile>(`/users/${id}`, undefined, fetcher);
 }
 
 export async function changePassword(email: string, newPassword: string): Promise<void> {
@@ -37,12 +38,12 @@ export async function adminDeleteUser(id: number): Promise<void> {
 	return request<void>(`/admin/users/${id}`, { method: 'DELETE' });
 }
 
-export async function deleteMyAccount(id: number): Promise<void> {
-	return request<void>(`/users/${id}`, { method: 'DELETE' });
+export async function deleteMyAccount(): Promise<void> {
+	return request<void>('/users/me', { method: 'DELETE' });
 }
 
-export async function getMe(): Promise<UserProfile> {
-	return request<UserProfile>('/users/me');
+export async function getMe(fetcher?: typeof fetch): Promise<UserProfile> {
+	return request<UserProfile>('/users/me', undefined, fetcher);
 }
 
 export async function getUserCars(): Promise<UserCar[]> {

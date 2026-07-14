@@ -21,7 +21,7 @@
 		<!-- Brand mark -->
 		<div class="mb-10 text-center">
 			<a href={resolve('/')} class="font-headline text-primary text-3xl font-black tracking-tight"
-				>DrumBun</a
+				>Drum Bun</a
 			>
 			<div class="mt-3 inline-flex items-center gap-2">
 				<div class="bg-primary/30 h-px w-8"></div>
@@ -110,7 +110,7 @@
 						<input
 							type="checkbox"
 							bind:checked={remember}
-							class="form-checkbox border-outline-variant text-primary-container focus:ring-primary h-4 w-4 rounded"
+							class="form-checkbox border-outline-variant/20 text-primary-container focus:ring-primary h-4 w-4 rounded"
 						/>
 						<span class="font-body text-sm">{i18n.t('auth.rememberMe')}</span>
 					</label>
@@ -126,7 +126,7 @@
 				<button
 					type="button"
 					onclick={handleGoogleLogin}
-					class="bg-surface-container-low font-headline text-on-surface hover:bg-surface-container flex w-full items-center justify-center gap-3 rounded-lg px-4 py-3 text-sm font-bold transition"
+					class="bg-surface-container-low font-headline text-on-surface hover:bg-surface-container-high flex w-full items-center justify-center gap-3 rounded-lg px-4 py-3 text-sm font-bold transition"
 				>
 					<img
 						src="https://www.svgrepo.com/show/475656/google-color.svg"

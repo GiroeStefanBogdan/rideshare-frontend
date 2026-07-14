@@ -7,47 +7,62 @@ The backend runs on `http://localhost:8080` by default. In development, the Vite
 All requests must go through the API client wrapper:
 
 ```ts
-import { get, post, put, del } from '$lib/api/client';
+import { ApiError, request } from '$lib/api/client';
 ```
 
 ---
 
-## Auth — `/auth`
+## Authentication
 
-| Action       | Method | Path           | Request body          | Response                         | Cookie       |
-| ------------ | ------ | -------------- | --------------------- | -------------------------------- | ------------ |
-| Email login  | POST   | `/auth/login`  | `{ email, password }` | `{ id, name, email, avatarUrl }` | Sets `jwt`   |
-| Google login | POST   | `/auth/google` | `{ idToken }`         | `{ id, name, email, avatarUrl }` | Sets `jwt`   |
-| Logout       | POST   | `/auth/logout` | —                     | 204                              | Clears `jwt` |
+| Action      | Method | Path           | Request body                      | Response               | Cookie         |
+| ----------- | ------ | -------------- | --------------------------------- | ---------------------- | -------------- |
+| Email login | POST   | `/login`       | `{ email, password, rememberMe }` | `LoginResponse`        | Sets `token`   |
+| Logout      | POST   | `/auth/logout` | —                                 | 204                    | Clears `token` |
 
 ---
 
 ## Rides — `/rides`
 
-| Action         | Method | Path         | Request body | Response |
-| -------------- | ------ | ------------ | ------------ | -------- |
-| List all rides | GET    | `/rides`     | —            | `Ride[]` |
-| Get one ride   | GET    | `/rides/:id` | —            | `Ride`   |
-| Post a ride    | POST   | `/rides`     | `RideInput`  | `Ride`   |
-| Delete a ride  | DELETE | `/rides/:id` | —            | 204      |
+| Action        | Method | Path                 | Auth   | Request body             | Response                |
+| ------------- | ------ | -------------------- | ------ | ------------------------ | ----------------------- |
+| Search rides  | POST   | `/rides/search`      | Public | `RideSearchParams`       | `RideSearchResult[]`    |
+| Get one ride  | GET    | `/rides/:id`         | Public | —                        | `RideDetails`           |
+| Post a ride   | POST   | `/rides`             | User   | `RideInput`              | Numeric ride ID         |
+| Reserve seats | POST   | `/rides/:id/reserve` | User   | `ReserveRideRequest`     | Numeric booking ID      |
+| Delete a ride | DELETE | `/rides/:id`         | Owner  | —                        | 204                     |
+| My rides      | GET    | `/rides/me`           | User   | —                        | `MyRidesResponse`       |
+
+`GET /rides/me` returns four independently sorted lists: `upcomingBookings`, `pastBookings`,
+`upcomingHostedRides`, and `pastHostedRides`. Booking entries contain the booked stops,
+seat count, total RON price, driver summary, and derived `ACTIVE`/`INACTIVE` status.
+Hosted entries contain ordered stops with departure time, available seats, and per-seat price.
+Search and detail stops include both the street/location name and its municipality name.
+
+`POST /rides` accepts ordered `rideStops`; each stop supplies `departsAt` and `price`.
+The first stop determines the ride departure and base price. Stop order, increasing times,
+and decreasing prices ending at zero are validated by the backend.
 
 ---
 
-## Reviews — `/rides/:id/reviews`
+## Locations
 
-| Action                | Method | Path                 | Request body  | Response   |
-| --------------------- | ------ | -------------------- | ------------- | ---------- |
-| List reviews for ride | GET    | `/rides/:id/reviews` | —             | `Review[]` |
-| Post a review         | POST   | `/rides/:id/reviews` | `ReviewInput` | `Review`   |
+`GET /locations/search?q={query}` is public and returns matching administrative units and streets.
 
 ---
 
 ## Users — `/users`
 
-| Action             | Method | Path         | Request body | Response |
-| ------------------ | ------ | ------------ | ------------ | -------- |
-| Get any profile    | GET    | `/users/:id` | —            | `User`   |
-| Update own profile | PUT    | `/users/me`  | `UserInput`  | `User`   |
+| Action              | Method | Path                  | Auth   | Request body        | Response            |
+| ------------------- | ------ | --------------------- | ------ | ------------------- | ------------------- |
+| Get public profile  | GET    | `/users/:id`          | Public | —                   | `UserPublicProfile` |
+| Get own profile     | GET    | `/users/me`           | User   | —                   | `UserProfile`       |
+| Update own profile  | PATCH  | `/users/me`           | User   | `UpdateUserRequest` | `UserProfile`       |
+| Change own password | PATCH  | `/users/me/password`  | User   | `ChangePassword`    | 204                 |
+| Delete own account  | DELETE | `/users/me`           | User   | —                   | 204                 |
+| List own cars       | GET    | `/users/me/cars`      | User   | —                   | `UserCar[]`         |
+| Add an own car      | POST   | `/users/me/cars`      | User   | `UserCarInput`      | `UserCar`           |
+| Update an own car   | PATCH  | `/users/me/cars/:id`  | User   | `UserCarInput`      | `UserCar`           |
+| Delete an own car   | DELETE | `/users/me/cars/:id`  | User   | —                   | 204                 |
 
 ---
 
@@ -57,11 +72,11 @@ The backend returns structured error bodies. The client wrapper in `client.ts` s
 
 ```ts
 try {
-	await post('/rides', payload);
+	await request('/rides', { method: 'POST', body: JSON.stringify(payload) });
 } catch (err) {
-	if (err.status === 400) return fail(400, { errors: err.body.errors });
-	if (err.status === 401) redirect(303, '/login');
-	return fail(500, { message: 'Server error' });
+	if (err instanceof ApiError && err.status === 400) {
+		// Display the backend validation message.
+	}
 }
 ```
 
