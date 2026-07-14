@@ -206,6 +206,28 @@ export const translations = {
 			male: 'Male',
 			female: 'Female',
 			errorUpdate: 'Failed to update profile. Please try again.'
+		},
+		publish: {
+			tagline: 'Share your journey',
+			title: 'Offer a ride',
+			description: 'Set your route, seats and price, and find fellow travelers for your trip.',
+			origin: 'Departure',
+			destination: 'Destination',
+			stop: 'Stop',
+			stopPlaceholder: 'Search a city or street',
+			addStop: 'Add stop',
+			removeStop: 'Remove stop',
+			seats: 'Available seats',
+			pricePerSeat: 'Price per seat (RON)',
+			departure: 'Departure date & time',
+			departurePick: 'Select date & time',
+			submit: 'Publish ride',
+			submitting: 'Publishing...',
+			errorMinStops: 'Please choose a departure and a destination.',
+			errorSeats: 'Seats must be between 1 and 9.',
+			errorPrice: 'Price per seat must be greater than 0.',
+			errorPastDate: 'Departure must be in the future.',
+			errorGeneric: 'Could not publish the ride. Please try again.'
 		}
 	},
 	ro: {
@@ -418,6 +440,29 @@ export const translations = {
 			male: 'Masculin',
 			female: 'Feminin',
 			errorUpdate: 'Eroare la actualizarea profilului. Te rugăm să încerci din nou.'
+		},
+		publish: {
+			tagline: 'Împarte-ți drumul',
+			title: 'Oferă o cursă',
+			description:
+				'Stabilește ruta, locurile disponibile și prețul, și găsește tovarăși de drum pentru călătoria ta.',
+			origin: 'Plecare',
+			destination: 'Destinație',
+			stop: 'Oprire',
+			stopPlaceholder: 'Caută un oraș sau o stradă',
+			addStop: 'Adaugă oprire',
+			removeStop: 'Elimină oprirea',
+			seats: 'Locuri disponibile',
+			pricePerSeat: 'Preț per loc (RON)',
+			departure: 'Data și ora plecării',
+			departurePick: 'Selectează data și ora',
+			submit: 'Publică cursa',
+			submitting: 'Se publică...',
+			errorMinStops: 'Te rugăm să alegi o plecare și o destinație.',
+			errorSeats: 'Numărul de locuri trebuie să fie între 1 și 9.',
+			errorPrice: 'Prețul per loc trebuie să fie mai mare decât 0.',
+			errorPastDate: 'Data plecării trebuie să fie în viitor.',
+			errorGeneric: 'Cursa nu a putut fi publicată. Te rugăm să încerci din nou.'
 		}
 	}
 };

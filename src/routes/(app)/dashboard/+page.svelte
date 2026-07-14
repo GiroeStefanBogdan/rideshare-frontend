@@ -5,6 +5,7 @@
 	import { goto } from '$app/navigation';
 	import { rideSearch } from '$lib/stores/rideSearch.svelte';
 	import { resolve } from '$app/paths';
+	import { formatLocalizedDate, showDatePicker } from '$lib/utils/date.js';
 
 	let { data } = $props();
 	let email = $derived(data.email);
@@ -17,17 +18,11 @@
 
 	function getDisplayDate(isoStr: string) {
 		if (!isoStr) return '';
-		const d = new Date(isoStr);
-		return d.toLocaleDateString(i18n.lang === 'ro' ? 'ro-RO' : 'en-US', {
+		return formatLocalizedDate(new Date(isoStr), i18n.lang, {
 			weekday: 'short',
 			day: 'numeric',
 			month: 'short'
 		});
-	}
-
-	function showDatePicker(event: MouseEvent) {
-		const input = event.currentTarget as HTMLInputElement;
-		input.showPicker?.();
 	}
 
 	async function handleSearch() {

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { UserReview } from '$lib/types/user';
 	import { i18n } from '$lib/stores/i18n.svelte';
+	import { formatLocalizedDate } from '$lib/utils/date.js';
 
 	let { reviews }: { reviews: UserReview[] } = $props();
 </script>
@@ -30,7 +31,7 @@
 						<span
 							class="font-label text-secondary/50 text-[0.6875rem] font-bold tracking-widest uppercase"
 						>
-							{new Date(review.date).toLocaleDateString(i18n.lang === 'ro' ? 'ro-RO' : 'en-US', {
+							{formatLocalizedDate(new Date(review.date), i18n.lang, {
 								year: 'numeric',
 								month: 'short',
 								day: 'numeric'
