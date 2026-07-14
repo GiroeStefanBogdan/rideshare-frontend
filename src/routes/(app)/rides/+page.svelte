@@ -33,11 +33,20 @@
 	let loading = $state(untrack(() => !!initialParams && results.length === 0));
 	let error = $state<string | null>(null);
 	let lastSearchKey = $state('');
+	let now = $state(Date.now());
 
 	let searchFrom = $state<LocationResult | null>(rideSearch.fromLocation ?? null);
 	let searchTo = $state<LocationResult | null>(rideSearch.toLocation ?? null);
 	let searchDate = $state(rideSearch.params?.date ?? new Date().toISOString().split('T')[0]);
 	let searchSeats = $state(rideSearch.params?.seats ?? 1);
+
+	$effect(() => {
+		const timer = window.setInterval(() => {
+			now = Date.now();
+		}, 30_000);
+
+		return () => window.clearInterval(timer);
+	});
 
 	function getDisplayDate(isoStr: string) {
 		if (!isoStr) return '';
@@ -699,7 +708,7 @@
 					</div>
 				{:else}
 					{#each results as ride (ride.rideId)}
-						{@const isDeparted = new Date(ride.startStop.departsAt) < new Date()}
+						{@const isDeparted = Date.parse(ride.startStop.departsAt) < now}
 						<article
 							class="glass-panel border-outline-variant/20 hover:ia-border-accent relative rounded-xl border p-6 shadow-sm transition-all hover:shadow-md"
 							class:opacity-50={isDeparted}
