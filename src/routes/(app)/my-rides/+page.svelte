@@ -22,7 +22,6 @@
 	$effect(() => {
 		void loadRides();
 	});
-	const section = (title: string, content: unknown) => ({ title, content });
 </script>
 
 <svelte:head><title>{i18n.t('myRides.title')}</title></svelte:head>
@@ -46,7 +45,7 @@
 		>
 	</div>
 	{#if loading}<div class="mt-8 grid gap-5 md:grid-cols-2">
-			{#each [1, 2, 3, 4] as _}<div
+			{#each [1, 2, 3, 4] as placeholder (placeholder)}<div
 					class="h-48 animate-pulse rounded-2xl bg-primary/5"
 				></div>{/each}
 		</div>
@@ -60,7 +59,7 @@
 	{:else if data}{#if tab === 'booked'}<section class="mt-10">
 				<h2 class="font-headline text-2xl font-bold">{i18n.t('myRides.upcoming')}</h2>
 				<div class="mt-4 grid gap-5 md:grid-cols-2">
-					{#each data.upcomingBookings as ride}<BookedRideCard {ride} />{:else}<p
+					{#each data.upcomingBookings as ride (ride.bookingId)}<BookedRideCard {ride} />{:else}<p
 							class="text-secondary"
 						>
 							{i18n.t('myRides.nothingUpcoming')}
@@ -70,7 +69,7 @@
 			<section class="mt-10">
 				<h2 class="font-headline text-2xl font-bold">{i18n.t('myRides.past')}</h2>
 				<div class="mt-4 grid gap-5 md:grid-cols-2">
-					{#each data.pastBookings as ride}<BookedRideCard {ride} />{:else}<p
+					{#each data.pastBookings as ride (ride.bookingId)}<BookedRideCard {ride} />{:else}<p
 							class="text-secondary"
 						>
 							{i18n.t('myRides.nothingPast')}
@@ -79,7 +78,7 @@
 			</section>{:else}<section class="mt-10">
 				<h2 class="font-headline text-2xl font-bold">{i18n.t('myRides.upcoming')}</h2>
 				<div class="mt-4 space-y-5">
-					{#each data.upcomingHostedRides as ride}<HostedRideCard {ride} />{:else}<p
+					{#each data.upcomingHostedRides as ride (ride.rideId)}<HostedRideCard {ride} />{:else}<p
 							class="text-secondary"
 						>
 							{i18n.t('myRides.nothingUpcoming')}
@@ -89,7 +88,7 @@
 			<section class="mt-10">
 				<h2 class="font-headline text-2xl font-bold">{i18n.t('myRides.past')}</h2>
 				<div class="mt-4 space-y-5">
-					{#each data.pastHostedRides as ride}<HostedRideCard {ride} />{:else}<p
+					{#each data.pastHostedRides as ride (ride.rideId)}<HostedRideCard {ride} />{:else}<p
 							class="text-secondary"
 						>
 							{i18n.t('myRides.nothingPast')}

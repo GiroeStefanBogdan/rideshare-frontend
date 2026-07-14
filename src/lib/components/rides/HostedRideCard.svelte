@@ -34,7 +34,7 @@
 			>{expanded ? i18n.t('myRides.hideStops') : i18n.t('myRides.showStops')}</button
 		>{/if}
 	{#if expanded}<div class="border-outline-variant/10 mt-4 space-y-3 border-t pt-4">
-			{#each ride.rideStops as stop}<div class="flex justify-between gap-3 text-sm">
+			{#each ride.rideStops as stop (stop.id)}<div class="flex justify-between gap-3 text-sm">
 					<span>{stop.stopOrder}. {stop.locationName}</span><span class="text-secondary"
 						>{formatTime(stop.departsAt)} · {stop.pricePerSeat ?? 0} RON</span
 					>
