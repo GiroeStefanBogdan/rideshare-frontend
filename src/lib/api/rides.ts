@@ -3,7 +3,8 @@ import type {
 	RideSearchParams,
 	RideSearchResult,
 	ReserveRideRequest,
-	ReserveRideResponse
+	ReserveRideResponse,
+	MyRidesResponse
 } from '../types/ride.js';
 
 export const searchRides = (params: RideSearchParams): Promise<RideSearchResult[]> => {
@@ -21,4 +22,8 @@ export const reserveRide = (
 		method: 'POST',
 		body: JSON.stringify(body)
 	});
+};
+
+export const getMyRides = (): Promise<MyRidesResponse> => {
+	return request<MyRidesResponse>('/rides/me');
 };

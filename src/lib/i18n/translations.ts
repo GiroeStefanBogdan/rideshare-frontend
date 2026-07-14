@@ -25,7 +25,30 @@ export const translations = {
 		nav: {
 			findRide: 'Find a Ride',
 			offerRide: 'Offer a Ride',
-			account: 'Account'
+			account: 'Account',
+			profile: 'Profile',
+			myRides: 'My rides'
+		},
+		myRides: {
+			title: 'My rides',
+			booked: 'Booked',
+			hosted: 'Hosted',
+			upcoming: 'Upcoming',
+			past: 'Past month',
+			loading: 'Loading your rides...',
+			error: 'Could not load your rides.',
+			retry: 'Retry',
+			empty: 'No rides here yet.',
+			cancelled: 'Cancelled',
+			seats: 'seats',
+			reviews: 'reviews',
+			stops: 'Stops',
+			showStops: 'Show stops',
+			hideStops: 'Hide stops',
+			from: 'From',
+			to: 'To',
+			nothingUpcoming: 'No upcoming rides.',
+			nothingPast: 'No rides from the past month.'
 		},
 		hero: {
 			tagline: 'Journey with soul',
@@ -234,7 +257,30 @@ export const translations = {
 		nav: {
 			findRide: 'Găsește o cursă',
 			offerRide: 'Oferă o cursă',
-			account: 'Cont'
+			account: 'Cont',
+			profile: 'Profil',
+			myRides: 'Cursele mele'
+		},
+		myRides: {
+			title: 'Cursele mele',
+			booked: 'Rezervate',
+			hosted: 'Oferite',
+			upcoming: 'Urmează',
+			past: 'Luna trecută',
+			loading: 'Se încarcă cursele...',
+			error: 'Cursele nu au putut fi încărcate.',
+			retry: 'Reîncearcă',
+			empty: 'Nu există curse aici.',
+			cancelled: 'Anulată',
+			seats: 'locuri',
+			reviews: 'recenzii',
+			stops: 'Opriri',
+			showStops: 'Arată opririle',
+			hideStops: 'Ascunde opririle',
+			from: 'De la',
+			to: 'Până la',
+			nothingUpcoming: 'Nu ai curse viitoare.',
+			nothingPast: 'Nu ai curse din ultima lună.'
 		},
 		hero: {
 			tagline: 'Călătorie cu suflet',

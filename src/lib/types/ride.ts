@@ -14,6 +14,37 @@ export interface RideStopBasic {
 	departsAt: string; // ISO 8601
 }
 
+export interface RideStopDetails extends RideStopBasic {
+	stopOrder: number;
+	availableSeats: number | null;
+	pricePerSeat: number | null;
+}
+
+export interface BookedRide {
+	bookingId: number;
+	rideId: number;
+	status: 'ACTIVE' | 'INACTIVE';
+	driver: RideDriver;
+	seats: number;
+	totalPrice: number;
+	fromStop: RideStopBasic;
+	toStop: RideStopBasic;
+}
+
+export interface HostedRide {
+	rideId: number;
+	status: 'ACTIVE' | 'INACTIVE';
+	seatsTotal: number;
+	rideStops: RideStopDetails[];
+}
+
+export interface MyRidesResponse {
+	upcomingBookings: BookedRide[];
+	pastBookings: BookedRide[];
+	upcomingHostedRides: HostedRide[];
+	pastHostedRides: HostedRide[];
+}
+
 export interface RideSearchResult {
 	rideId: number;
 	driver: RideDriver;

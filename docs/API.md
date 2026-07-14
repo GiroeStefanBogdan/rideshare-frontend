@@ -30,6 +30,16 @@ import { get, post, put, del } from '$lib/api/client';
 | Get one ride   | GET    | `/rides/:id` | —            | `Ride`   |
 | Post a ride    | POST   | `/rides`     | `RideInput`  | `Ride`   |
 | Delete a ride  | DELETE | `/rides/:id` | —            | 204      |
+| My rides       | GET    | `/rides/me`   | —            | `MyRidesResponse` |
+
+`GET /rides/me` returns four independently sorted lists: `upcomingBookings`, `pastBookings`,
+`upcomingHostedRides`, and `pastHostedRides`. Booking entries contain the booked stops,
+seat count, total RON price, driver summary, and derived `ACTIVE`/`INACTIVE` status.
+Hosted entries contain ordered stops with departure time, available seats, and per-seat price.
+
+`POST /rides` accepts ordered `rideStops`; each stop supplies `departsAt` and `price`.
+The first stop determines the ride departure and base price. Stop order, increasing times,
+and decreasing prices ending at zero are validated by the backend.
 
 ---
 

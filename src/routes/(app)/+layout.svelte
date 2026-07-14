@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { i18n } from '$lib/stores/i18n.svelte';
+	import AccountMenu from '$lib/components/account/AccountMenu.svelte';
 
 	let { children } = $props();
 </script>
@@ -45,17 +46,7 @@
 						>{i18n.t('nav.offerRide')}</a
 					>
 				</div>
-				<div
-					class="text-secondary hover:text-primary flex cursor-pointer items-center gap-2 transition-colors duration-300"
-				>
-					<a
-						href={resolve('/account')}
-						class="flex items-center"
-						aria-label={i18n.t('nav.account')}
-					>
-						<span class="material-symbols-outlined text-2xl">account_circle</span>
-					</a>
-				</div>
+				<AccountMenu />
 			</div>
 		</nav>
 	</header>
