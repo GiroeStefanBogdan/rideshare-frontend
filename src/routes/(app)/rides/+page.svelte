@@ -10,6 +10,7 @@
 	import type { LocationResult } from '$lib/types/location.js';
 	import LocationAutocomplete from '$lib/components/ui/LocationAutocomplete.svelte';
 	import Modal from '$lib/components/ui/Modal.svelte';
+	import { formatLocalizedDate, showDatePicker } from '$lib/utils/date.js';
 
 	let {
 		data
@@ -41,17 +42,11 @@
 
 	function getDisplayDate(isoStr: string) {
 		if (!isoStr) return '';
-		const d = new Date(isoStr);
-		return d.toLocaleDateString(i18n.lang === 'ro' ? 'ro-RO' : 'en-US', {
+		return formatLocalizedDate(new Date(isoStr), i18n.lang, {
 			weekday: 'short',
 			day: 'numeric',
 			month: 'short'
 		});
-	}
-
-	function showDatePicker(event: MouseEvent) {
-		const input = event.currentTarget as HTMLInputElement;
-		input.showPicker?.();
 	}
 
 	function handleRidesSearch() {

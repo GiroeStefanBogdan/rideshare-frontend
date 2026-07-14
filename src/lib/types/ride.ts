@@ -49,3 +49,17 @@ export interface RideSearchParams {
 	smokingAllowed?: boolean;
 	petFriendly?: boolean;
 }
+
+export interface RideStopInput {
+	id: number;
+	type: 'ADMIN_UNIT' | 'STREET';
+	stopOrder: number;
+	price: number;
+}
+
+export interface CreateRideRequest {
+	rideStops: RideStopInput[];
+	seatsTotal: number;
+	pricePerSeat: number;
+	departureAt: string; // OffsetDateTime ISO string, e.g. 2026-07-20T12:00:00+03:00
+}
