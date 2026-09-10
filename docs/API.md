@@ -12,13 +12,13 @@ import { get, post, put, del } from '$lib/api/client';
 
 ---
 
-## Auth — `/auth`
+## Authentication
 
 | Action       | Method | Path           | Request body          | Response                         | Cookie       |
 | ------------ | ------ | -------------- | --------------------- | -------------------------------- | ------------ |
-| Email login  | POST   | `/auth/login`  | `{ email, password }` | `{ id, name, email, avatarUrl }` | Sets `jwt`   |
-| Google login | POST   | `/auth/google` | `{ idToken }`         | `{ id, name, email, avatarUrl }` | Sets `jwt`   |
-| Logout       | POST   | `/auth/logout` | —                     | 204                              | Clears `jwt` |
+| Register    | POST   | `/register`    | `UserRegistrationRequest`             | `User`           | —              |
+| Email login | POST   | `/login`       | `{ email, password, rememberMe }`      | `{ token, user }` | Sets `token`   |
+| Logout      | POST   | `/auth/logout` | —                                      | 204              | Clears `token` |
 
 ---
 
@@ -26,28 +26,30 @@ import { get, post, put, del } from '$lib/api/client';
 
 | Action         | Method | Path         | Request body | Response |
 | -------------- | ------ | ------------ | ------------ | -------- |
-| List all rides | GET    | `/rides`     | —            | `Ride[]` |
 | Get one ride   | GET    | `/rides/:id` | —            | `Ride`   |
-| Post a ride    | POST   | `/rides`     | `RideInput`  | `Ride`   |
+| Publish a ride | POST   | `/rides`     | `PublishRideRequest` | 201 `{ rideId }` |
 | Delete a ride  | DELETE | `/rides/:id` | —            | 204      |
+| Search rides   | POST   | `/rides/search` | `RideSearchRequest` | `RideSearchResult[]` |
+| Reserve seats  | POST   | `/rides/:id/reserve` | `ReserveRideRequest` | 201 `{ bookingId }` |
+
+`PublishRideRequest` contains `seatsTotal` (1–4), optional `carId`, and 2–7 ordered `rideStops`.
+Each stop contains `id`, `type`, `stopOrder`, `departsAt`, and an increasing
+`cumulativePricePerSeat`; the Origin value is `0`.
 
 ---
 
-## Reviews — `/rides/:id/reviews`
+## Reviews
 
-| Action                | Method | Path                 | Request body  | Response   |
-| --------------------- | ------ | -------------------- | ------------- | ---------- |
-| List reviews for ride | GET    | `/rides/:id/reviews` | —             | `Review[]` |
-| Post a review         | POST   | `/rides/:id/reviews` | `ReviewInput` | `Review`   |
-
----
+> Planned feature: review endpoints are not implemented yet. The frontend displays an unavailable state until this contract is delivered.
 
 ## Users — `/users`
 
 | Action             | Method | Path         | Request body | Response |
 | ------------------ | ------ | ------------ | ------------ | -------- |
 | Get any profile    | GET    | `/users/:id` | —            | `User`   |
-| Update own profile | PUT    | `/users/me`  | `UserInput`  | `User`   |
+| Get own profile    | GET    | `/users/me`  | —            | `User`   |
+| Update own profile | PATCH  | `/users/me`  | `UserInput`  | `User`   |
+| Delete own account | DELETE | `/users/me`  | —            | 204      |
 
 ---
 

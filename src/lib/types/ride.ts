@@ -32,7 +32,7 @@ export interface ReserveRideRequest {
 }
 
 export interface ReserveRideResponse {
-	id: number; // bookingId
+	bookingId: number;
 }
 
 export interface RideSearchParams {
@@ -48,4 +48,48 @@ export interface RideSearchParams {
 	timeWindow?: 'BEFORE_8' | '8_12' | '12_18' | 'AFTER_18' | null;
 	smokingAllowed?: boolean;
 	petFriendly?: boolean;
+}
+
+export interface PublishRideStopRequest {
+	id: number;
+	type: 'ADMIN_UNIT' | 'STREET';
+	stopOrder: number;
+	cumulativePricePerSeat: number;
+	departsAt: string;
+}
+
+export interface PublishRideRequest {
+	rideStops: PublishRideStopRequest[];
+	seatsTotal: number;
+	carId: number | null;
+}
+
+export interface PublishRideResponse {
+	rideId: number;
+}
+
+export interface RideVehicle {
+	id: number;
+	brand: string;
+	model: string;
+	color: string;
+	year: number;
+}
+
+export interface RideStopDetails {
+	id: number;
+	stopOrder: number;
+	locationName: string;
+	municipalityName: string;
+	departsAt: string;
+	availableSeats: number;
+	cumulativePricePerSeat: number;
+}
+
+export interface RideDetails {
+	rideId: number;
+	driver: RideDriver;
+	seatsTotal: number;
+	vehicle: RideVehicle | null;
+	rideStops: RideStopDetails[];
 }

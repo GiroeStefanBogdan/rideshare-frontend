@@ -5,7 +5,7 @@
 	import { createUserCar, deleteUserCar, updateUserCar } from '$lib/api/users';
 	import ConfirmationModal from '$lib/components/ui/ConfirmationModal.svelte';
 
-	let { cars = $bindable() }: { cars: UserCar[] } = $props();
+	let { cars = $bindable(), editable = false }: { cars: UserCar[]; editable?: boolean } = $props();
 
 	let isEditing = $state(false);
 	let editingCarId = $state<number | null>(null);
@@ -103,9 +103,7 @@
 	}
 </script>
 
-<div
-	class="bg-surface-container-lowest border-outline-variant/15 rounded-xl border p-6 shadow-[0_8px_40px_rgba(0,32,104,0.06)]"
->
+<div class="border-heritage rounded-lg border bg-white p-6 shadow-md">
 	<div class="mb-5 flex items-center justify-between">
 		<div class="flex items-center gap-3">
 			<div class="bg-primary/5 flex h-10 w-10 items-center justify-center rounded-lg">
@@ -114,7 +112,7 @@
 			<h2 class="font-headline text-primary text-xl font-bold">{i18n.t('account.myCars')}</h2>
 		</div>
 
-		{#if !isEditing}
+		{#if editable && !isEditing}
 			<button
 				onclick={startAdd}
 				class="bg-primary hover:bg-primary/90 flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-bold text-white transition-all active:scale-95"
@@ -125,7 +123,7 @@
 		{/if}
 	</div>
 
-	{#if isEditing}
+	{#if editable && isEditing}
 		<div class="bg-surface-container-low mb-6 space-y-4 rounded-lg p-4">
 			<h3 class="font-headline text-on-surface text-sm font-bold">
 				{editingCarId ? i18n.t('account.editCar') : i18n.t('account.addCar')}
@@ -255,22 +253,22 @@
 						</div>
 					</div>
 
-					<div class="flex gap-1">
-						<button
-							onclick={() => startEdit(car)}
-							class="hover:bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-lg transition-all"
-							title={i18n.t('account.editCar')}
-						>
-							<span class="material-symbols-outlined text-lg">edit</span>
-						</button>
-						<button
-							onclick={() => confirmDelete(car.id)}
-							class="hover:bg-error/10 text-error flex h-8 w-8 items-center justify-center rounded-lg transition-all"
-							title={i18n.t('account.deleteCar')}
-						>
-							<span class="material-symbols-outlined text-lg">delete</span>
-						</button>
-					</div>
+					{#if editable}<div class="flex gap-1">
+							<button
+								onclick={() => startEdit(car)}
+								class="hover:bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-lg transition-all"
+								title={i18n.t('account.editCar')}
+							>
+								<span class="material-symbols-outlined text-lg">edit</span>
+							</button>
+							<button
+								onclick={() => confirmDelete(car.id)}
+								class="hover:bg-error/10 text-error flex h-8 w-8 items-center justify-center rounded-lg transition-all"
+								title={i18n.t('account.deleteCar')}
+							>
+								<span class="material-symbols-outlined text-lg">delete</span>
+							</button>
+						</div>{/if}
 				</li>
 			{/each}
 		</ul>
