@@ -78,7 +78,7 @@
 </script>
 
 <div
-	class="relative flex flex-1 flex-col rounded-lg px-6 py-4 transition-all focus-within:bg-white focus-within:shadow-sm {!showDropdown
+	class="relative flex min-w-0 flex-1 flex-col rounded-lg px-3 py-4 transition-all focus-within:bg-white focus-within:shadow-sm sm:px-6 {!showDropdown
 		? 'bg-surface-container-low/50'
 		: 'bg-white'}"
 >
@@ -89,11 +89,11 @@
 			>{label}</label
 		>
 	{/if}
-	<div class="flex items-center gap-3">
-		<span class="material-symbols-outlined text-primary/70" data-icon={icon}>{icon}</span>
+	<div class="flex min-w-0 items-center gap-2 sm:gap-3">
+		<span class="material-symbols-outlined text-primary/70 shrink-0" data-icon={icon}>{icon}</span>
 		<input
 			{id}
-			class="placeholder:text-outline-variant/60 w-full border-none bg-transparent p-0 text-lg font-bold focus:ring-0"
+			class="placeholder:text-outline-variant/60 w-full min-w-0 truncate border-none bg-transparent p-0 text-base font-bold placeholder:text-sm focus:ring-0 sm:text-lg sm:placeholder:text-base"
 			{placeholder}
 			type="text"
 			autocomplete="off"

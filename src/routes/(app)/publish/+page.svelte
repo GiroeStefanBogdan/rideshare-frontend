@@ -13,8 +13,8 @@
 	type DraftStop = {
 		clientId: number;
 		location: LocationResult | null;
-		date: string;
-		time: string;
+		durationHours?: number;
+		durationMinutes?: number;
 		cumulativePrice: number | null;
 	};
 
@@ -23,14 +23,15 @@
 		return local.toISOString().slice(0, 10);
 	}
 
-	const today = localDateValue(new Date());
-
 	let nextStopId = 3;
 	let step = $state(1);
 	let stops = $state<DraftStop[]>([
-		{ clientId: 1, location: null, date: today, time: '', cumulativePrice: 0 },
-		{ clientId: 2, location: null, date: today, time: '', cumulativePrice: null }
+		{ clientId: 1, location: null, cumulativePrice: 0 },
+		{ clientId: 2, location: null, cumulativePrice: null }
 	]);
+	let departureDate = $state('');
+	let departureTime = $state('');
+	let scheduleInitialized = $state(false);
 	let cars = $state<UserCar[]>([]);
 	let selectedCarId = $state<number | null>(null);
 	let seatsTotal = $state(3);
@@ -92,20 +93,16 @@
 		return local.toISOString().slice(11, 16);
 	}
 
-	function minimumDate(index: number) {
-		if (index === 0) return today;
-		return stops[index - 1].date || today;
+	function openNativePicker(event: MouseEvent) {
+		(event.currentTarget as HTMLInputElement).showPicker?.();
 	}
 
-	function minimumTime(index: number) {
-		if (index === 0) {
-			return stops[index].date === today
-				? localTimeValue(new Date(Date.now() + 60_000))
-				: undefined;
-		}
-		const previous = stops[index - 1];
-		if (!previous.date || !previous.time || stops[index].date !== previous.date) return undefined;
-		return localTimeValue(new Date(scheduleTimestamp(previous) + 60_000));
+	function initializeSchedule() {
+		if (scheduleInitialized) return;
+		const rounded = new Date(Math.ceil(Date.now() / 300_000) * 300_000);
+		departureDate = localDateValue(rounded);
+		departureTime = localTimeValue(rounded);
+		scheduleInitialized = true;
 	}
 
 	function maximumDate() {
@@ -113,24 +110,89 @@
 		return localDateValue(new Date(now.getFullYear(), now.getMonth() + 1, now.getDate()));
 	}
 
-	function scheduleTimestamp(stop: DraftStop) {
-		return new Date(`${stop.date}T${stop.time}`).getTime();
+	function departureTimestamp() {
+		return new Date(`${departureDate}T${departureTime}`).getTime();
+	}
+
+	function segmentMinutes(stop: DraftStop) {
+		return (stop.durationHours ?? 0) * 60 + (stop.durationMinutes ?? 0);
+	}
+
+	function updateDuration(stop: DraftStop, changedField: 'hours' | 'minutes') {
+		if (
+			changedField === 'hours' &&
+			stop.durationHours !== undefined &&
+			stop.durationMinutes === undefined
+		) {
+			stop.durationMinutes = 0;
+		}
+		if (
+			changedField === 'minutes' &&
+			stop.durationMinutes !== undefined &&
+			stop.durationHours === undefined
+		) {
+			stop.durationHours = 0;
+		}
+		markDirty();
+	}
+
+	function scheduledTimestamp(index: number) {
+		let timestamp = departureTimestamp();
+		for (let stopIndex = 1; stopIndex <= index; stopIndex += 1) {
+			timestamp += segmentMinutes(stops[stopIndex]) * 60_000;
+		}
+		return timestamp;
+	}
+
+	function formatScheduledTime(index: number) {
+		const timestamp = scheduledTimestamp(index);
+		if (!Number.isFinite(timestamp)) return '—';
+		return new Intl.DateTimeFormat(i18n.lang === 'ro' ? 'ro-RO' : 'en-GB', {
+			weekday: 'short',
+			day: 'numeric',
+			month: 'short',
+			hour: '2-digit',
+			minute: '2-digit'
+		}).format(timestamp);
+	}
+
+	function existingSegments() {
+		return new Map(
+			stops
+				.slice(1)
+				.map((stop, index) => [
+					`${stops[index].clientId}:${stop.clientId}`,
+					{ hours: stop.durationHours, minutes: stop.durationMinutes }
+				])
+		);
+	}
+
+	function restoreUnchangedSegments(
+		segments: Map<string, { hours: number | undefined; minutes: number | undefined }>
+	) {
+		stops.slice(1).forEach((stop, index) => {
+			const duration = segments.get(`${stops[index].clientId}:${stop.clientId}`);
+			stop.durationHours = duration?.hours;
+			stop.durationMinutes = duration?.minutes;
+		});
 	}
 
 	function addStop() {
 		if (stops.length >= 7) return;
+		const segments = existingSegments();
 		stops.splice(stops.length - 1, 0, {
 			clientId: nextStopId++,
 			location: null,
-			date: stops.at(-2)?.date || today,
-			time: '',
 			cumulativePrice: null
 		});
+		restoreUnchangedSegments(segments);
 		clearPrices();
 	}
 
 	function removeStop(index: number) {
+		const segments = existingSegments();
 		stops.splice(index, 1);
+		restoreUnchangedSegments(segments);
 		clearPrices();
 		markDirty();
 	}
@@ -144,7 +206,9 @@
 			destination >= stops.length - 1
 		)
 			return;
+		const segments = existingSegments();
 		[stops[index], stops[destination]] = [stops[destination], stops[index]];
+		restoreUnchangedSegments(segments);
 		stops = [...stops];
 		clearPrices();
 		markDirty();
@@ -161,8 +225,23 @@
 	}
 
 	function scheduleValid() {
-		if (stops.some((stop) => !stop.date || !stop.time)) return false;
-		const times = stops.map(scheduleTimestamp);
+		if (!departureDate || !departureTime) return false;
+		const durationsValid = stops.slice(1).every((stop) => {
+			const hours = stop.durationHours;
+			const minutes = stop.durationMinutes;
+			if (hours === undefined || minutes === undefined) return false;
+			return (
+				Number.isInteger(hours) &&
+				Number.isInteger(minutes) &&
+				hours >= 0 &&
+				hours <= 99 &&
+				minutes >= 0 &&
+				minutes <= 59 &&
+				hours * 60 + minutes >= 1
+			);
+		});
+		if (!durationsValid) return false;
+		const departure = departureTimestamp();
 		const now = Date.now();
 		const current = new Date();
 		const latest = new Date(
@@ -172,11 +251,7 @@
 			current.getHours(),
 			current.getMinutes()
 		);
-		return (
-			times[0] > now &&
-			times[0] <= latest.getTime() &&
-			times.every((time, index) => index === 0 || time - times[index - 1] >= 60_000)
-		);
+		return Number.isFinite(departure) && departure > now && departure <= latest.getTime();
 	}
 
 	function detailsValid() {
@@ -208,12 +283,15 @@
 
 	function next() {
 		markDirty();
-		if (validateCurrentStep()) step += 1;
+		if (validateCurrentStep()) {
+			step += 1;
+			if (step === 2) initializeSchedule();
+		}
 	}
 
-	function localOffsetDateTime(stop: DraftStop) {
-		const value = `${stop.date}T${stop.time}`;
-		const date = new Date(value);
+	function localOffsetDateTime(timestamp: number) {
+		const date = new Date(timestamp);
+		const value = `${localDateValue(date)}T${localTimeValue(date)}`;
 		const offset = -date.getTimezoneOffset();
 		const sign = offset >= 0 ? '+' : '-';
 		const hours = String(Math.floor(Math.abs(offset) / 60)).padStart(2, '0');
@@ -225,20 +303,23 @@
 		if (!validateCurrentStep() || submitting) return;
 		submitting = true;
 		try {
-			const result = await publishRide({
+			const rideId = await publishRide({
 				rideStops: stops.map((stop, index) => ({
 					id: stop.location!.id,
 					type: stop.location!.type,
 					stopOrder: index + 1,
 					cumulativePricePerSeat: stop.cumulativePrice!,
-					departsAt: localOffsetDateTime(stop)
+					departsAt: localOffsetDateTime(scheduledTimestamp(index))
 				})),
 				seatsTotal,
 				carId: selectedCarId
 			});
+			if (rideId === null) {
+				throw new Error(i18n.t('publish.publishError'));
+			}
 			published = true;
 			dirty = false;
-			await goto(resolve(`/rides/${result.rideId}`));
+			await goto(resolve(`/rides/${rideId}`));
 		} catch (caught) {
 			error = caught instanceof ApiError ? caught.message : i18n.t('publish.publishError');
 		} finally {
@@ -250,6 +331,10 @@
 		if (index === 0) return i18n.t('publish.origin');
 		if (index === stops.length - 1) return i18n.t('publish.destination');
 		return `${i18n.t('publish.stop')} ${index}`;
+	}
+
+	function stopName(index: number) {
+		return stops[index].location?.fullName ?? stopLabel(index);
 	}
 </script>
 
@@ -266,12 +351,26 @@
 			aria-label={i18n.t('publish.progress')}
 			class="relative mb-10 grid grid-cols-4 gap-2 rounded-lg bg-white p-2 shadow-sm"
 		>
+			<div class="col-span-4 px-2 py-2 sm:hidden">
+				<p class="text-on-surface-variant text-xs font-semibold tracking-widest uppercase">
+					{i18n.t('publish.step')}
+					{step}
+					{i18n.t('publish.of')} 4
+				</p>
+				<p class="mt-1 text-xl font-semibold">{steps[step - 1]}</p>
+				<div class="mt-3 grid grid-cols-4 gap-2" aria-hidden="true">
+					{#each steps as label, index (label)}<span
+							data-step={label}
+							class="h-1 rounded-lg {index + 1 <= step ? 'bg-primary-container' : 'bg-heritage'}"
+						></span>{/each}
+				</div>
+			</div>
 			{#each steps as label, index (label)}
 				<button
 					type="button"
 					onclick={() => index + 1 < step && (step = index + 1)}
 					disabled={index + 1 > step}
-					class="rounded-lg px-2 py-3 text-xs font-semibold tracking-widest uppercase transition-all duration-200 {index +
+					class="hidden rounded-lg px-2 py-3 text-xs font-semibold tracking-widest uppercase transition-all duration-200 sm:block {index +
 						1 ===
 					step
 						? 'bg-primary-container text-white'
@@ -297,7 +396,7 @@
 					>
 						{#each stops as stop, index (stop.clientId)}
 							<div
-								class="border-outline-variant/30 focus-within:border-primary-container relative flex items-center gap-2 rounded-lg border bg-white p-2 pl-10 shadow-sm transition-all duration-200 focus-within:shadow-md"
+								class="border-outline-variant/30 focus-within:border-primary-container relative flex flex-col items-stretch gap-2 rounded-lg border bg-white p-2 pl-10 shadow-sm transition-all duration-200 focus-within:shadow-md sm:flex-row sm:items-center"
 								oninput={markDirty}
 							>
 								<span
@@ -316,7 +415,7 @@
 									bind:value={stop.location}
 								/>
 								{#if index > 0 && index < stops.length - 1}
-									<div class="flex flex-col gap-1">
+									<div class="flex flex-row justify-end gap-1 sm:flex-col">
 										<button
 											type="button"
 											aria-label={i18n.t('publish.moveUp')}
@@ -354,41 +453,91 @@
 					>
 				{:else if step === 2}
 					<h2 class="mb-6 text-2xl font-semibold">{i18n.t('publish.scheduleTitle')}</h2>
+					<p class="text-on-surface-variant mb-6 text-base leading-relaxed">
+						{i18n.t('publish.scheduleIntro')}
+					</p>
 					<div class="space-y-4">
-						{#each stops as stop, index (stop.clientId)}
+						<fieldset
+							class="border-outline-variant/30 bg-surface-container-low/40 rounded-lg border p-4"
+						>
+							<legend class="px-1 text-xs font-semibold tracking-widest uppercase"
+								>{i18n.t('publish.departure')}</legend
+							>
+							<div class="mt-2 grid min-w-0 gap-4 sm:grid-cols-2">
+								<label class="block">
+									<span class="text-on-surface-variant mb-2 block text-sm font-semibold"
+										>{i18n.t('publish.date')}</span
+									>
+									<input
+										type="date"
+										onclick={openNativePicker}
+										min={localDateValue(new Date())}
+										max={maximumDate()}
+										bind:value={departureDate}
+										onchange={markDirty}
+										class="border-outline-variant/30 focus:border-primary-container h-12 w-full min-w-0 cursor-pointer rounded-lg border bg-white px-4 outline-none"
+									/>
+								</label>
+								<label class="block">
+									<span class="text-on-surface-variant mb-2 block text-sm font-semibold"
+										>{i18n.t('publish.time')}</span
+									>
+									<input
+										type="time"
+										onclick={openNativePicker}
+										step="60"
+										bind:value={departureTime}
+										onchange={markDirty}
+										class="border-outline-variant/30 focus:border-primary-container h-12 w-full min-w-0 cursor-pointer rounded-lg border bg-white px-4 outline-none"
+									/>
+								</label>
+							</div>
+						</fieldset>
+						{#each stops.slice(1) as stop, relativeIndex (stop.clientId)}
+							{@const index = relativeIndex + 1}
 							<fieldset class="border-outline-variant/30 rounded-lg border bg-white p-4">
 								<legend class="px-1 text-xs font-semibold tracking-widest uppercase"
-									>{stopLabel(index)} · {index === 0
-										? i18n.t('publish.departure')
-										: i18n.t('publish.arrival')}</legend
+									>{stopName(index)}</legend
 								>
-								<div class="mt-2 grid gap-4 sm:grid-cols-2">
-									<label class="block">
-										<span class="text-on-surface-variant mb-2 block text-sm font-semibold"
-											>{i18n.t('publish.date')}</span
-										>
-										<input
-											type="date"
-											min={minimumDate(index)}
-											max={maximumDate()}
-											bind:value={stop.date}
-											onchange={markDirty}
-											class="border-outline-variant/30 focus:border-primary-container w-full rounded-lg border p-3 outline-none"
-										/>
-									</label>
-									<label class="block">
-										<span class="text-on-surface-variant mb-2 block text-sm font-semibold"
-											>{i18n.t('publish.time')}</span
-										>
-										<input
-											type="time"
-											min={minimumTime(index)}
-											step="60"
-											bind:value={stop.time}
-											onchange={markDirty}
-											class="border-outline-variant/30 focus:border-primary-container w-full rounded-lg border p-3 outline-none"
-										/>
-									</label>
+								<p class="text-on-surface-variant mt-1 text-sm">
+									{i18n.t('publish.from')}
+									{stopName(index - 1)}
+								</p>
+								<div class="mt-3 grid grid-cols-2 gap-3 sm:max-w-sm">
+									<label
+										><span class="text-on-surface-variant mb-2 block text-sm font-semibold"
+											>{i18n.t('publish.hours')}</span
+										><input
+											type="number"
+											min="0"
+											max="99"
+											inputmode="numeric"
+											placeholder="0"
+											bind:value={stop.durationHours}
+											onchange={() => updateDuration(stop, 'hours')}
+											class="border-outline-variant/30 focus:border-primary-container h-12 w-full min-w-0 rounded-lg border bg-white px-4 outline-none"
+										/></label
+									>
+									<label
+										><span class="text-on-surface-variant mb-2 block text-sm font-semibold"
+											>{i18n.t('publish.minutes')}</span
+										><input
+											type="number"
+											min="0"
+											max="59"
+											inputmode="numeric"
+											placeholder="0"
+											bind:value={stop.durationMinutes}
+											onchange={() => updateDuration(stop, 'minutes')}
+											class="border-outline-variant/30 focus:border-primary-container h-12 w-full min-w-0 rounded-lg border bg-white px-4 outline-none"
+										/></label
+									>
+								</div>
+								<div class="bg-heritage text-charcoal mt-4 rounded-lg px-4 py-3">
+									<span class="text-xs font-semibold tracking-widest uppercase"
+										>{i18n.t('publish.estimatedArrival')}</span
+									>
+									<p class="mt-1 text-base font-semibold">{formatScheduledTime(index)}</p>
 								</div>
 							</fieldset>
 						{/each}
@@ -426,9 +575,10 @@
 							{#if index > 0}
 								<label class="block"
 									><span class="mb-2 block text-xs font-semibold tracking-widest uppercase"
-										>{stopLabel(index)} · {i18n.t('publish.cumulativePrice')}</span
+										>{stopName(index)} · {i18n.t('publish.cumulativePrice')}</span
 									><input
 										type="number"
+										placeholder={i18n.t('publish.pricePlaceholder')}
 										min={(stops[index - 1].cumulativePrice ?? 0) + 1}
 										max="32767"
 										bind:value={stop.cumulativePrice}
@@ -451,10 +601,10 @@
 							<li
 								class="border-outline-variant/30 bg-surface-container-low/60 rounded-lg border p-4"
 							>
-								<p class="text-xs font-semibold tracking-widest uppercase">{stopLabel(index)}</p>
+								<p class="text-xs font-semibold tracking-widest uppercase">{stopName(index)}</p>
 								<p class="text-xl font-semibold">{stop.location?.fullName}</p>
 								<p class="text-base leading-relaxed font-normal">
-									{stop.date} · {stop.time}{index > 0 ? ` · ${stop.cumulativePrice} RON` : ''}
+									{formatScheduledTime(index)}{index > 0 ? ` · ${stop.cumulativePrice} RON` : ''}
 								</p>
 							</li>
 						{/each}

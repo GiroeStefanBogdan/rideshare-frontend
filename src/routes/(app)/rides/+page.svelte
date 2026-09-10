@@ -192,12 +192,15 @@
 
 		try {
 			const requestedSeats = rideSearch.params?.seats ?? 1;
-			const response = await reserveRide(ride.rideId, {
+			const bookingId = await reserveRide(ride.rideId, {
 				fromStopId: ride.startStop.id,
 				toStopId: ride.endStop.id,
 				seats: requestedSeats
 			});
-			await goto(resolve(`/rides/${ride.rideId}?bookingId=${response.bookingId}`));
+			if (bookingId === null) {
+				throw new Error(i18n.t('rides.reserveError'));
+			}
+			await goto(resolve(`/rides/${ride.rideId}?bookingId=${bookingId}`));
 		} catch (err) {
 			const current = cardStates[ride.rideId];
 			if (current) {

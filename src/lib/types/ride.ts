@@ -31,9 +31,7 @@ export interface ReserveRideRequest {
 	seats: number;
 }
 
-export interface ReserveRideResponse {
-	bookingId: number;
-}
+export type ReserveRideResponse = number | null;
 
 export interface RideSearchParams {
 	fromId: number;
@@ -64,9 +62,7 @@ export interface PublishRideRequest {
 	carId: number | null;
 }
 
-export interface PublishRideResponse {
-	rideId: number;
-}
+export type PublishRideResponse = number | null;
 
 export interface RideVehicle {
 	id: number;
