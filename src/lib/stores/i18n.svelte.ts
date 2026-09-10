@@ -9,6 +9,7 @@ function createI18nStore() {
 		},
 		setLang(lang: Language) {
 			currentLang = lang;
+			if (typeof document !== 'undefined') document.documentElement.lang = lang;
 			if (typeof localStorage !== 'undefined') {
 				localStorage.setItem('lang', lang);
 			}
@@ -31,6 +32,7 @@ function createI18nStore() {
 				if (saved && (saved === 'en' || saved === 'ro')) {
 					currentLang = saved;
 				}
+				document.documentElement.lang = currentLang;
 			}
 		}
 	};

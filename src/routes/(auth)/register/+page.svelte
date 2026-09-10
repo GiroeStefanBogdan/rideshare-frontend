@@ -13,7 +13,6 @@
 	let phoneNumber = $state('');
 	let gender = $state('');
 	let confirm = $state('');
-	let newsletter = $state(true);
 	let showPassword = $state(false);
 	let showConfirmPassword = $state(false);
 	let error = $state('');
@@ -23,37 +22,38 @@
 
 	async function handleRegister(event: Event) {
 		event.preventDefault();
+		error = '';
+		fieldErrors = {};
 
-		if (!error) {
-			try {
-				const user = await request<UserResponseDto>('/register', {
-					method: 'POST',
-					body: JSON.stringify({
-						name,
-						email,
-						password,
-						birthday,
-						phoneNumber,
-						gender
-					})
-				});
+		try {
+			const user = await request<UserResponseDto>('/register', {
+				method: 'POST',
+				body: JSON.stringify({
+					name,
+					email,
+					password,
+					birthday,
+					phoneNumber,
+					gender
+				})
+			});
 
-				authStore.setUser(user);
-				await goto(resolve('/login'));
-			} catch (err) {
-				if (err instanceof ApiError) {
-					try {
-						const data = JSON.parse(err.message);
-						if (typeof data === 'object' && data !== null) {
-							fieldErrors = data;
-						}
-					} catch {
-						// The backend can return plain text for non-validation errors.
+			void user;
+			authStore.clear();
+			await goto(resolve('/login?registered=true'));
+		} catch (err) {
+			if (err instanceof ApiError) {
+				try {
+					const data = JSON.parse(err.message);
+					if (typeof data === 'object' && data !== null) {
+						fieldErrors = data;
 					}
+				} catch {
+					// The backend can return plain text for non-validation errors.
 				}
-
-				error = i18n.t('register.errorDefault');
 			}
+
+			error = i18n.t('register.errorDefault');
 		}
 	}
 </script>
@@ -67,9 +67,9 @@
 			>
 			<div class="mt-3 inline-flex items-center gap-2">
 				<div class="bg-primary/30 h-px w-8"></div>
-				<p class="font-label text-primary text-[0.6875rem] font-bold tracking-[0.3em] uppercase">
+				<h1 class="font-label text-primary text-xs font-semibold tracking-widest uppercase">
 					{i18n.t('register.title')}
-				</p>
+				</h1>
 				<div class="bg-primary/30 h-px w-8"></div>
 			</div>
 			<p class="font-body text-secondary mt-2 text-sm">{i18n.t('register.subtitle')}</p>
@@ -77,7 +77,7 @@
 
 		<!-- Card -->
 		<div
-			class="glass-panel border-outline-variant/20 ia-border-accent rounded-xl border p-8 shadow-[0_40px_100px_rgba(0,32,104,0.08)]"
+			class="glass-panel border-heritage ia-border-accent rounded-lg border p-6 shadow-md md:p-8"
 		>
 			<!-- Error -->
 			{#if error}
@@ -279,17 +279,6 @@
 						<p class="text-error mt-1 text-xs">{i18n.t('register.passwordsDoNotMatch')}</p>
 					{/if}
 				</div>
-
-				<!-- Newsletter -->
-				<label class="flex cursor-pointer items-center gap-3 px-1">
-					<input
-						id="newsletter"
-						type="checkbox"
-						bind:checked={newsletter}
-						class="form-checkbox border-outline-variant text-primary-container focus:ring-primary h-4 w-4 rounded"
-					/>
-					<span class="font-body text-secondary text-sm">{i18n.t('register.newsletter')}</span>
-				</label>
 
 				<!-- Submit -->
 				<button

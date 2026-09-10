@@ -33,6 +33,8 @@ Named after the Voroneț Monastery, whose deep cobalt blue is one of Romania's m
 - Never use pure `#000000` black — use `charcoal` for all dark text.
 - Background layers for folk motifs should use `heritage` or `voronet` at very low opacity (`opacity-5` to `opacity-10`).
 
+Semantic utilities such as `primary`, `secondary`, `surface`, and `outline` are aliases derived from these four brand foundations. They may communicate UI context, but must not introduce an independent palette or drift from `voronet`, `charcoal`, `soft-white`, and `heritage`.
+
 ---
 
 ## Typography
@@ -97,7 +99,7 @@ These are the heart of the visual identity. They must be used consistently and w
 - **Primary:** `bg-voronet text-white rounded-lg px-6 py-3 font-semibold hover:opacity-90 transition-opacity duration-150`
 - **Secondary/Ghost:** `border border-voronet text-voronet rounded-lg px-6 py-3 font-semibold hover:bg-voronet/5 transition-colors duration-150`
 - **Destructive:** `bg-red-600 text-white rounded-lg` — only for irreversible actions
-- All buttons: `rounded-lg` (8px) — never `rounded-full` or `rounded-none`
+- Standard buttons and cards render at 8px radius; compact controls may render at 4px. Circular masks are reserved for avatars and genuinely circular icons. Utility names may be aliased in the theme, so the rendered geometry is authoritative.
 
 ---
 

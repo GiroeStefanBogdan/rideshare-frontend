@@ -41,9 +41,7 @@
 	}
 </script>
 
-<div
-	class="bg-surface-container-lowest border-outline-variant/15 rounded-xl border p-6 shadow-[0_8px_40px_rgba(0,32,104,0.06)]"
->
+<div class="border-heritage rounded-lg border bg-white p-6 shadow-md">
 	<div class="mb-5 flex items-center gap-3">
 		<div class="bg-primary/5 flex h-10 w-10 items-center justify-center rounded-lg">
 			<span class="material-symbols-outlined text-primary-container">lock</span>

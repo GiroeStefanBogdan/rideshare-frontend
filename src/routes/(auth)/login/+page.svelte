@@ -1,13 +1,23 @@
 <script lang="ts">
 	import { i18n } from '$lib/stores/i18n.svelte';
-	import { handleLogin, handleGoogleLogin } from '$lib/api/auth';
+	import { handleLogin } from '$lib/api/auth';
 	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 
 	let email = $state('');
 	let password = $state('');
 	let showPassword = $state(false);
 	let remember = $state(false);
 	let error = $state('');
+	let notice = $derived(
+		page.url.searchParams.has('registered')
+			? i18n.t('auth.registeredSuccess')
+			: page.url.searchParams.has('accountDeleted')
+				? i18n.t('auth.accountDeletedSuccess')
+				: page.url.searchParams.has('loggedOut')
+					? i18n.t('auth.loggedOutSuccess')
+					: ''
+	);
 
 	async function onSubmit(event: Event) {
 		event.preventDefault();
@@ -25,17 +35,26 @@
 			>
 			<div class="mt-3 inline-flex items-center gap-2">
 				<div class="bg-primary/30 h-px w-8"></div>
-				<p class="font-label text-primary text-[0.6875rem] font-bold tracking-[0.3em] uppercase">
+				<h1 class="font-label text-primary text-xs font-semibold tracking-widest uppercase">
 					{i18n.t('auth.loginTitle')}
-				</p>
+				</h1>
 				<div class="bg-primary/30 h-px w-8"></div>
 			</div>
 		</div>
 
 		<!-- Card -->
 		<div
-			class="glass-panel border-outline-variant/20 ia-border-accent rounded-xl border p-8 shadow-[0_40px_100px_rgba(0,32,104,0.08)]"
+			class="glass-panel border-heritage ia-border-accent rounded-lg border p-6 shadow-md md:p-8"
 		>
+			{#if notice}
+				<p
+					role="status"
+					class="bg-primary/5 border-primary/10 text-primary mb-6 rounded-lg border px-4 py-3 text-sm font-medium"
+				>
+					{notice}
+				</p>
+			{/if}
+
 			<!-- Error -->
 			{#if error}
 				<div
@@ -121,20 +140,6 @@
 						{i18n.t('auth.forgotPassword')}
 					</a>
 				</div>
-
-				<!-- Google Login -->
-				<button
-					type="button"
-					onclick={handleGoogleLogin}
-					class="bg-surface-container-low font-headline text-on-surface hover:bg-surface-container flex w-full items-center justify-center gap-3 rounded-lg px-4 py-3 text-sm font-bold transition"
-				>
-					<img
-						src="https://www.svgrepo.com/show/475656/google-color.svg"
-						alt="Google"
-						class="h-5 w-5"
-					/>
-					{i18n.t('auth.signInWithGoogle')}
-				</button>
 
 				<!-- Submit -->
 				<button

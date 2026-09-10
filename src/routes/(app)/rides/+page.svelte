@@ -192,12 +192,15 @@
 
 		try {
 			const requestedSeats = rideSearch.params?.seats ?? 1;
-			const response = await reserveRide(ride.rideId, {
+			const bookingId = await reserveRide(ride.rideId, {
 				fromStopId: ride.startStop.id,
 				toStopId: ride.endStop.id,
 				seats: requestedSeats
 			});
-			await goto(resolve(`/rides/${ride.rideId}?bookingId=${response.id}`));
+			if (bookingId === null) {
+				throw new Error(i18n.t('rides.reserveError'));
+			}
+			await goto(resolve(`/rides/${ride.rideId}?bookingId=${bookingId}`));
 		} catch (err) {
 			const current = cardStates[ride.rideId];
 			if (current) {
@@ -467,7 +470,7 @@
 				</div>
 			{/if}
 
-			<Modal bind:show={showSearchModal}>
+			<Modal bind:show={showSearchModal} label={i18n.t('search.button')}>
 				<div class="space-y-5">
 					<div class="flex items-center justify-between">
 						<h3 class="font-headline text-primary text-lg font-bold">{i18n.t('search.title')}</h3>
@@ -551,7 +554,7 @@
 				</div>
 			</Modal>
 
-			<Modal bind:show={showFilterModal}>
+			<Modal bind:show={showFilterModal} label={i18n.t('rides.filters')}>
 				<div class="space-y-5">
 					<div class="flex items-center justify-between">
 						<h3 class="font-headline text-primary text-lg font-bold">
@@ -735,13 +738,6 @@
 									</div>
 									<div>
 										<p class="font-headline text-primary text-lg font-bold">{ride.driver.name}</p>
-										<div class="flex items-center gap-1 text-sm text-amber-500">
-											<span class="material-symbols-outlined text-[1rem]" data-icon="star"
-												>star</span
-											>
-											<span class="font-bold">{(ride.driver.rating ?? 0).toFixed(1)}</span>
-											<span class="text-secondary/60">({ride.driver.reviewsCount})</span>
-										</div>
 									</div>
 								</div>
 

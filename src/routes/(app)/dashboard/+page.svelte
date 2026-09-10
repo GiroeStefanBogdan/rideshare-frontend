@@ -95,7 +95,7 @@
 
 		<!-- Search Module with IA accent -->
 		<div
-			class="glass-panel border-outline-variant/20 ia-border-accent flex flex-col gap-2 rounded-xl border p-2 shadow-[0_40px_100px_rgba(0,32,104,0.08)] md:p-4"
+			class="glass-panel border-heritage ia-border-accent flex flex-col gap-2 rounded-lg border p-2 shadow-md md:p-4"
 		>
 			<div class="flex flex-col gap-2 md:flex-row">
 				<LocationAutocomplete

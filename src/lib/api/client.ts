@@ -9,7 +9,8 @@ const SVELTEKIT_FETCH_API_BASE = '/api';
 export class ApiError extends Error {
 	constructor(
 		public status: number,
-		message: string
+		message: string,
+		public body?: unknown
 	) {
 		super(message);
 		this.name = 'ApiError';
@@ -41,8 +42,18 @@ async function send(
 	}
 
 	if (!res.ok) {
-		const message = await res.text().catch(() => `HTTP ${res.status}`);
-		throw new ApiError(res.status, message);
+		const text = await res.text().catch(() => '');
+		let body: unknown;
+		try {
+			body = text ? JSON.parse(text) : undefined;
+		} catch {
+			body = undefined;
+		}
+		const message =
+			body && typeof body === 'object' && 'message' in body && typeof body.message === 'string'
+				? body.message
+				: text || `HTTP ${res.status}`;
+		throw new ApiError(res.status, message, body);
 	}
 
 	return res;

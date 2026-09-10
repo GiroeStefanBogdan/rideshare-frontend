@@ -127,7 +127,7 @@
 	{/if}
 
 	<div class="grid gap-6 lg:grid-cols-2">
-		<CarsSection bind:cars />
+		<CarsSection bind:cars editable />
 		<ReviewsSection {reviews} />
 	</div>
 
@@ -153,9 +153,7 @@
 			{#if allUsers.length === 0}
 				<p class="font-body text-secondary text-sm">{i18n.t('account.noUsersFound')}</p>
 			{:else}
-				<div
-					class="bg-surface-container-lowest border-outline-variant/15 overflow-x-auto rounded-xl border shadow-[0_8px_40px_rgba(0,32,104,0.06)]"
-				>
+				<div class="border-heritage overflow-x-auto rounded-lg border bg-white shadow-md">
 					<table class="w-full text-sm">
 						<thead>
 							<tr class="border-outline-variant/15 border-b text-left">
