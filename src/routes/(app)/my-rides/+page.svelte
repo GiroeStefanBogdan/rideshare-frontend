@@ -55,12 +55,20 @@
 	}
 	const booked = $derived(
 		data
-			? { upcoming: data.upcomingBookings.filter((r) => r.status === 'ACTIVE').map(bookedView) }
+			? {
+					upcoming: data.upcomingBookings.filter((r) => r.status === 'ACTIVE').map(bookedView),
+					past: bySchedule(data.pastBookings.filter((r) => r.status === 'ACTIVE').map(bookedView))
+				}
 			: null
 	);
 	const hosted = $derived(
 		data
-			? { upcoming: data.upcomingHostedRides.filter((r) => r.status === 'ACTIVE').map(hostedView) }
+			? {
+					upcoming: data.upcomingHostedRides.filter((r) => r.status === 'ACTIVE').map(hostedView),
+					past: bySchedule(
+						data.pastHostedRides.filter((r) => r.status === 'ACTIVE').map(hostedView)
+					)
+				}
 			: null
 	);
 	const cancelledBookings = $derived(
@@ -109,7 +117,7 @@
 			onclick={() => (tab = 'booked')}
 			>{i18n.t('myRides.booked')}
 			{booked && cancelledBookings
-				? `(${booked.upcoming.length + cancelledBookings.length})`
+				? `(${booked.upcoming.length + booked.past.length + cancelledBookings.length})`
 				: ''}</button
 		><button
 			class="border-b-2 px-4 py-3 font-bold {tab === 'hosted'
@@ -119,7 +127,7 @@
 			onclick={() => (tab = 'hosted')}
 			>{i18n.t('myRides.hosted')}
 			{hosted && cancelledHostedRides
-				? `(${hosted.upcoming.length + cancelledHostedRides.length})`
+				? `(${hosted.upcoming.length + hosted.past.length + cancelledHostedRides.length})`
 				: ''}</button
 		>
 	</div>
@@ -188,10 +196,32 @@
 				</div>
 			</section>
 		{/if}
-		<a
-			class="text-primary mt-10 inline-block text-sm font-bold underline"
-			href={resolve(`/my-rides/past?role=${tab}`)}>{i18n.t('myRides.viewPast')}</a
-		>
+		<section class="mt-10">
+			<div class="flex flex-wrap items-center justify-between gap-3">
+				<h2 class="font-headline text-2xl font-bold">{i18n.t('myRides.past')}</h2>
+				<a
+					class="text-primary text-sm font-bold underline"
+					href={resolve(`/my-rides/past?role=${tab}`)}>{i18n.t('myRides.viewPast')}</a
+				>
+			</div>
+			{#if tab === 'booked'}
+				<div class="mt-4 grid gap-5 md:grid-cols-2">
+					{#each booked?.past.slice(0, 3) ?? [] as ride (ride.bookingId)}
+						<BookedRideCard {ride} phase="past" />
+					{:else}
+						<p class="text-secondary">{i18n.t('myRides.nothingPast')}</p>
+					{/each}
+				</div>
+			{:else}
+				<div class="mt-4 space-y-5">
+					{#each hosted?.past.slice(0, 3) ?? [] as ride (ride.rideId)}
+						<HostedRideCard {ride} phase="past" />
+					{:else}
+						<p class="text-secondary">{i18n.t('myRides.nothingPast')}</p>
+					{/each}
+				</div>
+			{/if}
+		</section>
 	{/if}
 </section>
 <ConfirmationModal

@@ -110,7 +110,35 @@ New published stop times are required; legacy missing times are displayed as una
 
 ## Reviews
 
-> Planned feature: review endpoints are not implemented yet. The frontend displays an unavailable state until this contract is delivered.
+Reviews are one directional and last for life per counterpart. A later shared ride reopens the same
+review for fourteen days; there is no second vote. Content publishes when both counterparts have
+submitted, or when the later window closes, and publication locks editing until a later ride reopens
+it.
+
+| Action                   | Method | Path                        | Auth   | Request body              | Response               |
+| ------------------------ | ------ | --------------------------- | ------ | ------------------------- | ---------------------- |
+| Submit or amend a review | POST   | `/reviews`                  | User   | `ReviewInput`             | `Review`               |
+| Own review workspace     | GET    | `/reviews/me`               | User   | —                         | `MyReviews`            |
+| Counters awaiting review  | GET    | `/reviews/me/eligibility`   | User   | —                         | `ReviewEligibility[]`  |
+| Member's public reviews  | GET    | `/users/:id/reviews`        | Public | —                         | `UserReviews`          |
+| Hide a review            | PATCH  | `/admin/reviews/:id/hide`   | Admin  | `{ reason?: string }`     | `Review`               |
+| Restore a review         | PATCH  | `/admin/reviews/:id/restore`| Admin  | —                         | `Review`               |
+
+`ReviewInput` is `{ targetUserId, score (1–5), details? (≤1000 characters) }`. Eligibility is always
+derived from booked, non-cancelled, already-dropped-off rides, never accepted from the client.
+
+`canSubmit` is true while the review's window is open and it is neither published nor hidden. A
+review submitted alone (counterpart has not submitted yet) therefore remains `canSubmit: true` in
+subsequent eligibility responses until publication or lock; the UI hides it after a successful
+submission through a local per-cycle dismissal, not through a server flag.
+
+`Review` exposes published content plus, for the author only, `pendingScore`/`pendingDetails`,
+`canSubmit` and `windowEndsAt`. `RatingSummary` carries `average: number | null` and `count`;
+`average` is `null` when nothing has been published, which the UI renders as "No reviews yet" rather
+than a zero score. Each review carries `role` (`DRIVER` or `PASSENGER`) for its badge.
+
+`POST /reviews` conflicts with `409` when the window has closed, the review is published, or it was
+hidden, and when the two members share no qualifying ride.
 
 ---
 

@@ -1,3 +1,5 @@
+import type { Review } from './review';
+
 export interface UserResponseDto {
 	id: number;
 	name: string;
@@ -25,22 +27,14 @@ export interface UserCar {
 	numberOfSeats: number;
 }
 
-export interface UserReview {
-	id: number;
-	reviewerId: number;
-	targetUserId: number;
-	score: number;
-	details: string;
-	date: string; // ISO datetime string
-}
-
-// Returned by GET /users/{id} — own profile includes all fields; other users may have a subset
 export interface UserProfile extends UserResponseDto {
 	bio?: string;
 	canSmoke?: boolean;
 	petFriendly?: boolean;
 	cars?: UserCar[];
-	reviews?: UserReview[];
+	reviews?: Review[];
+	rating?: number | null;
+	reviewsCount?: number;
 }
 
 export interface UserPublicProfile {
@@ -52,7 +46,9 @@ export interface UserPublicProfile {
 	canSmoke?: boolean;
 	petFriendly?: boolean;
 	cars?: UserCar[];
-	reviews?: UserReview[];
+	reviews?: Review[];
+	rating?: number | null;
+	reviewsCount?: number;
 }
 
 export interface ChangePasswordRequest {
