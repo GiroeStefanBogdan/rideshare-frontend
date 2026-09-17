@@ -4,6 +4,7 @@ import type {
 	UpdateUserRequest,
 	UserCar,
 	UserProfile,
+	UserPublicProfile,
 	UserResponseDto
 } from '$lib/types/user';
 
@@ -11,12 +12,12 @@ export async function getUsers(): Promise<UserResponseDto[]> {
 	return request<UserResponseDto[]>('/users');
 }
 
-export async function getUserById(id: number): Promise<UserProfile> {
-	return request<UserProfile>(`/users/${id}`);
+export async function getUserById(id: number): Promise<UserPublicProfile> {
+	return request<UserPublicProfile>(`/users/${id}`);
 }
 
-export async function loadUserById(id: string, fetcher: typeof fetch): Promise<UserProfile> {
-	return request<UserProfile>(`/users/${id}`, undefined, fetcher);
+export async function loadUserById(id: string, fetcher: typeof fetch): Promise<UserPublicProfile> {
+	return request<UserPublicProfile>(`/users/${id}`, undefined, fetcher);
 }
 
 export async function changePassword(email: string, newPassword: string): Promise<void> {

@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { searchRides, reserveRide } from '$lib/api/rides.js';
+	import { ApiError } from '$lib/api/client.js';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	import { rideSearch } from '$lib/stores/rideSearch.svelte';
 	import type { RideSearchParams, RideSearchResult } from '$lib/types/ride.js';
@@ -33,11 +34,20 @@
 	let loading = $state(untrack(() => !!initialParams && results.length === 0));
 	let error = $state<string | null>(null);
 	let lastSearchKey = $state('');
+	let now = $state(Date.now());
 
 	let searchFrom = $state<LocationResult | null>(rideSearch.fromLocation ?? null);
 	let searchTo = $state<LocationResult | null>(rideSearch.toLocation ?? null);
 	let searchDate = $state(rideSearch.params?.date ?? new Date().toISOString().split('T')[0]);
 	let searchSeats = $state(rideSearch.params?.seats ?? 1);
+
+	$effect(() => {
+		const timer = window.setInterval(() => {
+			now = Date.now();
+		}, 30_000);
+
+		return () => window.clearInterval(timer);
+	});
 
 	function getDisplayDate(isoStr: string) {
 		if (!isoStr) return '';
@@ -174,7 +184,8 @@
 		}
 	}
 
-	function formatTime(value: string) {
+	function formatTime(value: string | null) {
+		if (!value) return i18n.t('common.notAvailable');
 		return new Date(value).toLocaleTimeString([], {
 			hour: '2-digit',
 			minute: '2-digit'
@@ -183,6 +194,12 @@
 
 	function formatDistance(value: number) {
 		return value.toFixed(1);
+	}
+
+	function distanceClass(value: number) {
+		if (value < 5) return 'bg-green-100 text-green-800';
+		if (value < 20) return 'bg-yellow-100 text-yellow-800';
+		return 'bg-red-100 text-red-800';
 	}
 
 	let cardStates = $state<Record<number, { reserving: boolean; error: string | null }>>({});
@@ -200,8 +217,13 @@
 			if (bookingId === null) {
 				throw new Error(i18n.t('rides.reserveError'));
 			}
-			await goto(resolve(`/rides/${ride.rideId}?bookingId=${bookingId}`));
+			await goto(resolve(`/rides/${ride.rideId}/confirmation?bookingId=${bookingId}`));
 		} catch (err) {
+			if (err instanceof ApiError && err.status === 401) {
+				const current = cardStates[ride.rideId];
+				if (current) current.reserving = false;
+				return;
+			}
 			const current = cardStates[ride.rideId];
 			if (current) {
 				current.reserving = false;
@@ -211,7 +233,9 @@
 	}
 </script>
 
-<div class="border-heritage sticky top-0 z-40 hidden border-b bg-white shadow-md md:block">
+<div
+	class="border-outline-variant/20 sticky top-16 z-40 hidden border-b bg-white shadow-md md:top-20 md:block"
+>
 	<div class="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 md:gap-3 md:px-8">
 		<div class="min-w-0 flex-1">
 			<LocationAutocomplete
@@ -270,17 +294,9 @@
 	</div>
 </div>
 
-<div class="border-heritage sticky top-0 z-40 border-b bg-white shadow-md md:hidden">
-	<div
-		class="mx-auto flex items-center gap-2 px-4 py-3"
-		role="button"
-		tabindex="0"
-		onclick={() => (showSearchModal = true)}
-		onkeydown={(e: KeyboardEvent) => {
-			if (e.key === 'Enter') showSearchModal = true;
-		}}
-	>
-		<div class="min-w-0 flex-1">
+<div class="border-outline-variant/20 sticky top-16 z-40 border-b bg-white shadow-md md:hidden">
+	<div class="mx-auto flex items-center gap-2 px-4 py-3">
+		<button type="button" class="min-w-0 flex-1 text-left" onclick={() => (showSearchModal = true)}>
 			{#if searchFrom || searchTo}
 				<p class="text-primary truncate text-sm font-bold">
 					{searchFrom?.name ?? '…'} <span class="text-secondary/60">&rarr;</span>
@@ -295,7 +311,7 @@
 					{i18n.t('search.from')} &rarr; {i18n.t('search.to')}
 				</p>
 			{/if}
-		</div>
+		</button>
 		<button
 			type="button"
 			onclick={(e: MouseEvent) => {
@@ -303,7 +319,7 @@
 				showFilterModal = true;
 			}}
 			aria-label={i18n.t('rides.filters')}
-			class="bg-surface-container-low/50 hover:bg-surface-container-low rounded-lg p-2 transition-colors"
+			class="bg-surface-container-low/50 hover:bg-surface-container-high rounded-lg p-2 transition-colors"
 		>
 			<span class="material-symbols-outlined text-primary/70 text-xl" data-icon="tune">tune</span>
 		</button>
@@ -333,7 +349,7 @@
 								min="0"
 								bind:value={maxDistanceStart}
 								placeholder="10"
-								class="border-outline-variant/30 text-primary w-full rounded-lg border bg-white px-3 py-2 focus:ring-0"
+								class="border-outline-variant/20 text-primary w-full rounded-lg border bg-white px-3 py-2 focus:ring-0"
 							/>
 							<span class="text-secondary/70 text-sm">km</span>
 						</div>
@@ -438,7 +454,7 @@
 				>
 					{loading
 						? i18n.t('search.searching')
-						: `${results.length} ${i18n.t('results.ridesCount')}`}
+						: `${results.length} ${i18n.t(results.length === 1 ? 'results.rideCountOne' : 'results.ridesCount')}`}
 				</div>
 			</div>
 
@@ -447,7 +463,7 @@
 					class="absolute inset-0 z-20 flex items-start justify-center bg-white/70 pt-24 backdrop-blur-[2px]"
 				>
 					<div
-						class="glass-panel ia-border-accent border-outline-variant/20 flex w-full max-w-sm flex-col items-center gap-4 rounded-xl border bg-white p-8 text-center shadow-xl"
+						class="border-outline-variant/20 flex w-full max-w-sm flex-col items-center gap-4 rounded-lg border bg-white p-8 text-center shadow-md"
 						in:fly={{ y: 8, duration: 160 }}
 					>
 						<div class="relative flex h-16 w-16 items-center justify-center">
@@ -582,7 +598,7 @@
 								min="0"
 								bind:value={maxDistanceStart}
 								placeholder="10"
-								class="border-outline-variant/30 text-primary w-full rounded-lg border bg-white px-3 py-2 focus:ring-0"
+								class="border-outline-variant/20 text-primary w-full rounded-lg border bg-white px-3 py-2 focus:ring-0"
 							/>
 							<span class="text-secondary/70 text-sm">km</span>
 						</div>
@@ -702,7 +718,9 @@
 					</div>
 				{:else}
 					{#each results as ride (ride.rideId)}
-						{@const isDeparted = new Date(ride.startStop.departsAt) < new Date()}
+						{@const isDeparted = ride.startStop.departsAt
+							? Date.parse(ride.startStop.departsAt) < now
+							: false}
 						<article
 							class="glass-panel border-outline-variant/20 hover:ia-border-accent relative rounded-xl border p-6 shadow-sm transition-all hover:shadow-md"
 							class:opacity-50={isDeparted}
@@ -737,7 +755,18 @@
 										{/if}
 									</div>
 									<div>
-										<p class="font-headline text-primary text-lg font-bold">{ride.driver.name}</p>
+										<a
+											href={resolve(`/rides/${ride.rideId}`)}
+											class="font-headline text-primary text-lg font-bold hover:underline"
+											>{ride.driver.name}</a
+										>
+										<div class="flex items-center gap-1 text-sm text-amber-500">
+											<span class="material-symbols-outlined text-[1rem]" data-icon="star"
+												>star</span
+											>
+											<span class="font-bold">{(ride.driver.rating ?? 0).toFixed(1)}</span>
+											<span class="text-secondary/60">({ride.driver.reviewsCount})</span>
+										</div>
 									</div>
 								</div>
 
@@ -812,12 +841,22 @@
 
 									<span class="text-secondary w-36 truncate text-right text-sm font-semibold">
 										{ride.endStop.locationName}
+										{#if ride.endStop.municipalityName}
+											<span class="text-secondary/60 block text-xs"
+												>{ride.endStop.municipalityName}</span
+											>
+										{/if}
 									</span>
 								</div>
 								<div class="flex justify-between gap-4 text-sm">
-									<span class="text-secondary w-36 truncate font-medium"
-										>{ride.startStop.locationName}</span
-									>
+									<span class="text-secondary w-36 truncate font-medium">
+										{ride.startStop.locationName}
+										{#if ride.startStop.municipalityName}
+											<span class="text-secondary/60 block text-xs"
+												>{ride.startStop.municipalityName}</span
+											>
+										{/if}
+									</span>
 									<span
 										class="font-label text-secondary/60 text-right text-[0.6875rem] font-bold tracking-widest uppercase"
 									>
@@ -827,34 +866,50 @@
 							</div>
 
 							<div
-								class="mt-6 flex flex-wrap items-center gap-4 rounded-lg bg-gray-50/50 px-4 py-3"
+								class="bg-surface-container-low/40 mt-6 flex flex-wrap items-center gap-3 rounded-lg px-4 py-3"
 							>
-								<div class="flex items-center gap-2 text-sm text-gray-600">
+								<div
+									class={`flex items-center gap-2 rounded-lg px-2 py-1 text-sm ${distanceClass(ride.distanceToStartKm)}`}
+								>
 									<span
 										class="material-symbols-outlined text-[1.125rem]"
 										data-icon="directions_walk">directions_walk</span
 									>
 									<span>
-										<strong class="text-gray-900"
-											>{formatDistance(ride.distanceToStartKm)} km</strong
+										<strong
+											>{formatDistance(ride.distanceToStartKm)}
+											{i18n.t('common.kilometers')}</strong
 										>
 										{i18n.t('results.distanceStart')}
 									</span>
 								</div>
-								<div class="h-4 w-px bg-gray-200"></div>
-								<div class="flex items-center gap-2 text-sm text-gray-600">
+								<div
+									class={`flex items-center gap-2 rounded-lg px-2 py-1 text-sm ${distanceClass(ride.distanceToEndKm)}`}
+								>
+									<span class="material-symbols-outlined text-[1.125rem]" data-icon="near_me"
+										>near_me</span
+									>
+									<span>
+										<strong
+											>{formatDistance(ride.distanceToEndKm)} {i18n.t('common.kilometers')}</strong
+										>
+										{i18n.t('results.distanceEnd')}
+									</span>
+								</div>
+								<div
+									class="bg-surface text-charcoal flex items-center gap-2 rounded-lg px-2 py-1 text-sm"
+								>
 									<span class="material-symbols-outlined text-[1.125rem]" data-icon="event_seat"
 										>event_seat</span
 									>
 									<span
-										><strong class="text-gray-900">{ride.seatsAvailable}</strong>
+										><strong>{ride.seatsAvailable}</strong>
 										{i18n.t('filters.seats')}</span
 									>
 								</div>
 								{#if ride.driver.smokingAllowed}
-									<div class="h-4 w-px bg-gray-200"></div>
 									<div
-										class="flex items-center gap-2 text-sm text-gray-600"
+										class="bg-surface text-charcoal flex items-center gap-2 rounded-lg px-2 py-1 text-sm"
 										title={i18n.t('filters.smokingAllowed')}
 									>
 										<span
@@ -864,9 +919,8 @@
 									</div>
 								{/if}
 								{#if ride.driver.petFriendly}
-									<div class="h-4 w-px bg-gray-200"></div>
 									<div
-										class="flex items-center gap-2 text-sm text-gray-600"
+										class="bg-surface text-charcoal flex items-center gap-2 rounded-lg px-2 py-1 text-sm"
 										title={i18n.t('filters.petFriendly')}
 									>
 										<span class="material-symbols-outlined text-[1.125rem]" data-icon="pets"

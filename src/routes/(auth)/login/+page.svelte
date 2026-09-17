@@ -31,7 +31,7 @@
 		<!-- Brand mark -->
 		<div class="mb-10 text-center">
 			<a href={resolve('/')} class="font-headline text-primary text-3xl font-black tracking-tight"
-				>DrumBun</a
+				>Drum Bun</a
 			>
 			<div class="mt-3 inline-flex items-center gap-2">
 				<div class="bg-primary/30 h-px w-8"></div>
@@ -129,7 +129,7 @@
 						<input
 							type="checkbox"
 							bind:checked={remember}
-							class="form-checkbox border-outline-variant text-primary-container focus:ring-primary h-4 w-4 rounded"
+							class="form-checkbox border-outline-variant/20 text-primary-container focus:ring-primary h-4 w-4 rounded"
 						/>
 						<span class="font-body text-sm">{i18n.t('auth.rememberMe')}</span>
 					</label>

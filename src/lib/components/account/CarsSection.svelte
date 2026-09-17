@@ -5,7 +5,13 @@
 	import { createUserCar, deleteUserCar, updateUserCar } from '$lib/api/users';
 	import ConfirmationModal from '$lib/components/ui/ConfirmationModal.svelte';
 
-	let { cars = $bindable(), editable = false }: { cars: UserCar[]; editable?: boolean } = $props();
+	let {
+		cars = $bindable(),
+		editable = false
+	}: {
+		cars: UserCar[];
+		editable?: boolean;
+	} = $props();
 
 	let isEditing = $state(false);
 	let editingCarId = $state<number | null>(null);
@@ -53,7 +59,7 @@
 	async function handleSave() {
 		if (!authStore.user?.id) return;
 		if (!brand || !model || !color || !year || !licensePlate || !numberOfSeats) {
-			error = 'All fields are required';
+			error = i18n.t('account.allFieldsRequired');
 			return;
 		}
 		isSaving = true;
@@ -253,11 +259,13 @@
 						</div>
 					</div>
 
-					{#if editable}<div class="flex gap-1">
+					<div class="flex gap-1">
+						{#if editable}
 							<button
 								onclick={() => startEdit(car)}
 								class="hover:bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-lg transition-all"
 								title={i18n.t('account.editCar')}
+								aria-label={i18n.t('account.editCar')}
 							>
 								<span class="material-symbols-outlined text-lg">edit</span>
 							</button>
@@ -265,10 +273,12 @@
 								onclick={() => confirmDelete(car.id)}
 								class="hover:bg-error/10 text-error flex h-8 w-8 items-center justify-center rounded-lg transition-all"
 								title={i18n.t('account.deleteCar')}
+								aria-label={i18n.t('account.deleteCar')}
 							>
 								<span class="material-symbols-outlined text-lg">delete</span>
 							</button>
-						</div>{/if}
+						{/if}
+					</div>
 				</li>
 			{/each}
 		</ul>

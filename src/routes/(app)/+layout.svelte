@@ -107,6 +107,11 @@
 									class="hover:bg-heritage block rounded-lg px-4 py-3 font-semibold"
 									onclick={closeMenus}>{i18n.t('nav.account')}</a
 								>
+								<a
+									href={resolve('/my-rides')}
+									class="hover:bg-heritage block rounded-lg px-4 py-3 font-semibold"
+									onclick={closeMenus}>{i18n.t('nav.myRides')}</a
+								>
 								<button
 									type="button"
 									class="hover:bg-heritage text-charcoal w-full rounded-lg px-4 py-3 text-left font-semibold"
@@ -163,6 +168,11 @@
 							href={resolve('/account')}
 							class="hover:bg-heritage rounded-lg px-4 py-3 font-semibold"
 							onclick={closeMenus}>{i18n.t('nav.account')}</a
+						>
+						<a
+							href={resolve('/my-rides')}
+							class="hover:bg-heritage rounded-lg px-4 py-3 font-semibold"
+							onclick={closeMenus}>{i18n.t('nav.myRides')}</a
 						>
 						<button
 							type="button"

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { i18n } from '$lib/stores/i18n.svelte';
 	import { resolve } from '$app/paths';
+	import { i18n } from '$lib/stores/i18n.svelte';
 	import type { RideDetails } from '$lib/types/ride';
 
 	let { data }: { data: { ride: RideDetails; bookingId: string | null } } = $props();
@@ -50,8 +50,11 @@
 									: `${i18n.t('publish.stop')} ${index}`}
 						</p>
 						<h3 class="text-xl font-semibold">{stop.locationName}</h3>
+						<p class="text-charcoal/70 text-sm">{stop.municipalityName}</p>
 						<p class="text-base leading-relaxed font-normal">
-							{formatDate(stop.departsAt)} · {stop.cumulativePricePerSeat} RON
+							{formatDate(stop.departsAt)} · {stop.cumulativePricePerSeat} RON · {stop.availableSeats ??
+								0}
+							{i18n.t('filters.seats')}
 						</p>
 					</li>
 				{/each}
@@ -64,6 +67,10 @@
 			<div>
 				<p class="text-xs font-semibold tracking-widest uppercase">{i18n.t('rides.driver')}</p>
 				<p class="text-xl font-semibold">{data.ride.driver.name}</p>
+				<p class="text-charcoal/70 text-sm">
+					{data.ride.driver.rating.toFixed(1)} · {data.ride.driver.reviewsCount}
+					{i18n.t('myRides.reviews')}
+				</p>
 			</div>
 			<div>
 				<p class="text-xs font-semibold tracking-widest uppercase">{i18n.t('publish.capacity')}</p>

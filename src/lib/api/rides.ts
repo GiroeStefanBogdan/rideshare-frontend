@@ -6,10 +6,11 @@ import type {
 	PublishRideResponse,
 	RideDetails,
 	ReserveRideRequest,
-	ReserveRideResponse
+	ReserveRideResponse,
+	MyRidesResponse
 } from '../types/ride.js';
 
-export const loadRideDetails = (rideId: number, fetcher: typeof fetch): Promise<RideDetails> => {
+export const loadRideDetails = (rideId: number, fetcher?: typeof fetch): Promise<RideDetails> => {
 	return request<RideDetails>(`/rides/${rideId}`, undefined, fetcher);
 };
 
@@ -35,4 +36,8 @@ export const reserveRide = (
 		method: 'POST',
 		body: JSON.stringify(body)
 	});
+};
+
+export const getMyRides = (): Promise<MyRidesResponse> => {
+	return request<MyRidesResponse>('/rides/me');
 };
