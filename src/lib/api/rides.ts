@@ -41,3 +41,7 @@ export const reserveRide = (
 export const getMyRides = (): Promise<MyRidesResponse> => {
 	return request<MyRidesResponse>('/rides/me');
 };
+
+export const cancelBooking = (bookingId: number): Promise<void> => {
+	return request<void>(`/rides/me/bookings/${bookingId}`, { method: 'DELETE' });
+};

@@ -122,3 +122,51 @@ export const actions = {
 ### Route protection
 
 Protected routes live under `(app)/`. Each protected page has a `+page.server.ts` that checks `locals.user` and redirects unauthenticated users to `/login`. Do not implement client-side auth guards — the server load function is the authoritative check.
+
+## My Rides and passenger cancellation
+
+Both `/my-rides` and `/my-rides/past` live under `(app)/` with server auth guards.
+They fetch the same `GET /rides/me` response on mount through `src/lib/api/rides.ts`.
+
+| Layer                                            | Responsibility                                                                          |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| `src/lib/types/ride.ts`                          | Four-array `MyRidesResponse`; `RideStatus` is `ACTIVE` / `CANCELLED`                    |
+| `src/routes/(app)/my-rides/+page.svelte`         | Active Upcoming, merged Cancelled, confirmation and cancellation/refetch                |
+| `src/routes/(app)/my-rides/past/+page.svelte`    | Active Past only, using server history buckets                                          |
+| `src/lib/rides/classification.svelte.ts`         | Shared view types, scheduled-end parsing, ongoing badge predicate and cancelled sorting |
+| `src/lib/components/rides/BookedRideCard.svelte` | Passenger card and eligible cancel button; receives callback, never fetches             |
+| `src/lib/components/rides/HostedRideCard.svelte` | Hosted schedule and status card                                                         |
+
+### Buckets and navigation
+
+The backend owns time classification: booking drop-off / hosted final-stop end determines
+Upcoming (`end > now` or legacy null) versus Past (`now.minusMonths(1) <= end <= now`, inclusive).
+Upcoming sorts start ASC and Past end DESC with ID ASC ties. The frontend preserves these orders
+when filtering active entries; it does not independently reclassify the response by browser time.
+
+Main Cancelled merges cancelled entries from both server buckets for the selected role, sorting
+end DESC, null ends last, then booking/ride ID ASC. Past excludes cancellations. Backend response
+mapping composes booking + ride status and normalizes legacy `INACTIVE` to `CANCELLED`.
+
+Both pages initialize Booked/Hosted from `?role=hosted` (otherwise Booked); their Past/Back links
+include the current `role=booked|hosted`. Role is UI state, not an API filter. Tab buttons change
+local selection; they do not send a request or rewrite the URL themselves.
+
+Cards show “On the way” when `start <= browser now < end`, within Upcoming. Missing schedule
+values show unavailable text; no schedules are fabricated. This badge is presentation only.
+There is no polling, focus refresh, or timer-driven reclassification; requests occur on mount,
+explicit Retry, and successful cancellation.
+
+### Cancellation flow
+
+The Booked card offers cancellation only for active Upcoming entries with a known future pickup.
+The page opens `ConfirmationModal`, guards duplicate submission with `cancelling`, calls
+`cancelBooking(bookingId)`, then explicitly reloads My Rides after 204. It does not optimistically
+restore seats or move cards. Cancellation errors show an alert; reload errors use the page retry state.
+Backend time/ownership checks remain authoritative if the page becomes stale.
+
+See [API cancellation contract](API.md#passenger-cancellation) for owner-only 404, idempotent 204,
+and expiry 409 responses.
+
+No frontend automated tests, test configuration, or test dependencies are introduced for this
+feature. Type/lint checks and manual validation evidence belong to the implementation handoff.

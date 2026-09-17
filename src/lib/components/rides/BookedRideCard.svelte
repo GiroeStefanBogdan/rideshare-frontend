@@ -1,7 +1,18 @@
 <script lang="ts">
-	import type { BookedRide } from '$lib/types/ride';
+	import type { BookedRideView } from '$lib/rides/classification.svelte';
+	import { isOngoing, scheduledEnd } from '$lib/rides/classification.svelte';
 	import { i18n } from '$lib/stores/i18n.svelte';
-	let { ride }: { ride: BookedRide } = $props();
+	let {
+		ride,
+		phase,
+		cancelling = false,
+		onCancel
+	}: {
+		ride: BookedRideView;
+		phase: 'upcoming' | 'past' | 'cancelled';
+		cancelling?: boolean;
+		onCancel?: () => void;
+	} = $props();
 	const formatTime = (value: string | null): string =>
 		value
 			? new Intl.DateTimeFormat(i18n.lang === 'ro' ? 'ro-RO' : 'en-GB', {
@@ -10,9 +21,16 @@
 					hour12: false
 				}).format(new Date(value))
 			: i18n.t('common.notAvailable');
+	const end = $derived(scheduledEnd(ride));
+	const ongoing = $derived(phase === 'upcoming' && isOngoing(ride));
 </script>
 
-<article class="border-outline-variant/20 bg-surface rounded-2xl border p-5 shadow-sm">
+<article
+	class="border-outline-variant/20 bg-surface rounded-2xl border p-5 shadow-sm {phase ===
+	'cancelled'
+		? 'bg-surface-container-low grayscale'
+		: ''}"
+>
 	<div class="flex items-start justify-between gap-4">
 		<div class="flex items-center gap-3">
 			{#if ride.driver.avatarUrl}<img
@@ -32,9 +50,12 @@
 				</p>
 			</div>
 		</div>
-		{#if ride.status === 'INACTIVE'}<span
+		{#if phase === 'cancelled'}<span
 				class="rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-700"
 				>{i18n.t('myRides.cancelled')}</span
+			>{:else if ongoing}<span
+				class="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700"
+				>{i18n.t('myRides.onTheWay')}</span
 			>{/if}
 	</div>
 	<div class="mt-5 grid gap-4 sm:grid-cols-2">
@@ -46,10 +67,30 @@
 		<div>
 			<p class="text-secondary text-xs font-bold uppercase">{i18n.t('myRides.to')}</p>
 			<p class="font-semibold">{ride.toStop.locationName}</p>
-			<p class="text-secondary text-sm">{formatTime(ride.toStop.departsAt)}</p>
+			<p class="text-secondary text-sm">
+				{ride.toStop.departsAt
+					? formatTime(ride.toStop.departsAt)
+					: i18n.t('myRides.scheduleUnavailable')}
+			</p>
 		</div>
 	</div>
-	<div class="border-outline-variant/10 mt-5 flex justify-between border-t pt-4 text-sm">
-		<span>{ride.seats} {i18n.t('myRides.seats')}</span><strong>{ride.totalPrice} RON</strong>
+	<div
+		class="border-outline-variant/10 mt-5 flex items-center justify-between gap-3 border-t pt-4 text-sm"
+	>
+		<span>{ride.seats} {i18n.t('myRides.seats')}</span>
+		{#if phase === 'upcoming' && ride.status === 'ACTIVE' && onCancel && ride.startTime && Date.parse(ride.startTime) > Date.now()}
+			<button
+				type="button"
+				class="rounded-lg border border-red-200 px-3 py-1.5 font-semibold text-red-700 transition-colors duration-150 hover:bg-red-50 disabled:opacity-40"
+				disabled={cancelling}
+				onclick={onCancel}
+				>{cancelling ? i18n.t('myRides.cancelling') : i18n.t('myRides.cancelBooking')}</button
+			>
+		{/if}
+		<strong>{ride.totalPrice} RON</strong>
 	</div>
+	{#if phase === 'upcoming' && end}<p class="text-secondary mt-2 text-right text-xs">
+			{i18n.t('myRides.arrivalLabel')}
+			{formatTime(ride.toStop.departsAt)}
+		</p>{/if}
 </article>
