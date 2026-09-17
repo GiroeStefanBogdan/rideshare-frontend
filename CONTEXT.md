@@ -81,4 +81,32 @@ A lifecycle status, not a synonym for Past. My Rides wire status is `ACTIVE` / `
 **Passenger Cancellation**:
 The Booking owner's action strictly before Pickup, changing only that Booking's status and restoring exactly its seats once on `[fromOrder, toOrder)`. Already cancelled/inactive Booking or Ride is a no-op. Driver cancellation changes only the Ride status and releases no seats.
 
+## Reviews and reputation
+
+**Review**:
+One directional piece of feedback between two members who shared a Ride: a passenger reviewing their driver, or a driver reviewing one of their booking passengers. A member keeps at most one Review per counterpart for life; a later shared Ride reopens its window instead of creating another Review.
+_Avoid_: Ride review, per-booking review, second review
+
+**Review Window**:
+The fourteen days following the passenger's scheduled Drop-off during which a Review may be submitted or amended. It reopens for a strictly later shared Drop-off.
+_Avoid_: Deadline, grace period
+
+**Pending / Published**:
+A Review's current content is Pending until it becomes public. It publishes once both counterparts have submitted for the same cycle, or once its own Review Window closes. Published Reviews are visible to everyone and count toward reputation; Pending ones are visible only to their author.
+_Avoid_: Draft, unpublished
+
+**Hidden**:
+A Published Review removed from public sight by moderation. It stops counting toward reputation but is not deleted.
+_Avoid_: Deleted review, rejected review
+
+**Rating Summary**:
+A member's combined reputation across Published, non-Hidden received Reviews: their arithmetic mean to one decimal plus the count. A member without Published Reviews is unrated, which is not the same as a zero score. Each Review also carries a role badge saying whether it was written as a driver or as a passenger.
+_Avoid_: Stars, driver rating, passenger rating
+
+**Deleted Member**:
+The attribution shown on a Review whose author deleted their account. Its contribution to the counterpart's Rating Summary remains; the deleted member's own listing and reputation do not.
+_Avoid_: Anonymous user, removed review
+
+See [review architecture](docs/ARCHITECTURE.md#reviews) and [review ADR](docs/adr/0004-use-lifetime-user-pair-reviews.md).
+
 See [My Rides architecture](docs/ARCHITECTURE.md#my-rides-and-passenger-cancellation) and [cancellation ADR](docs/adr/0003-use-explicit-cancelled-status.md).

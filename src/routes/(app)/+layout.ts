@@ -1,10 +1,5 @@
 import type { LayoutLoad } from './$types';
-import { getMe } from '$lib/api/users';
 
-export const load: LayoutLoad = async ({ fetch }) => {
-	try {
-		return { user: await getMe(fetch) };
-	} catch {
-		return { user: null };
-	}
-};
+// The server resolves cookie-backed identity. Anonymous public pages must not
+// trigger the API client's protected-request redirect during navigation.
+export const load: LayoutLoad = ({ data }) => data;

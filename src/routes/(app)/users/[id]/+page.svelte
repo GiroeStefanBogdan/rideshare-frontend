@@ -2,6 +2,9 @@
 	import type { PageData } from './$types';
 	import CarsSection from '$lib/components/account/CarsSection.svelte';
 	import ReviewsSection from '$lib/components/account/ReviewsSection.svelte';
+	import { adminHideReview, adminRestoreReview } from '$lib/api/reviews';
+	import type { Review, RatingSummary } from '$lib/types/review';
+	import { authStore } from '$lib/stores/auth.svelte';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	import { resolve } from '$app/paths';
 
@@ -11,6 +14,32 @@
 	const genderLabel = $derived(
 		profile.gender === 'MALE' ? i18n.t('account.male') : i18n.t('account.female')
 	);
+
+	let hidden = $state<number[]>([]);
+	let moderationError = $state('');
+
+	const summary = $derived<RatingSummary>({
+		average: profile.rating ?? null,
+		count: profile.reviewsCount ?? 0
+	});
+	const visibleReviews = $derived<Review[]>(
+		(profile.reviews ?? []).filter((review) => !hidden.includes(review.id))
+	);
+
+	async function moderateReview(review: Review, action: 'hide' | 'restore'): Promise<void> {
+		moderationError = '';
+		try {
+			if (action === 'hide') {
+				await adminHideReview(review.id);
+				hidden = [...hidden, review.id];
+			} else {
+				await adminRestoreReview(review.id);
+				hidden = hidden.filter((id) => id !== review.id);
+			}
+		} catch {
+			moderationError = i18n.t('reviews.failedModerate');
+		}
+	}
 </script>
 
 <!-- Page header -->
@@ -18,7 +47,7 @@
 	<div class="relative z-10 mx-auto max-w-7xl px-8">
 		<a
 			href={resolve('/account')}
-			class="font-label text-primary/60 hover:text-primary mb-6 inline-flex items-center gap-2 text-[0.6875rem] font-bold tracking-widest uppercase transition-colors"
+			class="font-label text-primary/60 hover:text-primary mb-6 flex items-center gap-2 text-[0.6875rem] font-bold tracking-widest uppercase transition-colors"
 		>
 			<span class="material-symbols-outlined text-sm">arrow_back</span>
 			{i18n.t('userProfile.back')}
@@ -37,7 +66,7 @@
 
 <div class="ia-divider w-full opacity-60"></div>
 
-<div class="mx-auto max-w-7xl space-y-10 px-8 py-12">
+<div class="mx-auto grid max-w-7xl items-start gap-6 px-8 py-12 lg:grid-cols-2">
 	<!-- Profile details card -->
 	<div class="border-heritage rounded-lg border bg-white p-6 shadow-md">
 		<div class="mb-5 flex items-center gap-3">
@@ -96,14 +125,19 @@
 		</dl>
 	</div>
 
-	{#if profile.cars !== undefined || profile.reviews !== undefined}
-		<div class="grid gap-6 lg:grid-cols-2">
-			{#if profile.cars !== undefined}
-				<CarsSection cars={profile.cars} editable={false} />
-			{/if}
-			{#if profile.reviews !== undefined}
-				<ReviewsSection reviews={profile.reviews} />
-			{/if}
-		</div>
+	{#if profile.cars !== undefined}
+		<CarsSection cars={profile.cars} editable={false} />
+	{/if}
+	{#if profile.reviews !== undefined}
+		<ReviewsSection
+			{summary}
+			reviews={visibleReviews}
+			showModeration={authStore.isAdmin}
+			onModerate={moderateReview}
+		/>
+	{/if}
+
+	{#if moderationError}
+		<p class="text-sm text-red-600 lg:col-span-2" role="alert">{moderationError}</p>
 	{/if}
 </div>

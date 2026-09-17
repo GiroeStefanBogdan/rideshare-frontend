@@ -170,3 +170,44 @@ and expiry 409 responses.
 
 No frontend automated tests, test configuration, or test dependencies are introduced for this
 feature. Type/lint checks and manual validation evidence belong to the implementation handoff.
+
+---
+
+## Reviews
+
+`src/lib/api/reviews.ts` is the only review transport, and it goes through the shared `client.ts`
+wrapper like every other call. Types live in `src/lib/types/review.ts`; the review namespace in
+`translations.ts` holds the copy for both languages.
+
+The client never decides who may be reviewed. `GET /reviews/me/eligibility` and `GET /reviews/me`
+report the counterparts a member shared a ride with, whether a review already exists, and whether
+`canSubmit` still allows writing. `ReviewsToWrite` renders that list as-is and opens `ReviewForm`,
+which posts to `/reviews` and reloads after success. This means the same component serves both
+"write" and "update", matching the lifetime one-review-per-counterpart rule.
+
+Two surfaces read reviews and neither is writable:
+
+- `ReviewsSection` renders a `RatingSummary` plus published reviews, and is used by the account page
+  and public profiles. Public profiles pass `showModeration` when the signed-in member is an admin,
+  which reveals hide/restore controls backed by `/admin/reviews/{id}/hide` and `/restore`. Hiding
+  removes the card locally and re-hides on reload because the server no longer returns it publicly.
+- Search results, Ride details, and booked cards keep using the driver rating fields already present
+  in their payloads. A null average renders as "No reviews yet" through `RatingSummary`; it is never
+  shown as a zero score.
+
+`/my-rides/past` shows `ReviewsToWrite` for the member's outstanding feedback, covering both
+directions, so a driver reviews their passengers and a passenger reviews their driver from the same
+list. The account page shows it alongside received reviews.
+
+After a successful submit, `ReviewsToWrite` shows a transient confirmation ("Your review has been
+recorded") in place of the form and immediately records a per-cycle dismissal in `localStorage`
+(`reviews.dismissed.v1`, keyed `targetUserId:dropoffAt|rideId`, capped at 200 keys). The submitted
+entry therefore never reappears on that browser — not after reload, and not on the account page,
+which shares the component. The confirmation renders outside the writable-filtered list because the
+dismissal removes the entry from that list in the same tick it is written. This is presentation
+state only: the backend still reports the review as writable (`canSubmit` stays true until
+publication or lock), so the server, not storage, decides what may be edited on another browser or
+after storage is cleared.
+
+No frontend automated tests are introduced for reviews either. `npm run check`, `npm run lint`, and
+`npm run build` are the required checks.

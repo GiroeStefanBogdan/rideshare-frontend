@@ -2,6 +2,9 @@
 	import { getMyRides } from '$lib/api/rides';
 	import BookedRideCard from '$lib/components/rides/BookedRideCard.svelte';
 	import HostedRideCard from '$lib/components/rides/HostedRideCard.svelte';
+	import ReviewsToWrite from '$lib/components/reviews/ReviewsToWrite.svelte';
+	import { getMyReviewEligibility } from '$lib/api/reviews';
+	import type { ReviewEligibility } from '$lib/types/review';
 	import { type BookedRideView, type HostedRideView } from '$lib/rides/classification.svelte';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	import { resolve } from '$app/paths';
@@ -26,6 +29,20 @@
 	}
 	$effect(() => {
 		void loadRides();
+	});
+
+	let eligibility = $state<ReviewEligibility[]>([]);
+
+	async function loadEligibility(): Promise<void> {
+		try {
+			eligibility = await getMyReviewEligibility();
+		} catch {
+			eligibility = [];
+		}
+	}
+
+	$effect(() => {
+		void loadEligibility();
 	});
 	function bookedView(booking: MyRidesResponse['upcomingBookings'][number]): BookedRideView {
 		return {
@@ -99,6 +116,12 @@
 				<HostedRideCard {ride} phase="past" />{:else}
 				<p class="text-secondary">{i18n.t('myRides.nothingPast')}</p>
 			{/each}
+		</div>
+	{/if}
+
+	{#if eligibility.length > 0}
+		<div class="mt-10">
+			<ReviewsToWrite {eligibility} onChanged={loadEligibility} />
 		</div>
 	{/if}
 </section>

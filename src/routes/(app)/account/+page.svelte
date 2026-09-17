@@ -4,15 +4,17 @@
 	import UserInfoSection from '$lib/components/account/UserInfoSection.svelte';
 	import CarsSection from '$lib/components/account/CarsSection.svelte';
 	import ReviewsSection from '$lib/components/account/ReviewsSection.svelte';
+	import ReviewsToWrite from '$lib/components/reviews/ReviewsToWrite.svelte';
 	import ConfirmationModal from '$lib/components/ui/ConfirmationModal.svelte';
 	import { adminDeleteUser, updateUserRole, getUsers, getUserCars } from '$lib/api/users';
-	import type { UserCar, UserProfile, UserResponseDto, UserReview } from '$lib/types/user';
+	import { getMyReviews } from '$lib/api/reviews';
+	import type { MyReviews, RatingSummary } from '$lib/types/review';
+	import type { UserCar, UserResponseDto } from '$lib/types/user';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	import { resolve } from '$app/paths';
 
 	const isAdmin = $derived(authStore.isAdmin);
 
-	let profile = $state<UserProfile | null>(null);
 	let profileError = $state('');
 
 	let allUsers = $state<UserResponseDto[]>([]);
@@ -34,12 +36,6 @@
 	});
 
 	$effect(() => {
-		if (authStore.user) {
-			profile = authStore.user as UserProfile;
-		}
-	});
-
-	$effect(() => {
 		if (isAdmin) {
 			getUsers()
 				.then((users: UserResponseDto[]) => (allUsers = users))
@@ -47,7 +43,23 @@
 		}
 	});
 
-	const reviews = $derived<UserReview[]>(profile?.reviews ?? []);
+	let myReviews = $state<MyReviews | null>(null);
+
+	const summary = $derived<RatingSummary>(myReviews?.summary ?? { average: null, count: 0 });
+
+	async function loadReviews(): Promise<void> {
+		try {
+			myReviews = await getMyReviews();
+		} catch {
+			myReviews = null;
+		}
+	}
+
+	$effect(() => {
+		if (authStore.user) {
+			void loadReviews();
+		}
+	});
 
 	let cars = $state<UserCar[]>([]);
 
@@ -134,7 +146,11 @@
 
 	<div class="grid gap-6 lg:grid-cols-2">
 		<CarsSection bind:cars editable />
-		<ReviewsSection {reviews} />
+		<ReviewsSection {summary} reviews={myReviews?.received ?? []} />
+	</div>
+
+	<div class="mt-6">
+		<ReviewsToWrite eligibility={myReviews?.toWrite ?? []} onChanged={loadReviews} />
 	</div>
 
 	<!-- Admin panel -->
