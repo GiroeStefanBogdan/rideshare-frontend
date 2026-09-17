@@ -214,6 +214,9 @@
 				toStopId: ride.endStop.id,
 				seats: requestedSeats
 			});
+			if (bookingId === null) {
+				throw new Error(i18n.t('rides.reserveError'));
+			}
 			await goto(resolve(`/rides/${ride.rideId}/confirmation?bookingId=${bookingId}`));
 		} catch (err) {
 			if (err instanceof ApiError && err.status === 401) {
@@ -483,7 +486,7 @@
 				</div>
 			{/if}
 
-			<Modal bind:show={showSearchModal}>
+			<Modal bind:show={showSearchModal} label={i18n.t('search.button')}>
 				<div class="space-y-5">
 					<div class="flex items-center justify-between">
 						<h3 class="font-headline text-primary text-lg font-bold">{i18n.t('search.title')}</h3>
@@ -567,7 +570,7 @@
 				</div>
 			</Modal>
 
-			<Modal bind:show={showFilterModal}>
+			<Modal bind:show={showFilterModal} label={i18n.t('rides.filters')}>
 				<div class="space-y-5">
 					<div class="flex items-center justify-between">
 						<h3 class="font-headline text-primary text-lg font-bold">
@@ -863,7 +866,7 @@
 							</div>
 
 							<div
-								class="mt-6 flex flex-wrap items-center gap-3 rounded-lg bg-surface-container-low/40 px-4 py-3"
+								class="bg-surface-container-low/40 mt-6 flex flex-wrap items-center gap-3 rounded-lg px-4 py-3"
 							>
 								<div
 									class={`flex items-center gap-2 rounded-lg px-2 py-1 text-sm ${distanceClass(ride.distanceToStartKm)}`}
@@ -894,7 +897,7 @@
 									</span>
 								</div>
 								<div
-									class="flex items-center gap-2 rounded-lg bg-surface px-2 py-1 text-sm text-charcoal"
+									class="bg-surface text-charcoal flex items-center gap-2 rounded-lg px-2 py-1 text-sm"
 								>
 									<span class="material-symbols-outlined text-[1.125rem]" data-icon="event_seat"
 										>event_seat</span
@@ -906,7 +909,7 @@
 								</div>
 								{#if ride.driver.smokingAllowed}
 									<div
-										class="flex items-center gap-2 rounded-lg bg-surface px-2 py-1 text-sm text-charcoal"
+										class="bg-surface text-charcoal flex items-center gap-2 rounded-lg px-2 py-1 text-sm"
 										title={i18n.t('filters.smokingAllowed')}
 									>
 										<span
@@ -917,7 +920,7 @@
 								{/if}
 								{#if ride.driver.petFriendly}
 									<div
-										class="flex items-center gap-2 rounded-lg bg-surface px-2 py-1 text-sm text-charcoal"
+										class="bg-surface text-charcoal flex items-center gap-2 rounded-lg px-2 py-1 text-sm"
 										title={i18n.t('filters.petFriendly')}
 									>
 										<span class="material-symbols-outlined text-[1.125rem]" data-icon="pets"

@@ -58,7 +58,7 @@
 	{/if}
 	{#if isAuthenticated && open}
 		<div
-			class="border-outline-variant/20 absolute right-0 top-11 z-50 min-w-44 rounded-lg border bg-white p-2 shadow-md"
+			class="border-outline-variant/20 absolute top-11 right-0 z-50 min-w-44 rounded-lg border bg-white p-2 shadow-md"
 			role="menu"
 		>
 			<a

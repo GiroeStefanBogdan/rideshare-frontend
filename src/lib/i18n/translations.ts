@@ -23,7 +23,10 @@ export const translations = {
 			signUpHere: 'Sign up here',
 			invalidCredentials: 'Invalid email or password',
 			loginError: 'Could not sign in. Please try again.',
-			googleFailed: 'Google login failed'
+			googleFailed: 'Google login failed',
+			registeredSuccess: 'Account created. You can sign in now.',
+			accountDeletedSuccess: 'Your account was deleted successfully.',
+			loggedOutSuccess: 'You have been signed out.'
 		},
 		nav: {
 			findRide: 'Find a Ride',
@@ -32,7 +35,75 @@ export const translations = {
 			menu: 'Menu',
 			profile: 'Profile',
 			myRides: 'My rides',
-			logout: 'Log out'
+			login: 'Sign in',
+			register: 'Register',
+			logout: 'Sign out',
+			loggingOut: 'Signing out…',
+			openMenu: 'Open navigation menu',
+			closeMenu: 'Close navigation menu',
+			primary: 'Primary navigation',
+			language: 'Language'
+		},
+		publish: {
+			eyebrow: 'Offer a ride',
+			title: 'Where are you driving?',
+			progress: 'Publishing progress',
+			route: 'Route',
+			schedule: 'Schedule',
+			details: 'Details',
+			review: 'Review',
+			routeTitle: 'Build your route',
+			routeIntro:
+				'Add the places in the exact order you will visit them. You can adjust intermediate stops at any time.',
+			asideTitle: 'A thoughtful route',
+			asideIntro: 'Four clear steps are all it takes to share your journey with the community.',
+			asideRoute: 'Choose a distinct origin, destination, and up to five intermediate stops.',
+			asideSchedule: 'Set realistic arrival times, at least one minute apart.',
+			asidePrice: 'Use simple cumulative prices so every passenger sees a fair share.',
+			communityLabel: 'Travel together',
+			communityText: 'Clear details build trust before the first kilometre.',
+			scheduleTitle: 'Set the schedule',
+			scheduleIntro:
+				'Enter the duration of each segment; arrival times are calculated automatically from departure.',
+			step: 'Step',
+			of: 'of',
+			from: 'From',
+			hours: 'Hours',
+			minutes: 'Minutes',
+			estimatedArrival: 'Estimated arrival',
+			detailsTitle: 'Ride details',
+			reviewTitle: 'Review your ride',
+			origin: 'Origin',
+			destination: 'Destination',
+			stop: 'Stop',
+			locationPlaceholder: 'Search for a place',
+			addStop: 'Add an intermediate stop',
+			moveUp: 'Move stop up',
+			moveDown: 'Move stop down',
+			remove: 'Remove stop',
+			departure: 'Departure',
+			arrival: 'Arrival',
+			date: 'Date',
+			time: 'Time',
+			vehicle: 'Vehicle',
+			noVehicle: 'No vehicle selected',
+			capacity: 'Passenger capacity',
+			cumulativePrice: 'Price from origin',
+			segmentPrice: 'From previous stop',
+			pricePlaceholder: 'e.g. 25',
+			total: 'Full route price',
+			back: 'Back',
+			continue: 'Continue',
+			publish: 'Publish ride',
+			publishing: 'Publishing…',
+			leaveWarning: 'Leave this page? Your unpublished ride will be lost.',
+			carsWarning: 'Vehicles could not be loaded. You can still publish without one.',
+			step1Error: 'Select distinct locations for the entire route.',
+			step2Error:
+				'Choose a future departure within one month and a duration from 1 minute to 99 hours 59 minutes for every segment.',
+			step3Error: 'Choose 1–4 seats and increasing whole-RON prices.',
+			step4Error: 'Review the invalid fields before publishing.',
+			publishError: 'The ride could not be published. Please try again.'
 		},
 		myRides: {
 			title: 'My rides',
@@ -85,7 +156,7 @@ export const translations = {
 				'We are not a taxi app, but a network of neighbors who share their journeys and stories, building trust at every kilometer.',
 			safetyTitle: 'Maximum Safety',
 			safetyDesc:
-				'Every profile is manually verified. Our rating system based on good manners ensures a pleasant and civilized experience.',
+				'Clear profiles and shared journey details help neighbors make informed travel choices.',
 			natureTitle: 'Nature Friendly',
 			natureDesc:
 				'Fewer cars on the road means cleaner air. Drum Bun is our way of reducing our collective carbon footprint.'
@@ -122,6 +193,9 @@ export const translations = {
 			destination: 'Destination'
 		},
 		rides: {
+			rideDetails: 'Ride details',
+			itinerary: 'Itinerary',
+			driver: 'Driver',
 			reserve: 'Reserve',
 			reserveLoading: 'Reserving...',
 			reserveSuccess: 'Reserved! Booking #',
@@ -193,7 +267,7 @@ export const translations = {
 			deleteCar: 'Delete Car',
 			noCars: 'No cars registered yet.',
 			reviews: 'Reviews',
-			noReviews: 'No reviews yet.',
+			noReviews: 'Reviews will be available soon.',
 			reviewer: 'User',
 			adminPanelTitle: 'Admin — All Users',
 			noUsersFound: 'No users found.',
@@ -225,6 +299,18 @@ export const translations = {
 			loginHere: 'Login here',
 			passwordsDoNotMatch: 'Passwords do not match',
 			errorDefault: 'Could not create the account. Check the details and try again.'
+		},
+		pages: {
+			forgotTitle: 'Forgot password',
+			forgotTodo:
+				'TODO: Password recovery will be available here. Until then, please contact us for help.',
+			termsTitle: 'Terms & Conditions',
+			termsTodo: 'TODO: The DrumBun terms and conditions will be published here.',
+			privacyTitle: 'Privacy',
+			privacyTodo: 'TODO: The DrumBun privacy policy will be published here.',
+			contactTitle: 'Contact',
+			contactTodo: 'TODO: DrumBun contact and support details will be published here.',
+			backToLogin: 'Back to sign in'
 		},
 		userProfile: {
 			back: 'Back',
@@ -269,7 +355,10 @@ export const translations = {
 			signUpHere: 'Înregistrează-te aici',
 			invalidCredentials: 'Email sau parolă invalidă',
 			loginError: 'Autentificarea a eșuat. Te rugăm să încerci din nou.',
-			googleFailed: 'Autentificarea Google a eșuat'
+			googleFailed: 'Autentificarea Google a eșuat',
+			registeredSuccess: 'Cont creat. Te poți autentifica acum.',
+			accountDeletedSuccess: 'Contul tău a fost șters.',
+			loggedOutSuccess: 'Te-ai deconectat.'
 		},
 		nav: {
 			findRide: 'Găsește o cursă',
@@ -278,7 +367,75 @@ export const translations = {
 			menu: 'Meniu',
 			profile: 'Profil',
 			myRides: 'Cursele mele',
-			logout: 'Deconectare'
+			login: 'Autentificare',
+			register: 'Înregistrare',
+			logout: 'Deconectare',
+			loggingOut: 'Se deconectează…',
+			openMenu: 'Deschide meniul de navigare',
+			closeMenu: 'Închide meniul de navigare',
+			primary: 'Navigare principală',
+			language: 'Limbă'
+		},
+		publish: {
+			eyebrow: 'Oferă o cursă',
+			title: 'Unde călătorești?',
+			progress: 'Progresul publicării',
+			route: 'Traseu',
+			schedule: 'Program',
+			details: 'Detalii',
+			review: 'Verificare',
+			routeTitle: 'Construiește traseul',
+			routeIntro:
+				'Adaugă locurile în ordinea exactă în care le vei vizita. Poți ajusta oricând opririle intermediare.',
+			asideTitle: 'Un traseu bine gândit',
+			asideIntro: 'Patru pași clari sunt suficienți pentru a împărți drumul cu comunitatea.',
+			asideRoute: 'Alege o plecare, o destinație și cel mult cinci opriri distincte.',
+			asideSchedule: 'Stabilește ore realiste de sosire, la cel puțin un minut distanță.',
+			asidePrice: 'Folosește prețuri cumulative simple, pentru o contribuție echitabilă.',
+			communityLabel: 'Călătorim împreună',
+			communityText: 'Detaliile clare construiesc încredere înainte de primul kilometru.',
+			scheduleTitle: 'Stabilește programul',
+			scheduleIntro:
+				'Introdu durata fiecărui segment; orele de sosire se calculează automat de la plecare.',
+			step: 'Pasul',
+			of: 'din',
+			from: 'Din',
+			hours: 'Ore',
+			minutes: 'Minute',
+			estimatedArrival: 'Sosire estimată',
+			detailsTitle: 'Detaliile cursei',
+			reviewTitle: 'Verifică cursa',
+			origin: 'Plecare',
+			destination: 'Destinație',
+			stop: 'Oprire',
+			locationPlaceholder: 'Caută o localitate',
+			addStop: 'Adaugă o oprire intermediară',
+			moveUp: 'Mută oprirea în sus',
+			moveDown: 'Mută oprirea în jos',
+			remove: 'Șterge oprirea',
+			departure: 'Ora plecării',
+			arrival: 'Ora sosirii',
+			date: 'Data',
+			time: 'Ora',
+			vehicle: 'Mașină',
+			noVehicle: 'Fără mașină selectată',
+			capacity: 'Locuri pentru pasageri',
+			cumulativePrice: 'Preț de la plecare',
+			segmentPrice: 'De la oprirea anterioară',
+			pricePlaceholder: 'ex. 25',
+			total: 'Preț traseu complet',
+			back: 'Înapoi',
+			continue: 'Continuă',
+			publish: 'Publică cursa',
+			publishing: 'Se publică…',
+			leaveWarning: 'Părăsești pagina? Cursa nepublicată va fi pierdută.',
+			carsWarning: 'Mașinile nu au putut fi încărcate. Poți publica fără una.',
+			step1Error: 'Selectează locații distincte pentru întregul traseu.',
+			step2Error:
+				'Alege o plecare viitoare în maximum o lună și o durată între 1 minut și 99 de ore și 59 de minute pentru fiecare segment.',
+			step3Error: 'Alege 1–4 locuri și prețuri întregi crescătoare în RON.',
+			step4Error: 'Corectează câmpurile invalide înainte de publicare.',
+			publishError: 'Cursa nu a putut fi publicată. Încearcă din nou.'
 		},
 		myRides: {
 			title: 'Cursele mele',
@@ -331,7 +488,7 @@ export const translations = {
 				'Nu suntem o aplicație de taxi, ci o rețea de vecini care își împart drumurile și poveștile, construind încredere la fiecare kilometru.',
 			safetyTitle: 'Siguranță Maximă',
 			safetyDesc:
-				'Fiecare profil este verificat manual. Sistemul nostru de rating bazat pe bunele maniere asigură o experiență plăcută și civilizată.',
+				'Profilurile clare și detaliile curselor îi ajută pe vecini să facă alegeri informate.',
 			natureTitle: 'Prietenos cu Natura',
 			natureDesc:
 				'Mai puține mașini pe drum înseamnă un aer mai curat. Drum Bun este modul nostru de a reduce amprenta de carbon colectiv.'
@@ -368,6 +525,9 @@ export const translations = {
 			destination: 'Destinație'
 		},
 		rides: {
+			rideDetails: 'Detaliile cursei',
+			itinerary: 'Itinerar',
+			driver: 'Șofer',
 			reserve: 'Rezervă',
 			reserveLoading: 'Se rezervă...',
 			reserveSuccess: 'Rezervat! Rezervarea #',
@@ -442,7 +602,7 @@ export const translations = {
 			deleteCar: 'Șterge mașină',
 			noCars: 'Nicio mașină înregistrată încă.',
 			reviews: 'Recenzii',
-			noReviews: 'Nicio recenzie încă.',
+			noReviews: 'Recenziile vor fi disponibile în curând.',
 			reviewer: 'Utilizator',
 			adminPanelTitle: 'Admin — Toți Utilizatorii',
 			noUsersFound: 'Niciun utilizator găsit.',
@@ -474,6 +634,18 @@ export const translations = {
 			loginHere: 'Autentifică-te aici',
 			passwordsDoNotMatch: 'Parolele nu se potrivesc',
 			errorDefault: 'Contul nu a putut fi creat. Verifică datele și încearcă din nou.'
+		},
+		pages: {
+			forgotTitle: 'Ai uitat parola?',
+			forgotTodo:
+				'TODO: Recuperarea parolei va fi disponibilă aici. Până atunci, contactează-ne pentru ajutor.',
+			termsTitle: 'Termeni și Condiții',
+			termsTodo: 'TODO: Termenii și condițiile DrumBun vor fi publicați aici.',
+			privacyTitle: 'Confidențialitate',
+			privacyTodo: 'TODO: Politica de confidențialitate DrumBun va fi publicată aici.',
+			contactTitle: 'Contact',
+			contactTodo: 'TODO: Datele de contact și suport DrumBun vor fi publicate aici.',
+			backToLogin: 'Înapoi la autentificare'
 		},
 		userProfile: {
 			back: 'Înapoi',

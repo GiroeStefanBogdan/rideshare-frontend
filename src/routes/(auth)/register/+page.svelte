@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { ApiError, request } from '$lib/api/client';
 	import type { UserResponseDto } from '$lib/types/user';
+	import { authStore } from '$lib/stores/auth.svelte';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	import { resolve } from '$app/paths';
 
@@ -37,7 +38,8 @@
 				})
 			});
 
-			await goto(resolve('/login'));
+			authStore.clear();
+			await goto(resolve('/login?registered=true'));
 		} catch (err) {
 			if (err instanceof ApiError) {
 				try {
@@ -64,9 +66,9 @@
 			>
 			<div class="mt-3 inline-flex items-center gap-2">
 				<div class="bg-primary/30 h-px w-8"></div>
-				<p class="font-label text-primary text-[0.6875rem] font-bold tracking-[0.3em] uppercase">
+				<h1 class="font-label text-primary text-xs font-semibold tracking-widest uppercase">
 					{i18n.t('register.title')}
-				</p>
+				</h1>
 				<div class="bg-primary/30 h-px w-8"></div>
 			</div>
 			<p class="font-body text-secondary mt-2 text-sm">{i18n.t('register.subtitle')}</p>
@@ -74,7 +76,7 @@
 
 		<!-- Card -->
 		<div
-			class="glass-panel border-outline-variant/20 ia-border-accent rounded-xl border p-8 shadow-[0_40px_100px_rgba(0,32,104,0.08)]"
+			class="glass-panel border-heritage ia-border-accent rounded-lg border p-6 shadow-md md:p-8"
 		>
 			<!-- Error -->
 			{#if error}

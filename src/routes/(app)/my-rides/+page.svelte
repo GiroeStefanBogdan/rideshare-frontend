@@ -27,18 +27,18 @@
 <svelte:head><title>{i18n.t('myRides.title')}</title></svelte:head>
 <section class="mx-auto w-full max-w-7xl px-8 py-12">
 	<h1 class="font-headline text-primary text-4xl font-black">{i18n.t('myRides.title')}</h1>
-	<div class="mt-8 flex gap-2 border-b border-outline-variant/20">
+	<div class="border-outline-variant/20 mt-8 flex gap-2 border-b">
 		<button
 			class="border-b-2 px-4 py-3 font-bold {tab === 'booked'
 				? 'border-primary text-primary'
-				: 'border-transparent text-secondary'}"
+				: 'text-secondary border-transparent'}"
 			onclick={() => (tab = 'booked')}
 			>{i18n.t('myRides.booked')}
 			{data ? `(${data.upcomingBookings.length + data.pastBookings.length})` : ''}</button
 		><button
 			class="border-b-2 px-4 py-3 font-bold {tab === 'hosted'
 				? 'border-primary text-primary'
-				: 'border-transparent text-secondary'}"
+				: 'text-secondary border-transparent'}"
 			onclick={() => (tab = 'hosted')}
 			>{i18n.t('myRides.hosted')}
 			{data ? `(${data.upcomingHostedRides.length + data.pastHostedRides.length})` : ''}</button
@@ -46,7 +46,7 @@
 	</div>
 	{#if loading}<div class="mt-8 grid gap-5 md:grid-cols-2">
 			{#each [1, 2, 3, 4] as placeholder (placeholder)}<div
-					class="h-48 animate-pulse rounded-2xl bg-primary/5"
+					class="bg-primary/5 h-48 animate-pulse rounded-2xl"
 				></div>{/each}
 		</div>
 	{:else if error}<div class="mt-10 rounded-2xl bg-red-50 p-8 text-center">

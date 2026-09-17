@@ -15,12 +15,6 @@ export interface RideStopBasic {
 	departsAt: string | null; // ISO 8601
 }
 
-export interface RideStopDetails extends RideStopBasic {
-	stopOrder: number;
-	availableSeats: number | null;
-	pricePerSeat: number | null;
-}
-
 export interface BookedRide {
 	bookingId: number;
 	rideId: number;
@@ -35,13 +29,6 @@ export interface BookedRide {
 export interface HostedRide {
 	rideId: number;
 	status: 'ACTIVE' | 'INACTIVE';
-	seatsTotal: number;
-	rideStops: RideStopDetails[];
-}
-
-export interface RideDetails {
-	rideId: number;
-	driver: RideDriver;
 	seatsTotal: number;
 	rideStops: RideStopDetails[];
 }
@@ -70,6 +57,8 @@ export interface ReserveRideRequest {
 	seats: number;
 }
 
+export type ReserveRideResponse = number | null;
+
 export interface RideSearchParams {
 	fromId: number;
 	fromType: 'ADMIN_UNIT' | 'STREET';
@@ -83,4 +72,46 @@ export interface RideSearchParams {
 	timeWindow?: 'BEFORE_8' | '8_12' | '12_18' | 'AFTER_18' | null;
 	smokingAllowed?: boolean;
 	petFriendly?: boolean;
+}
+
+export interface PublishRideStopRequest {
+	id: number;
+	type: 'ADMIN_UNIT' | 'STREET';
+	stopOrder: number;
+	cumulativePricePerSeat: number;
+	departsAt: string;
+}
+
+export interface PublishRideRequest {
+	rideStops: PublishRideStopRequest[];
+	seatsTotal: number;
+	carId: number | null;
+}
+
+export type PublishRideResponse = number | null;
+
+export interface RideVehicle {
+	id: number;
+	brand: string;
+	model: string;
+	color: string;
+	year: number;
+}
+
+export interface RideStopDetails {
+	id: number;
+	stopOrder: number;
+	locationName: string;
+	municipalityName: string;
+	departsAt: string;
+	availableSeats: number;
+	cumulativePricePerSeat: number;
+}
+
+export interface RideDetails {
+	rideId: number;
+	driver: RideDriver;
+	seatsTotal: number;
+	vehicle: RideVehicle | null;
+	rideStops: RideStopDetails[];
 }

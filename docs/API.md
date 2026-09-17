@@ -14,33 +14,34 @@ import { ApiError, request } from '$lib/api/client';
 
 ## Authentication
 
-| Action      | Method | Path           | Request body                      | Response               | Cookie         |
-| ----------- | ------ | -------------- | --------------------------------- | ---------------------- | -------------- |
-| Email login | POST   | `/login`       | `{ email, password, rememberMe }` | `LoginResponse`        | Sets `token`   |
-| Logout      | POST   | `/auth/logout` | —                                 | 204                    | Clears `token` |
+| Action       | Method | Path           | Request body                     | Response          | Cookie         |
+| ------------ | ------ | -------------- | -------------------------------- | ----------------- | -------------- |
+| Register     | POST   | `/register`    | `UserRegistrationRequest`        | `User`            | —              |
+| Email login  | POST   | `/login`       | `{ email, password, rememberMe }` | `LoginResponse`  | Sets `token`   |
+| Logout       | POST   | `/auth/logout` | —                                | 204               | Clears `token` |
 
 ---
 
 ## Rides — `/rides`
 
-| Action        | Method | Path                 | Auth   | Request body             | Response                |
-| ------------- | ------ | -------------------- | ------ | ------------------------ | ----------------------- |
-| Search rides  | POST   | `/rides/search`      | Public | `RideSearchParams`       | `RideSearchResult[]`    |
-| Get one ride  | GET    | `/rides/:id`         | Public | —                        | `RideDetails`           |
-| Post a ride   | POST   | `/rides`             | User   | `RideInput`              | Numeric ride ID         |
-| Reserve seats | POST   | `/rides/:id/reserve` | User   | `ReserveRideRequest`     | Numeric booking ID      |
-| Delete a ride | DELETE | `/rides/:id`         | Owner  | —                        | 204                     |
-| My rides      | GET    | `/rides/me`           | User   | —                        | `MyRidesResponse`       |
+| Action         | Method | Path                 | Auth   | Request body         | Response             |
+| -------------- | ------ | -------------------- | ------ | -------------------- | -------------------- |
+| Search rides   | POST   | `/rides/search`      | Public | `RideSearchParams`   | `RideSearchResult[]` |
+| Get one ride   | GET    | `/rides/:id`         | Public | —                    | `RideDetails`        |
+| Publish a ride | POST   | `/rides`             | User   | `PublishRideRequest` | 201 numeric ride ID     |
+| Reserve seats  | POST   | `/rides/:id/reserve` | User   | `ReserveRideRequest` | 201 numeric booking ID  |
+| Delete a ride  | DELETE | `/rides/:id`         | Owner  | —                    | 204                  |
+| My rides       | GET    | `/rides/me`          | User   | —                    | `MyRidesResponse`    |
+
+`PublishRideRequest` contains `seatsTotal` (1–4), optional `carId`, and 2–7 ordered `rideStops`.
+Each stop contains `id`, `type`, `stopOrder`, `departsAt`, and an increasing
+`cumulativePricePerSeat`; the Origin value is `0`.
 
 `GET /rides/me` returns four independently sorted lists: `upcomingBookings`, `pastBookings`,
 `upcomingHostedRides`, and `pastHostedRides`. Booking entries contain the booked stops,
 seat count, total RON price, driver summary, and derived `ACTIVE`/`INACTIVE` status.
 Hosted entries contain ordered stops with departure time, available seats, and per-seat price.
 Search and detail stops include both the street/location name and its municipality name.
-
-`POST /rides` accepts ordered `rideStops`; each stop supplies `departsAt` and `price`.
-The first stop determines the ride departure and base price. Stop order, increasing times,
-and decreasing prices ending at zero are validated by the backend.
 
 ---
 
@@ -63,6 +64,12 @@ and decreasing prices ending at zero are validated by the backend.
 | Add an own car      | POST   | `/users/me/cars`      | User   | `UserCarInput`      | `UserCar`           |
 | Update an own car   | PATCH  | `/users/me/cars/:id`  | User   | `UserCarInput`      | `UserCar`           |
 | Delete an own car   | DELETE | `/users/me/cars/:id`  | User   | —                   | 204                 |
+
+---
+
+## Reviews
+
+> Planned feature: review endpoints are not implemented yet. The frontend displays an unavailable state until this contract is delivered.
 
 ---
 

@@ -38,7 +38,7 @@
 	<div class="mt-10 flex justify-center gap-3">
 		<a
 			href={resolve('/rides')}
-			class="bg-voronet hover:opacity-90 rounded-lg px-6 py-3 font-bold text-white transition-opacity"
+			class="bg-voronet rounded-lg px-6 py-3 font-bold text-white transition-opacity hover:opacity-90"
 			>{i18n.t('rides.backToResults')}</a
 		>
 		<a
