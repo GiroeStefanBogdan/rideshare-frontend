@@ -28,12 +28,14 @@
 	);
 	let searchParams = $state<RideSearchParams | null>(initialParams);
 	let maxDistanceStart = $state<number | undefined>(initialParams?.maxDistanceStart);
+	let maxDistanceEnd = $state<number | undefined>(initialParams?.maxDistanceEnd);
+	let maxPrice = $state<number | undefined>(initialParams?.maxPrice);
 	let timeWindow = $state<RideSearchParams['timeWindow']>(initialParams?.timeWindow || null);
 	let smokingAllowed = $state<boolean>(!!initialParams?.smokingAllowed);
 	let petFriendly = $state<boolean>(!!initialParams?.petFriendly);
 	let loading = $state(untrack(() => !!initialParams && results.length === 0));
 	let error = $state<string | null>(null);
-	let lastSearchKey = $state('');
+
 	let now = $state(Date.now());
 
 	let searchFrom = $state<LocationResult | null>(rideSearch.fromLocation ?? null);
@@ -74,7 +76,9 @@
 			toType: searchTo.type,
 			date: searchDate,
 			seats: searchSeats,
-			maxDistanceStart: maxDistanceStart && maxDistanceStart > 0 ? maxDistanceStart : undefined,
+			maxDistanceStart,
+			maxDistanceEnd,
+			maxPrice,
 			timeWindow: timeWindow || undefined,
 			smokingAllowed: smokingAllowed || undefined,
 			petFriendly: petFriendly || undefined
@@ -96,7 +100,9 @@
 			toType: searchTo.type,
 			date: searchDate,
 			seats: searchSeats,
-			maxDistanceStart: maxDistanceStart && maxDistanceStart > 0 ? maxDistanceStart : undefined,
+			maxDistanceStart,
+			maxDistanceEnd,
+			maxPrice,
 			timeWindow: timeWindow || undefined,
 			smokingAllowed: smokingAllowed || undefined,
 			petFriendly: petFriendly || undefined
@@ -117,7 +123,9 @@
 			toType: searchTo?.type ?? searchParams.toType,
 			date: searchDate,
 			seats: searchSeats,
-			maxDistanceStart: maxDistanceStart && maxDistanceStart > 0 ? maxDistanceStart : undefined,
+			maxDistanceStart,
+			maxDistanceEnd,
+			maxPrice,
 			timeWindow: timeWindow || undefined,
 			smokingAllowed: smokingAllowed || undefined,
 			petFriendly: petFriendly || undefined
@@ -127,22 +135,10 @@
 		showFilterModal = false;
 	}
 
-	let filtersChanged = $derived(
-		!!searchParams &&
-			(maxDistanceStart !== searchParams.maxDistanceStart ||
-				timeWindow !== (searchParams.timeWindow || null) ||
-				smokingAllowed !== !!searchParams.smokingAllowed ||
-				petFriendly !== !!searchParams.petFriendly)
-	);
-
 	$effect(() => {
 		const params = rideSearch.params;
 		if (!params) return;
 
-		const searchKey = JSON.stringify(params);
-		if (searchKey === lastSearchKey) return;
-
-		lastSearchKey = searchKey;
 		searchParams = params;
 		setFilterState(params);
 		runSearch(params);
@@ -150,6 +146,8 @@
 
 	function setFilterState(params: RideSearchParams) {
 		maxDistanceStart = params.maxDistanceStart;
+		maxDistanceEnd = params.maxDistanceEnd;
+		maxPrice = params.maxPrice;
 		timeWindow = params.timeWindow || null;
 		smokingAllowed = !!params.smokingAllowed;
 		petFriendly = !!params.petFriendly;
@@ -160,7 +158,9 @@
 
 		const nextParams: RideSearchParams = {
 			...searchParams,
-			maxDistanceStart: maxDistanceStart && maxDistanceStart > 0 ? maxDistanceStart : undefined,
+			maxDistanceStart,
+			maxDistanceEnd,
+			maxPrice,
 			timeWindow: timeWindow || undefined,
 			smokingAllowed: smokingAllowed || undefined,
 			petFriendly: petFriendly || undefined
@@ -348,13 +348,42 @@
 								type="number"
 								min="0"
 								bind:value={maxDistanceStart}
-								placeholder="10"
+								placeholder="30"
 								class="border-outline-variant/20 text-primary w-full rounded-lg border bg-white px-3 py-2 focus:ring-0"
 							/>
 							<span class="text-secondary/70 text-sm">km</span>
 						</div>
 					</div>
 
+					<div class="space-y-2">
+						<label
+							for="filter-distance-end"
+							class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
+							>{i18n.t('filters.distanceEnd')}</label
+						>
+						<input
+							id="filter-distance-end"
+							type="number"
+							min="0"
+							bind:value={maxDistanceEnd}
+							placeholder="30"
+							class="border-outline-variant/20 text-primary w-full rounded-lg border bg-white px-3 py-2 focus:ring-0"
+						/>
+					</div>
+					<div class="space-y-2">
+						<label
+							for="filter-price"
+							class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
+							>{i18n.t('filters.price')} (RON)</label
+						>
+						<input
+							id="filter-price"
+							type="number"
+							min="0"
+							bind:value={maxPrice}
+							class="border-outline-variant/20 text-primary w-full rounded-lg border bg-white px-3 py-2 focus:ring-0"
+						/>
+					</div>
 					<fieldset class="space-y-2">
 						<legend class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
 							>{i18n.t('filters.time')}</legend
@@ -434,7 +463,7 @@
 
 					<button
 						onclick={applyFilters}
-						disabled={!filtersChanged || loading}
+						disabled={loading}
 						class="bg-primary hover:bg-primary-container font-headline flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 font-bold text-white transition-all disabled:cursor-not-allowed disabled:opacity-45"
 					>
 						<span class="material-symbols-outlined text-lg" data-icon="refresh">refresh</span>
@@ -597,11 +626,40 @@
 								type="number"
 								min="0"
 								bind:value={maxDistanceStart}
-								placeholder="10"
+								placeholder="30"
 								class="border-outline-variant/20 text-primary w-full rounded-lg border bg-white px-3 py-2 focus:ring-0"
 							/>
 							<span class="text-secondary/70 text-sm">km</span>
 						</div>
+					</div>
+					<div class="space-y-2">
+						<label
+							for="modal-filter-distance-end"
+							class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
+							>{i18n.t('filters.distanceEnd')}</label
+						>
+						<input
+							id="modal-filter-distance-end"
+							type="number"
+							min="0"
+							bind:value={maxDistanceEnd}
+							placeholder="30"
+							class="border-outline-variant/20 text-primary w-full rounded-lg border bg-white px-3 py-2 focus:ring-0"
+						/>
+					</div>
+					<div class="space-y-2">
+						<label
+							for="modal-filter-price"
+							class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
+							>{i18n.t('filters.price')} (RON)</label
+						>
+						<input
+							id="modal-filter-price"
+							type="number"
+							min="0"
+							bind:value={maxPrice}
+							class="border-outline-variant/20 text-primary w-full rounded-lg border bg-white px-3 py-2 focus:ring-0"
+						/>
 					</div>
 					<fieldset class="space-y-2">
 						<legend class="font-label text-secondary/80 text-xs font-bold tracking-widest uppercase"
@@ -717,7 +775,7 @@
 						<p class="text-secondary text-lg">{i18n.t('results.noRides')}</p>
 					</div>
 				{:else}
-					{#each results as ride (ride.rideId)}
+					{#each results as ride (`${ride.rideId}:${ride.startStop.id}:${ride.endStop.id}`)}
 						{@const isDeparted = ride.startStop.departsAt
 							? Date.parse(ride.startStop.departsAt) < now
 							: false}
