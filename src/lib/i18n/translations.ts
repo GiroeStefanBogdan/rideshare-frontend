@@ -116,6 +116,18 @@ export const translations = {
 			retry: 'Retry',
 			empty: 'No rides here yet.',
 			cancelled: 'Cancelled',
+			cancelBooking: 'Cancel booking',
+			cancelling: 'Cancelling…',
+			cancelConfirmTitle: 'Cancel this booking?',
+			cancelConfirmMessage:
+				'Your reserved seats will be released for other passengers. This cannot be undone.',
+			cancelError: 'Could not cancel the booking. Please try again.',
+			scheduleUnavailable: 'Schedule unavailable',
+			ongoing: 'Ongoing',
+			onTheWay: 'On the way',
+			arrivalLabel: 'Scheduled arrival:',
+			viewPast: 'See rides from the past month',
+			backToUpcoming: 'Back to upcoming rides',
 			seats: 'seats',
 			reviews: 'reviews',
 			stops: 'Stops',
@@ -124,7 +136,8 @@ export const translations = {
 			from: 'From',
 			to: 'To',
 			nothingUpcoming: 'No upcoming rides.',
-			nothingPast: 'No rides from the past month.'
+			nothingPast: 'No rides from the past month.',
+			nothingCancelled: 'Nothing has been cancelled.'
 		},
 		hero: {
 			tagline: 'Journey with soul',
@@ -448,6 +461,18 @@ export const translations = {
 			retry: 'Reîncearcă',
 			empty: 'Nu există curse aici.',
 			cancelled: 'Anulată',
+			cancelBooking: 'Anulează rezervarea',
+			cancelling: 'Se anulează…',
+			cancelConfirmTitle: 'Anulezi această rezervare?',
+			cancelConfirmMessage:
+				'Locurile rezervate vor fi eliberate pentru alți pasageri. Acțiunea este definitivă.',
+			cancelError: 'Rezervarea nu a putut fi anulată. Încearcă din nou.',
+			scheduleUnavailable: 'Program indisponibil',
+			ongoing: 'În desfășurare',
+			onTheWay: 'În drum',
+			arrivalLabel: 'Sosire programată:',
+			viewPast: 'Vezi cursele din ultima lună',
+			backToUpcoming: 'Înapoi la cursele viitoare',
 			seats: 'locuri',
 			reviews: 'recenzii',
 			stops: 'Opriri',
@@ -456,7 +481,8 @@ export const translations = {
 			from: 'De la',
 			to: 'Până la',
 			nothingUpcoming: 'Nu ai curse viitoare.',
-			nothingPast: 'Nu ai curse din ultima lună.'
+			nothingPast: 'Nu ai curse din ultima lună.',
+			nothingCancelled: 'Nimic nu a fost anulat.'
 		},
 		hero: {
 			tagline: 'Călătorie cu suflet',

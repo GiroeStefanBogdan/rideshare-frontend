@@ -15,10 +15,12 @@ export interface RideStopBasic {
 	departsAt: string | null; // ISO 8601
 }
 
+export type RideStatus = 'ACTIVE' | 'CANCELLED';
+
 export interface BookedRide {
 	bookingId: number;
 	rideId: number;
-	status: 'ACTIVE' | 'INACTIVE';
+	status: RideStatus;
 	driver: RideDriver;
 	seats: number;
 	totalPrice: number;
@@ -28,7 +30,7 @@ export interface BookedRide {
 
 export interface HostedRide {
 	rideId: number;
-	status: 'ACTIVE' | 'INACTIVE';
+	status: RideStatus;
 	seatsTotal: number;
 	rideStops: RideStopDetails[];
 }
