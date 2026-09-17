@@ -31,7 +31,7 @@
 		deleting = true;
 		error = '';
 		try {
-			await deleteMyAccount(user.id);
+			await deleteMyAccount();
 			authStore.clear();
 			await goto(resolve('/login'));
 		} catch {
@@ -158,7 +158,7 @@
 			</div>
 		{:else}
 			<dl class="space-y-3">
-				{#each [{ label: i18n.t('account.name'), value: user.name }, { label: i18n.t('account.email'), value: user.email }, { label: i18n.t('account.birthday'), value: user.birthday }, { label: i18n.t('account.gender'), value: genderLabel }, { label: i18n.t('account.phone'), value: user.phoneNumber }, { label: i18n.t('account.role'), value: roleLabel }, { label: i18n.t('account.provider'), value: user.provider }] as row (row.label)}
+				{#each [{ label: i18n.t('account.name'), value: user.name }, { label: i18n.t('account.email'), value: user.email }, { label: i18n.t('account.birthday'), value: user.birthday }, { label: i18n.t('account.gender'), value: genderLabel }, { label: i18n.t('account.phone'), value: user.phoneNumber }, { label: i18n.t('account.role'), value: roleLabel }, { label: i18n.t('account.provider'), value: user.provider }].filter((row) => row.value !== null && row.value !== undefined && row.value !== '') as row (row.label)}
 					<div
 						class="border-outline-variant/10 flex items-center justify-between border-b py-2 last:border-0"
 					>

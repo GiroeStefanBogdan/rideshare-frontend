@@ -98,8 +98,14 @@
 		</dl>
 	</div>
 
-	<div class="grid gap-6 lg:grid-cols-2">
-		<CarsSection cars={profile.cars ?? []} />
-		<ReviewsSection reviews={profile.reviews ?? []} />
-	</div>
+	{#if profile.cars !== undefined || profile.reviews !== undefined}
+		<div class="grid gap-6 lg:grid-cols-2">
+			{#if profile.cars !== undefined}
+				<CarsSection cars={profile.cars} editable={false} />
+			{/if}
+			{#if profile.reviews !== undefined}
+				<ReviewsSection reviews={profile.reviews} />
+			{/if}
+		</div>
+	{/if}
 </div>

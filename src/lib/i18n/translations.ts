@@ -5,7 +5,9 @@ export const translations = {
 			cancel: 'Cancel',
 			delete: 'Delete',
 			save: 'Save',
-			loading: 'Loading...'
+			loading: 'Loading...',
+			kilometers: 'km',
+			notAvailable: 'Not available'
 		},
 		auth: {
 			loginTitle: 'Login to your dashboard',
@@ -20,12 +22,38 @@ export const translations = {
 			noAccount: "Don't have an account?",
 			signUpHere: 'Sign up here',
 			invalidCredentials: 'Invalid email or password',
+			loginError: 'Could not sign in. Please try again.',
 			googleFailed: 'Google login failed'
 		},
 		nav: {
 			findRide: 'Find a Ride',
 			offerRide: 'Offer a Ride',
-			account: 'Account'
+			account: 'Account',
+			menu: 'Menu',
+			profile: 'Profile',
+			myRides: 'My rides',
+			logout: 'Log out'
+		},
+		myRides: {
+			title: 'My rides',
+			booked: 'Booked',
+			hosted: 'Hosted',
+			upcoming: 'Upcoming',
+			past: 'Past month',
+			loading: 'Loading your rides...',
+			error: 'Could not load your rides.',
+			retry: 'Retry',
+			empty: 'No rides here yet.',
+			cancelled: 'Cancelled',
+			seats: 'seats',
+			reviews: 'reviews',
+			stops: 'Stops',
+			showStops: 'Show stops',
+			hideStops: 'Hide stops',
+			from: 'From',
+			to: 'To',
+			nothingUpcoming: 'No upcoming rides.',
+			nothingPast: 'No rides from the past month.'
 		},
 		hero: {
 			tagline: 'Journey with soul',
@@ -39,6 +67,7 @@ export const translations = {
 			accessDashboard: 'to access your dashboard.'
 		},
 		search: {
+			title: 'Search rides',
 			from: 'Leaving from...',
 			fromPlaceholder: 'Departure city',
 			to: 'Arriving in...',
@@ -47,7 +76,8 @@ export const translations = {
 			datePlaceholder: 'When are you starting?',
 			button: 'Search Rides',
 			noResults: 'No results found',
-			searching: 'Searching...'
+			searching: 'Searching...',
+			loadError: 'Could not load locations. Please try again.'
 		},
 		values: {
 			communityTitle: 'United Community',
@@ -58,7 +88,7 @@ export const translations = {
 				'Every profile is manually verified. Our rating system based on good manners ensures a pleasant and civilized experience.',
 			natureTitle: 'Nature Friendly',
 			natureDesc:
-				'Fewer cars on the road means cleaner air. DrumBun is our way of reducing our collective carbon footprint.'
+				'Fewer cars on the road means cleaner air. Drum Bun is our way of reducing our collective carbon footprint.'
 		},
 		filters: {
 			title: 'Filters',
@@ -79,6 +109,7 @@ export const translations = {
 		},
 		results: {
 			title: 'Rides found',
+			rideCountOne: 'ride',
 			ridesCount: 'rides',
 			loadingTitle: 'Finding rides',
 			loadingDescription: 'Checking the latest options for your route.',
@@ -100,7 +131,10 @@ export const translations = {
 			notEnoughSeats: 'Only {seats} seats left',
 			departed: 'Departed',
 			passengers: '{count} passengers',
-			filters: 'Filters'
+			filters: 'Filters',
+			detailsTitle: 'Ride details',
+			stops: 'Stops',
+			backToResults: 'Back to rides'
 		},
 		footer: {
 			tagline:
@@ -170,7 +204,11 @@ export const translations = {
 			delete: 'Delete',
 			failedLoadUsers: 'Failed to load users.',
 			failedUpdateRole: 'Failed to update role for user #',
-			failedDeleteUser: 'Failed to delete user #'
+			failedDeleteUser: 'Failed to delete user #',
+			allFieldsRequired: 'All fields are required.',
+			rideId: 'Ride ID',
+			bookingId: 'Booking ID',
+			adminDeleteConfirm: 'Are you sure you want to delete this user? This action cannot be undone.'
 		},
 		register: {
 			title: 'Create your account',
@@ -182,12 +220,11 @@ export const translations = {
 			phone: 'Phone Number',
 			password: 'Password',
 			confirmPassword: 'Confirm Password',
-			newsletter: 'Subscribe to our newsletter',
 			createButton: 'Create Account',
 			alreadyHaveAccount: 'Already have an account?',
 			loginHere: 'Login here',
 			passwordsDoNotMatch: 'Passwords do not match',
-			errorDefault: 'Invalid email or password'
+			errorDefault: 'Could not create the account. Check the details and try again.'
 		},
 		userProfile: {
 			back: 'Back',
@@ -214,7 +251,9 @@ export const translations = {
 			cancel: 'Anulează',
 			delete: 'Șterge',
 			save: 'Salvează',
-			loading: 'Se încarcă...'
+			loading: 'Se încarcă...',
+			kilometers: 'km',
+			notAvailable: 'Indisponibil'
 		},
 		auth: {
 			loginTitle: 'Autentifică-te în contul tău',
@@ -229,12 +268,38 @@ export const translations = {
 			noAccount: 'Nu ai cont?',
 			signUpHere: 'Înregistrează-te aici',
 			invalidCredentials: 'Email sau parolă invalidă',
+			loginError: 'Autentificarea a eșuat. Te rugăm să încerci din nou.',
 			googleFailed: 'Autentificarea Google a eșuat'
 		},
 		nav: {
 			findRide: 'Găsește o cursă',
 			offerRide: 'Oferă o cursă',
-			account: 'Cont'
+			account: 'Cont',
+			menu: 'Meniu',
+			profile: 'Profil',
+			myRides: 'Cursele mele',
+			logout: 'Deconectare'
+		},
+		myRides: {
+			title: 'Cursele mele',
+			booked: 'Rezervate',
+			hosted: 'Oferite',
+			upcoming: 'Urmează',
+			past: 'Luna trecută',
+			loading: 'Se încarcă cursele...',
+			error: 'Cursele nu au putut fi încărcate.',
+			retry: 'Reîncearcă',
+			empty: 'Nu există curse aici.',
+			cancelled: 'Anulată',
+			seats: 'locuri',
+			reviews: 'recenzii',
+			stops: 'Opriri',
+			showStops: 'Arată opririle',
+			hideStops: 'Ascunde opririle',
+			from: 'De la',
+			to: 'Până la',
+			nothingUpcoming: 'Nu ai curse viitoare.',
+			nothingPast: 'Nu ai curse din ultima lună.'
 		},
 		hero: {
 			tagline: 'Călătorie cu suflet',
@@ -248,6 +313,7 @@ export const translations = {
 			accessDashboard: 'pentru a accesa tabloul de bord.'
 		},
 		search: {
+			title: 'Caută curse',
 			from: 'Plecăm din...',
 			fromPlaceholder: 'Orașul de plecare',
 			to: 'Ajungem în...',
@@ -256,7 +322,8 @@ export const translations = {
 			datePlaceholder: 'Când pornești?',
 			button: 'Caută Curse',
 			noResults: 'Niciun rezultat găsit',
-			searching: 'Se caută...'
+			searching: 'Se caută...',
+			loadError: 'Locațiile nu au putut fi încărcate. Încearcă din nou.'
 		},
 		values: {
 			communityTitle: 'Comunitate Unită',
@@ -267,7 +334,7 @@ export const translations = {
 				'Fiecare profil este verificat manual. Sistemul nostru de rating bazat pe bunele maniere asigură o experiență plăcută și civilizată.',
 			natureTitle: 'Prietenos cu Natura',
 			natureDesc:
-				'Mai puține mașini pe drum înseamnă un aer mai curat. DrumBun este modul nostru de a reduce amprenta de carbon colectiv.'
+				'Mai puține mașini pe drum înseamnă un aer mai curat. Drum Bun este modul nostru de a reduce amprenta de carbon colectiv.'
 		},
 		filters: {
 			title: 'Filtre',
@@ -288,6 +355,7 @@ export const translations = {
 		},
 		results: {
 			title: 'Curse găsite',
+			rideCountOne: 'cursă',
 			ridesCount: 'curse',
 			loadingTitle: 'Căutăm curse',
 			loadingDescription: 'Verificăm cele mai noi opțiuni pentru ruta ta.',
@@ -309,7 +377,10 @@ export const translations = {
 			notEnoughSeats: 'Doar {seats} locuri disponibile',
 			departed: 'Plecată',
 			passengers: '{count} pasageri',
-			filters: 'Filtre'
+			filters: 'Filtre',
+			detailsTitle: 'Detalii cursă',
+			stops: 'Opriri',
+			backToResults: 'Înapoi la curse'
 		},
 		footer: {
 			tagline:
@@ -382,7 +453,11 @@ export const translations = {
 			delete: 'Șterge',
 			failedLoadUsers: 'Nu s-au putut încărca utilizatorii.',
 			failedUpdateRole: 'Nu s-a putut actualiza rolul pentru utilizatorul #',
-			failedDeleteUser: 'Nu s-a putut șterge utilizatorul #'
+			failedDeleteUser: 'Nu s-a putut șterge utilizatorul #',
+			allFieldsRequired: 'Toate câmpurile sunt obligatorii.',
+			rideId: 'ID cursă',
+			bookingId: 'ID rezervare',
+			adminDeleteConfirm: 'Sigur vrei să ștergi acest utilizator? Acțiunea nu poate fi anulată.'
 		},
 		register: {
 			title: 'Creează-ți un cont',
@@ -394,12 +469,11 @@ export const translations = {
 			phone: 'Număr de telefon',
 			password: 'Parolă',
 			confirmPassword: 'Confirmă parola',
-			newsletter: 'Abonează-te la newsletter-ul nostru',
 			createButton: 'Creează cont',
 			alreadyHaveAccount: 'Ai deja un cont?',
 			loginHere: 'Autentifică-te aici',
 			passwordsDoNotMatch: 'Parolele nu se potrivesc',
-			errorDefault: 'Email sau parolă invalidă'
+			errorDefault: 'Contul nu a putut fi creat. Verifică datele și încearcă din nou.'
 		},
 		userProfile: {
 			back: 'Înapoi',

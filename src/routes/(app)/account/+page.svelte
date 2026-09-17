@@ -4,6 +4,7 @@
 	import UserInfoSection from '$lib/components/account/UserInfoSection.svelte';
 	import CarsSection from '$lib/components/account/CarsSection.svelte';
 	import ReviewsSection from '$lib/components/account/ReviewsSection.svelte';
+	import ConfirmationModal from '$lib/components/ui/ConfirmationModal.svelte';
 	import { adminDeleteUser, updateUserRole, getUsers, getUserCars } from '$lib/api/users';
 	import type { UserCar, UserProfile, UserResponseDto, UserReview } from '$lib/types/user';
 	import { i18n } from '$lib/stores/i18n.svelte';
@@ -18,6 +19,7 @@
 	let roleUpdating = $state<number | null>(null);
 	let deleting = $state<number | null>(null);
 	let adminError = $state('');
+	let confirmingAdminDelete = $state<number | null>(null);
 
 	$effect(() => {
 		if (authStore.user) {
@@ -74,6 +76,10 @@
 		} finally {
 			deleting = null;
 		}
+	}
+
+	function requestAdminDelete(id: number) {
+		confirmingAdminDelete = id;
 	}
 </script>
 
@@ -222,7 +228,7 @@
 													: i18n.t('account.promote')}
 										</button>
 										<button
-											onclick={() => handleAdminDelete(user.id)}
+											onclick={() => requestAdminDelete(user.id)}
 											disabled={deleting === user.id}
 											class="bg-error/10 font-headline text-error hover:bg-error rounded-lg px-3 py-1.5 text-xs font-bold transition hover:text-white disabled:opacity-50"
 										>
@@ -238,3 +244,15 @@
 		</section>
 	{/if}
 </div>
+
+<ConfirmationModal
+	show={confirmingAdminDelete !== null}
+	title={i18n.t('account.delete')}
+	message={i18n.t('account.adminDeleteConfirm')}
+	confirmText={i18n.t('account.delete')}
+	onCancel={() => (confirmingAdminDelete = null)}
+	onConfirm={() => {
+		if (confirmingAdminDelete !== null) void handleAdminDelete(confirmingAdminDelete);
+		confirmingAdminDelete = null;
+	}}
+/>

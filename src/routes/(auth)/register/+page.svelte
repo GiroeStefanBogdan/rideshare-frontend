@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { ApiError, request } from '$lib/api/client';
-	import { authStore } from '$lib/stores/auth.svelte';
 	import type { UserResponseDto } from '$lib/types/user';
 	import { i18n } from '$lib/stores/i18n.svelte';
 	import { resolve } from '$app/paths';
@@ -13,7 +12,6 @@
 	let phoneNumber = $state('');
 	let gender = $state('');
 	let confirm = $state('');
-	let newsletter = $state(true);
 	let showPassword = $state(false);
 	let showConfirmPassword = $state(false);
 	let error = $state('');
@@ -23,37 +21,36 @@
 
 	async function handleRegister(event: Event) {
 		event.preventDefault();
+		error = '';
+		fieldErrors = {};
 
-		if (!error) {
-			try {
-				const user = await request<UserResponseDto>('/register', {
-					method: 'POST',
-					body: JSON.stringify({
-						name,
-						email,
-						password,
-						birthday,
-						phoneNumber,
-						gender
-					})
-				});
+		try {
+			await request<UserResponseDto>('/register', {
+				method: 'POST',
+				body: JSON.stringify({
+					name,
+					email,
+					password,
+					birthday,
+					phoneNumber,
+					gender
+				})
+			});
 
-				authStore.setUser(user);
-				await goto(resolve('/login'));
-			} catch (err) {
-				if (err instanceof ApiError) {
-					try {
-						const data = JSON.parse(err.message);
-						if (typeof data === 'object' && data !== null) {
-							fieldErrors = data;
-						}
-					} catch {
-						// The backend can return plain text for non-validation errors.
+			await goto(resolve('/login'));
+		} catch (err) {
+			if (err instanceof ApiError) {
+				try {
+					const data = JSON.parse(err.message);
+					if (typeof data === 'object' && data !== null) {
+						fieldErrors = data;
 					}
+				} catch {
+					// The backend can return plain text for non-validation errors.
 				}
-
-				error = i18n.t('register.errorDefault');
 			}
+
+			error = i18n.t('register.errorDefault');
 		}
 	}
 </script>
@@ -63,7 +60,7 @@
 		<!-- Brand mark -->
 		<div class="mb-10 text-center">
 			<a href={resolve('/')} class="font-headline text-primary text-3xl font-black tracking-tight"
-				>DrumBun</a
+				>Drum Bun</a
 			>
 			<div class="mt-3 inline-flex items-center gap-2">
 				<div class="bg-primary/30 h-px w-8"></div>
@@ -279,17 +276,6 @@
 						<p class="text-error mt-1 text-xs">{i18n.t('register.passwordsDoNotMatch')}</p>
 					{/if}
 				</div>
-
-				<!-- Newsletter -->
-				<label class="flex cursor-pointer items-center gap-3 px-1">
-					<input
-						id="newsletter"
-						type="checkbox"
-						bind:checked={newsletter}
-						class="form-checkbox border-outline-variant text-primary-container focus:ring-primary h-4 w-4 rounded"
-					/>
-					<span class="font-body text-secondary text-sm">{i18n.t('register.newsletter')}</span>
-				</label>
 
 				<!-- Submit -->
 				<button

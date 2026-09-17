@@ -35,7 +35,8 @@ async function send(
 
 	if (res.status === 401) {
 		if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/login')) {
-			goto(resolve('/login'));
+			const redirect = `${window.location.pathname}${window.location.search}`;
+			void goto(resolve(`/login?redirect=${encodeURIComponent(redirect)}`));
 		}
 		throw new ApiError(401, 'Unauthorized');
 	}

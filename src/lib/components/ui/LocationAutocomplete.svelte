@@ -50,8 +50,8 @@
 		debounceTimer = setTimeout(async () => {
 			try {
 				results = await getLocations(query);
-			} catch (err) {
-				error = err instanceof Error ? err.message : 'Error fetching locations';
+			} catch {
+				error = i18n.t('search.loadError');
 			} finally {
 				loading = false;
 			}
