@@ -2,6 +2,7 @@
 	import { authStore } from '$lib/stores/auth.svelte';
 	import ProfileSection from '$lib/components/account/ProfileSection.svelte';
 	import UserInfoSection from '$lib/components/account/UserInfoSection.svelte';
+	import PreferencesSection from '$lib/components/account/PreferencesSection.svelte';
 	import CarsSection from '$lib/components/account/CarsSection.svelte';
 	import ReviewsSection from '$lib/components/account/ReviewsSection.svelte';
 	import ReviewsToWrite from '$lib/components/reviews/ReviewsToWrite.svelte';
@@ -135,6 +136,10 @@
 	<div class="grid gap-6 lg:grid-cols-2">
 		<ProfileSection />
 		<UserInfoSection />
+	</div>
+
+	<div class="grid gap-6 lg:grid-cols-2">
+		<PreferencesSection />
 	</div>
 
 	{#if profileError}
