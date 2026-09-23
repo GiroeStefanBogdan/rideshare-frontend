@@ -9,6 +9,8 @@ export interface UserResponseDto {
 	phoneNumber: string;
 	role: 'ROLE_USER' | 'ROLE_ADMIN';
 	provider: 'LOCAL' | 'GOOGLE';
+	canSmoke?: boolean;
+	petFriendly?: boolean;
 }
 
 export interface UserInfo {
@@ -67,4 +69,9 @@ export interface UpdateUserRequest {
 	phoneNumber?: string;
 	birthday?: string;
 	gender?: 'MALE' | 'FEMALE';
+}
+
+export interface UpdateUserPreferencesRequest {
+	canSmoke?: boolean;
+	petFriendly?: boolean;
 }

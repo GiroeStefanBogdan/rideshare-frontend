@@ -1,6 +1,7 @@
 import { request } from './client';
 import type {
 	ChangePasswordRequest,
+	UpdateUserPreferencesRequest,
 	UpdateUserRequest,
 	UserCar,
 	UserProfile,
@@ -78,4 +79,13 @@ export async function updateUserProfile(
 
 export async function deleteUserCar(carId: number): Promise<void> {
 	return request<void>(`/users/me/cars/${carId}`, { method: 'DELETE' });
+}
+
+export async function updateUserPreferences(
+	updateRequest: UpdateUserPreferencesRequest
+): Promise<UserResponseDto> {
+	return request<UserResponseDto>('/users/me/preferences', {
+		method: 'PATCH',
+		body: JSON.stringify(updateRequest)
+	});
 }

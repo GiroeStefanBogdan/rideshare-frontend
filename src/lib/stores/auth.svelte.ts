@@ -1,4 +1,5 @@
 import type { UserResponseDto } from '$lib/types/user';
+import { getMe } from '$lib/api/users';
 
 const STORAGE_KEY = 'auth_user';
 const EMAIL_KEY = 'auth_email';
@@ -53,6 +54,18 @@ function createAuthStore() {
 			if (typeof sessionStorage !== 'undefined') {
 				sessionStorage.removeItem(STORAGE_KEY);
 				sessionStorage.removeItem(EMAIL_KEY);
+			}
+		},
+		async refresh() {
+			try {
+				const refreshed = await getMe();
+				user = refreshed;
+				if (typeof sessionStorage !== 'undefined') {
+					sessionStorage.setItem(STORAGE_KEY, JSON.stringify(refreshed));
+					sessionStorage.setItem(EMAIL_KEY, refreshed.email);
+				}
+			} catch {
+				// Ignore — user stays as-is
 			}
 		}
 	};
