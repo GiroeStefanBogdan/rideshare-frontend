@@ -294,7 +294,8 @@ export const translations = {
 			failedDeleteUser: 'Failed to delete user #',
 			allFieldsRequired: 'All fields are required.',
 			preferencesTitle: 'Preferences',
-			preferencesDescription: 'Set your ride preferences. These help you find like-minded rides and let passengers know what to expect.',
+			preferencesDescription:
+				'Set your ride preferences. These help you find like-minded rides and let passengers know what to expect.',
 			preferencesSaved: 'Preferences saved successfully.',
 			preferencesError: 'Failed to save preferences. Please try again.',
 			smokingAllowed: 'Allow Smoking',
@@ -304,7 +305,7 @@ export const translations = {
 			savePreferences: 'Save Preferences',
 			rideId: 'Ride ID',
 			bookingId: 'Booking ID',
-			adminDeleteConfirm: 'Are you sure you want to delete this user? This action cannot be undone.',
+			adminDeleteConfirm: 'Are you sure you want to delete this user? This action cannot be undone.'
 		},
 		register: {
 			title: 'Create your account',
@@ -684,14 +685,15 @@ export const translations = {
 			bookingId: 'ID rezervare',
 			adminDeleteConfirm: 'Sigur vrei să ștergi acest utilizator? Acțiunea nu poate fi anulată.',
 			preferencesTitle: 'Preferințe',
-			preferencesDescription: 'Stabilește preferințele tale pentru curse. Acestea te ajută să găsești curse care ți se potrivesc și le spun pasagerilor ce să se aștepte.',
+			preferencesDescription:
+				'Stabilește preferințele tale pentru curse. Acestea te ajută să găsești curse care ți se potrivesc și le spun pasagerilor ce să se aștepte.',
 			preferencesSaved: 'Preferințe salvate cu succes.',
 			preferencesError: 'Eroare la salvarea preferințelor. Încearcă din nou.',
 			smokingAllowed: 'Permite Fumat',
 			smokingAllowedHint: 'Accept pasageri care fumează în mașină',
 			petFriendly: 'Acceptă animale',
 			petFriendlyHint: 'Accept pasageri care aduc animale de companie în mașină',
-			savePreferences: 'Salvează Preferințe',
+			savePreferences: 'Salvează Preferințe'
 		},
 		register: {
 			title: 'Creează-ți un cont',

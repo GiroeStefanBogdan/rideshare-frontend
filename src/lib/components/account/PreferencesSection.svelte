@@ -88,9 +88,7 @@
 		</div>
 
 		{#if errorMsg}
-			<div
-				class="bg-error/5 border-error/10 flex items-center gap-3 rounded-lg border px-4 py-3"
-			>
+			<div class="bg-error/5 border-error/10 flex items-center gap-3 rounded-lg border px-4 py-3">
 				<span class="material-symbols-outlined text-error text-sm">error</span>
 				<p class="font-body text-error text-sm">{errorMsg}</p>
 			</div>
@@ -111,9 +109,7 @@
 			class="bg-primary hover:bg-primary-container font-headline flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 font-bold text-white transition-all disabled:cursor-not-allowed disabled:opacity-45"
 		>
 			{#if saving}
-				<span class="material-symbols-outlined animate-spin text-sm"
-					>progress_activity</span
-				>
+				<span class="material-symbols-outlined animate-spin text-sm">progress_activity</span>
 			{/if}
 			<span>{i18n.t('account.savePreferences')}</span>
 		</button>
